@@ -1,6 +1,6 @@
 # Tablero agroclimático ICC — Boletines semanales en Power BI
 
-Modelo semántico y reporte de Power BI que reemplazan los boletines meteorológicos semanales en PDF (BCS para caña de azúcar, APIB para banano) con un tablero interactivo para agrónomos y técnicos de campo. Los datos provienen de la **Red Meteorológica del ICC** (API REDMET, 35 estaciones en la costa sur de Guatemala, datos desde 2008).
+Modelo semántico y reporte de Power BI que reemplazan los boletines meteorológicos semanales en PDF con un tablero interactivo para agrónomos y técnicos de campo. Los datos provienen de la **Red Meteorológica del ICC** (API REDMET, 35 estaciones en la costa sur de Guatemala, datos desde 2008).
 
 - **Responsable:** Alan — equipo CeH, Instituto Privado de Investigación sobre Cambio Climático (ICC)
 - **Formato:** Power BI Project (`.pbip`): modelo en TMDL y reporte en PBIR, legibles y versionables con Git

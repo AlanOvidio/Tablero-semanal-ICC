@@ -26,6 +26,7 @@ Registrar aquí cada cambio relevante al modelo o al reporte: **qué** cambió, 
 
 ### 2026-11-02
 - Documentación inicial (`README.md`, `docs/`), generador `tools/generar_docs_modelo.py` y `.gitignore` para el repositorio.
+- Se quitaron de la documentación las referencias a organizaciones externas y a la experiencia institucional como fuente de umbrales.
 
 ### 2026-11-01
 - Radiación basada en el periodo de luz (D11): nuevas columnas en `Fact_Subdiaria_met_aux` (`Hora_Inicio_Luz`, `Hora_Fin_Luz`, `Duracion_Luz_h`, `Rad_Media_Luz`, `Energia_Luz_MJ`) y sus medidas. Se eliminó `Rad_Media_Diurna_MJ`.
@@ -36,7 +37,7 @@ Registrar aquí cada cambio relevante al modelo o al reporte: **qué** cambió, 
 - `Precip_Max_Evento`: máximo de 15 min por estación, promediado (antes: máximo de todas las estaciones, podía superar la lluvia diaria promedio).
 - `Balance_Semanal` y `Balance_Por_Semana`: Σ (P − ETo) por estación y promedio, consistente con `Balance_Diario`.
 - `Rad_MJ` con 96 lecturas (D13). `Rad_Media_Diurna_MJ` integrada (luego reemplazada el 11-01).
-- Se eliminaron copias de conflicto de OneDrive (`*-AlanOvidio.*`) que impedían abrir el proyecto.
+- Se eliminaron copias de conflicto de OneDrive (`*-NOMBREEQUIPO.*`) que impedían abrir el proyecto.
 
 ### 2026-10-28
 - Rosa de vientos: viento horario vectorial en `Fact_Horaria_riesgo` (`Viento_Media`, `Dir_Viento`, `Sector_Viento`), relación con `Direcciones_Viento`, medidas de frecuencia/calmas y visual SVG con segmentador de período.
@@ -49,7 +50,7 @@ Registrar aquí cada cambio relevante al modelo o al reporte: **qué** cambió, 
 
 ## Pendientes / ideas
 
-- Validar los umbrales de riesgo con datos de campo (CENGICAÑA, APIB, técnicos del ICC).
+- Validar los umbrales de riesgo con datos de campo.
 - Relleno de días faltantes en acumulados de radiación/ETo (Σ días con dato + media de la estación × días faltantes), si el diagnóstico de completitud lo justifica.
 - `Rad_Media_Diurna` (ventana fija) ya no se usa en visuales: evaluar su eliminación.
 - Página *Pronóstico Semanal* sin contenido.

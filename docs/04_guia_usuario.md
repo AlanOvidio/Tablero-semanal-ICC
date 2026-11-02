@@ -39,7 +39,7 @@ Esta guía explica cómo leer el tablero semanal. Está pensada para agrónomos 
 | Phytophthora | ≥ 1 día | ≥ 3 días y balance > 50 mm | |
 | Pudrición del cogollo (palma) | lluvia > 100 mm y Tmed < 26 °C | lluvia > 150 mm y Tmed < 26 °C | |
 
-> Los umbrales son **valores de referencia** de la literatura y la experiencia del ICC; están sujetos a validación con datos de campo.
+> Los umbrales son **valores de referencia** de la literatura; están sujetos a validación con datos de campo.
 
 ## Condiciones de riesgo de plagas y enfermedades
 
