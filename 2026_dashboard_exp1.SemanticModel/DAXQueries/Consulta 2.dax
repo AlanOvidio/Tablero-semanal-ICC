@@ -1,0 +1,12 @@
+DEFINE
+    MEASURE '_Medidas'[Temp_Media_Historico] = VAR AnioActual = MAX(Calendario[Año_Hidrologico])
+RETURN
+CALCULATE(
+    AVERAGE(Fact_Diaria_met[Temp_Media]),
+    Calendario[Año_Hidrologico] < AnioActual
+)
+
+EVALUATE
+    SUMMARIZECOLUMNS(
+        "Temp_Media_Historico", [Temp_Media_Historico]
+    )

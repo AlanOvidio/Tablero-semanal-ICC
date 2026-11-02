@@ -1,0 +1,33 @@
+table Semanas_Anio
+	lineageTag: 32ae696a-5ab9-46b9-bce3-b4a16a2a7982
+
+	column Semana_Num
+		dataType: int64
+		formatString: 0
+		lineageTag: 4466248d-a332-4f8e-920f-9d276ae514a1
+		summarizeBy: sum
+		sourceColumn: Semana_Num
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Semanas_Anio = m
+		mode: import
+		source =
+				let
+				    // Genera semanas 1 a 53
+				    Lista = List.Numbers(1, 53, 1),
+				    Tabla = Table.FromList(
+				        Lista,
+				        Splitter.SplitByNothing(),
+				        {"Semana_Num"}
+				    ),
+				    Tipo = Table.TransformColumnTypes(
+				        Tabla, {{"Semana_Num", Int64.Type}}
+				    )
+				in
+				    Tipo
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

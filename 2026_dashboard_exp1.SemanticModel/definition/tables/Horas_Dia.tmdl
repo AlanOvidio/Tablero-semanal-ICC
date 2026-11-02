@@ -1,0 +1,64 @@
+table Horas_Dia
+	lineageTag: b3f64462-11fe-465b-aaea-861ae4feedb2
+
+	column Hora
+		dataType: int64
+		formatString: 0
+		lineageTag: 142b0fa6-d362-4d23-9116-5cd20ec753c0
+		summarizeBy: none
+		sourceColumn: Hora
+
+		annotation SummarizationSetBy = Automatic
+
+	column Hora_Etiqueta
+		dataType: string
+		lineageTag: 479394d3-fd8f-4095-9395-03e887b64975
+		summarizeBy: none
+		sourceColumn: Hora_Etiqueta
+
+		annotation SummarizationSetBy = Automatic
+
+	column Periodo
+		dataType: string
+		lineageTag: 28167c56-c681-4749-bf70-e3665c74b56f
+		summarizeBy: none
+		sourceColumn: Periodo
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Horas_Dia = m
+		mode: import
+		source =
+				let
+				    Lista = List.Numbers(0, 24, 1),
+				    Tabla = Table.FromList(
+				        Lista,
+				        Splitter.SplitByNothing(),
+				        {"Hora"}
+				    ),
+				    // Etiqueta legible
+				    AgregarEtiqueta = Table.AddColumn(
+				        Tabla, "Hora_Etiqueta",
+				        each Text.PadStart(Text.From([Hora]), 2, "0") & ":00",
+				        type text
+				    ),
+				    // Período del día
+				    AgregarPeriodo = Table.AddColumn(
+				        AgregarEtiqueta, "Periodo",
+				        each
+				            if [Hora] >= 6 and [Hora] <= 18 then "Diurno"
+				            else if [Hora] >= 19 and [Hora] <= 23 then "Nocturno tarde"
+				            else "Nocturno madrugada",
+				        type text
+				    ),
+				    Tipo = Table.TransformColumnTypes(
+				        AgregarPeriodo,
+				        {{"Hora", Int64.Type}}
+				    )
+				in
+				    Tipo
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

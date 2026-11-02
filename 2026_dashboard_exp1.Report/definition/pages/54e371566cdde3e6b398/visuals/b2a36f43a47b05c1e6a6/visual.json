@@ -1,0 +1,153 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "name": "b2a36f43a47b05c1e6a6",
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0,
+    "height": 582.85714285714289,
+    "width": 928.57142857142867,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Estaciones_met"
+                    }
+                  },
+                  "Property": "finca"
+                }
+              },
+              "queryRef": "Estaciones_met.finca",
+              "nativeQueryRef": "finca"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Estaciones_met"
+                    }
+                  },
+                  "Property": "estrato.nombre"
+                }
+              },
+              "queryRef": "Estaciones_met.estrato.nombre",
+              "nativeQueryRef": "estrato.nombre"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Calendario"
+                    }
+                  },
+                  "Property": "Semana_Etiqueta"
+                }
+              },
+              "queryRef": "Calendario.Semana_Etiqueta",
+              "nativeQueryRef": "Semana_Etiqueta"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Precip_Semanal"
+                }
+              },
+              "queryRef": "_Medidas.Precip_Semanal",
+              "nativeQueryRef": "Precip_Semanal"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "ETO_Semanal"
+                }
+              },
+              "queryRef": "_Medidas.ETO_Semanal",
+              "nativeQueryRef": "ETO_Semanal"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Temp_Min"
+                }
+              },
+              "queryRef": "_Medidas.Temp_Min",
+              "nativeQueryRef": "Temp_Min"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Temp_Max"
+                }
+              },
+              "queryRef": "_Medidas.Temp_Max",
+              "nativeQueryRef": "Temp_Max"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Balance_Semanal"
+                }
+              },
+              "queryRef": "_Medidas.Balance_Semanal",
+              "nativeQueryRef": "Balance_Semanal"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Estaciones_met"
+                  }
+                },
+                "Property": "finca"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

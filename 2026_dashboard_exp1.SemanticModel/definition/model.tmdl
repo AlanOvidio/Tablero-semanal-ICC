@@ -1,0 +1,33 @@
+model Model
+	culture: es-GT
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["Estaciones_met","fxLecturasEstacion_met","RangeEnd","TablaEstaciones_met","Fact_Meteorologia","RangeStart","Calendario","Fact_Diaria_met","InicioAnioHidrologico","Semanas_Grafica","fxLecturasEstacion_met_diario","Fact_Subdiaria_met_aux","Semanas_Anio","Horas_Dia","Plagas","Fact_Horaria_riesgo","Periodos_Dia","Direcciones_Viento"]
+
+annotation PBI_ProTooling = ["DaxQueryView_Desktop","DevMode"]
+
+annotation __TEdtr = 1
+
+ref table Estaciones_met
+ref table TablaEstaciones_met
+ref table Fact_Meteorologia
+ref table Calendario
+ref table Fact_Diaria_met
+ref table _Medidas
+ref table Semanas_Grafica
+ref table Fact_Subdiaria_met_aux
+ref table Semanas_Anio
+ref table Horas_Dia
+ref table Plagas
+ref table Fact_Horaria_riesgo
+ref table Periodos_Dia
+ref table Direcciones_Viento
+
+ref cultureInfo es-GT
+

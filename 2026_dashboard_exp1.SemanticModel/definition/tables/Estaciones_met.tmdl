@@ -1,0 +1,193 @@
+table Estaciones_met
+	lineageTag: 5fa51949-d0d5-46c2-8e57-eb2ad5f1c306
+
+	column estacionid
+		dataType: int64
+		formatString: 0
+		lineageTag: 024a40b4-1553-4fbe-b9ec-8d3baad2c766
+		summarizeBy: none
+		sourceColumn: estacionid
+
+		annotation SummarizationSetBy = Automatic
+
+	column estrato_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 874fbb18-bfd4-4a6f-aaae-889b49567a72
+		summarizeBy: sum
+		sourceColumn: estrato_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column codigo
+		dataType: string
+		lineageTag: bbff376e-0d89-4969-9a7f-0f448969e45a
+		summarizeBy: none
+		sourceColumn: codigo
+
+		annotation SummarizationSetBy = Automatic
+
+	column finca
+		dataType: string
+		lineageTag: b6d1b338-b313-43cd-a3be-db438040d0d1
+		summarizeBy: none
+		sourceColumn: finca
+
+		annotation SummarizationSetBy = Automatic
+
+	column latitud
+		dataType: double
+		lineageTag: 9433d8ec-deca-4a3d-8e15-5fa89e6c7676
+		summarizeBy: sum
+		sourceColumn: latitud
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column longitud
+		dataType: double
+		lineageTag: 78ab2d0c-94d3-40a8-9fed-88cb557afed2
+		summarizeBy: sum
+		sourceColumn: longitud
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column altitud
+		dataType: int64
+		formatString: 0
+		lineageTag: 9a6fb4f4-01f4-4e24-b02b-40726954e6b6
+		summarizeBy: sum
+		sourceColumn: altitud
+
+		annotation SummarizationSetBy = Automatic
+
+	column activa
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 23743fa7-6490-4c95-a0d0-5857df91653c
+		summarizeBy: none
+		sourceColumn: activa
+
+		annotation SummarizationSetBy = Automatic
+
+	column redmet
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 8109379f-1dfb-4380-856d-5eeb67f571e2
+		summarizeBy: none
+		sourceColumn: redmet
+
+		annotation SummarizationSetBy = Automatic
+
+	column pais_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 7b453a33-d4be-4526-ac35-37652110e793
+		summarizeBy: sum
+		sourceColumn: pais_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'pais.id'
+		dataType: int64
+		formatString: 0
+		lineageTag: 54ad9530-6051-4632-923f-b2ade7923a52
+		summarizeBy: sum
+		sourceColumn: pais.id
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'pais.nombre'
+		dataType: string
+		lineageTag: eeb81bc1-40eb-4ff7-adfa-7949c4f697f2
+		summarizeBy: none
+		sourceColumn: pais.nombre
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'estrato.id'
+		dataType: int64
+		formatString: 0
+		lineageTag: dc40205c-9826-43eb-b743-542e3bc7e09e
+		summarizeBy: sum
+		sourceColumn: estrato.id
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'estrato.nombre'
+		dataType: string
+		lineageTag: 72e5d001-a4ff-46d8-8af6-27aebcd36b3a
+		summarizeBy: none
+		sourceColumn: estrato.nombre
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Estaciones_met = m
+		mode: import
+		source = ```
+				let
+				    Origen = Json.Document(Web.Contents(
+				        "https://redmet.icc.org.gt/ws/redmet/estaciones", 
+				        [Headers=[Accept="Application/json"]]
+				    )),
+				    #"Convertida en tabla" = Table.FromRecords({Origen}),
+				    #"Expandir estaciones" = Table.ExpandListColumn(
+				        #"Convertida en tabla", "estaciones"
+				    ),
+				    #"Expandir campos" = Table.ExpandRecordColumn(
+				        #"Expandir estaciones", "estaciones",
+				        {
+				            "estacionid", "estrato_id", "codigo", "finca",
+				            "latitud", "longitud", "altitud", "activa", "redmet",
+				            "pais_id", "pais", "estrato"
+				        },
+				        {
+				            "estacionid", "estrato_id", "codigo", "finca",
+				            "latitud", "longitud", "altitud", "activa", "redmet",
+				            "pais_id", "pais", "estrato"
+				        }
+				    ),
+				    #"Expandir pais" = Table.ExpandRecordColumn(
+				        #"Expandir campos", "pais",
+				        {"id", "nombre"},
+				        {"pais.id", "pais.nombre"}
+				    ),
+				    #"Expandir estrato" = Table.ExpandRecordColumn(
+				        #"Expandir pais", "estrato",
+				        {"id", "nombre"},
+				        {"estrato.id", "estrato.nombre"}
+				    ),
+				    #"Tipos correctos" = Table.TransformColumnTypes(
+				        #"Expandir estrato",
+				        {
+				            // claves — todas Int64 para que relacionen con las Facts
+				            {"estacionid",  Int64.Type},
+				            {"estrato_id",  Int64.Type},
+				            {"pais_id",     Int64.Type},
+				            {"pais.id",     Int64.Type},
+				            {"estrato.id",  Int64.Type},
+				            // descriptivos
+				            {"codigo",          type text},
+				            {"finca",           type text},
+				            {"pais.nombre",     type text},
+				            {"estrato.nombre",  type text},
+				            // geográficos
+				            {"latitud",   type number},
+				            {"longitud",  type number},
+				            {"altitud",   Int64.Type},
+				            // flags
+				            {"activa",  type logical},
+				            {"redmet",  type logical}
+				        }
+				    )
+				in
+				    #"Tipos correctos"
+				```
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

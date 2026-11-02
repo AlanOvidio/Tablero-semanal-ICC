@@ -1,0 +1,1668 @@
+table _Medidas
+	lineageTag: a4cc8d0f-dd65-4ae6-85b0-267d1aa4653d
+
+	measure Precip_Semanal =
+			CALCULATE(
+			    AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))),
+			    FILTER(
+			        Calendario,
+			        Calendario[Semana_Hidrologica] = MAX(Calendario[Semana_Hidrologica]) &&
+			        Calendario[Año_Hidrologico]    = MAX(Calendario[Año_Hidrologico])
+			    )
+			)
+		lineageTag: 82308c34-66de-410a-91fb-196f7ac7361d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Precip_Diaria = AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Precip_Total])))
+		lineageTag: 292f592d-89dd-4233-92f2-c0049ca5e202
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Precip_Max_Evento =
+			// Máximo de 15 min por estación, promediado entre estaciones
+			// (consistente con Precip_Diaria: nunca supera el promedio diario)
+			AVERAGEX(
+			    VALUES(Estaciones_met[estacionid]),
+			    CALCULATE(MAX(Fact_Subdiaria_met_aux[Precip_Max15min]))
+			)
+		lineageTag: c845df3b-3110-42cd-9519-669d26d95b77
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Temp_Max = ```
+			
+			MAX(Fact_Diaria_met[Temp_Max])
+			
+			```
+		lineageTag: c11bdd31-ba2b-4e9b-91d8-5174a9bbd48e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Temp_Min =
+			
+			MIN(Fact_Diaria_met[Temp_Min])
+		lineageTag: abfd2ee7-00e9-4085-b99e-485a51b3ec5e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Temp_Media =
+			
+			AVERAGE(Fact_Diaria_met[Temp_Media])
+		lineageTag: 227d6413-e327-439c-ab80-1e2386010cff
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Amplitud_Termica =
+			
+			[Temp_Max] - [Temp_Min]
+		lineageTag: 8cb13b90-3ddc-4afa-9921-f1a40afeca92
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure HR_Media =
+			
+			AVERAGE(Fact_Diaria_met[HR_Media])
+		lineageTag: 43f1fc8f-73fd-4875-8b26-864eb1b2fe66
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure HR_Min =
+			
+			MIN(Fact_Diaria_met[HR_Min])
+		lineageTag: a35670cd-b11b-429f-a435-14a172e3d2d3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure ETO_Semanal =
+			ROUND(CALCULATE(
+			    AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[ETO_Total]))),
+			    FILTER(
+			        Calendario,
+			        Calendario[Semana_Hidrologica] = MAX(Calendario[Semana_Hidrologica]) &&
+			        Calendario[Año_Hidrologico]    = MAX(Calendario[Año_Hidrologico])
+			    )
+			), 2)
+		lineageTag: 10816b16-13c0-48e0-bb26-f274dada65c9
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure ETO_Diaria = AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[ETO_Total])))
+		lineageTag: 2f57fcce-0cfd-46ca-9993-6fec8e135395
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Balance_Semanal =
+			// Σ balance diario (P − ETo, días con ambos datos) por estación, promediado entre estaciones
+			ROUND(
+			    CALCULATE(
+			        AVERAGEX(
+			            VALUES(Estaciones_met[estacionid]),
+			            CALCULATE(SUM(Fact_Diaria_met[Balance_Hidrico]))
+			        ),
+			        FILTER(
+			            Calendario,
+			            Calendario[Semana_Hidrologica] = MAX(Calendario[Semana_Hidrologica]) &&
+			            Calendario[Año_Hidrologico]    = MAX(Calendario[Año_Hidrologico])
+			        )
+			    ),
+			    2
+			)
+		lineageTag: b6914587-58ed-4cda-9d53-2720ab9f5b6a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Balance_Diario = AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Balance_Hidrico])))
+		lineageTag: 28a18013-e635-458a-8bc9-a6d94951f622
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Viento_Media =
+			
+			AVERAGE(Fact_Diaria_met[Viento_Media])
+		lineageTag: 534e3d1b-75e4-4873-8e56-f6cf03c07344
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure IC_Max = MAX(Fact_Subdiaria_met_aux[IC_Max_Diurno])
+		lineageTag: 35a4dea7-213a-4d19-a0ec-a5280063a004
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure _Semana_Hidro_Actual =
+			
+			MAX(Calendario[Semana_Hidrologica])
+		formatString: 0
+		lineageTag: 95e28daa-7446-433f-9dcd-29eab19784d9
+
+	measure Precip_Historico_Promedio =
+			VAR AnioActual   = MAX(Calendario[Año_Hidrologico])
+			VAR SemanaActual = MAX(Calendario[Semana_Hidrologica])
+			RETURN
+			CALCULATE(
+			    AVERAGEX(
+			        VALUES(Calendario[Año_Hidrologico]),
+			        CALCULATE(AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))))
+			    ),
+			    ALL(Calendario),
+			    Calendario[Semana_Hidrologica] = SemanaActual,
+			    Calendario[Año_Hidrologico]    < AnioActual
+			)
+		lineageTag: 168ddc6e-6cc4-48e2-9525-75713de90e93
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Precip_Historico_Max =
+			VAR AnioActual   = MAX(Calendario[Año_Hidrologico])
+			VAR SemanaActual = MAX(Calendario[Semana_Hidrologica])
+			RETURN
+			CALCULATE(
+			    MAXX(
+			        VALUES(Calendario[Año_Hidrologico]),
+			        CALCULATE(AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))))
+			    ),
+			    ALL(Calendario),
+			    Calendario[Semana_Hidrologica] = SemanaActual,
+			    Calendario[Año_Hidrologico]    < AnioActual
+			)
+		lineageTag: 0f13e3c9-4a1c-429a-85fb-41b0f92a9ceb
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Precip_Historico_Min =
+			VAR AnioActual   = MAX(Calendario[Año_Hidrologico])
+			VAR SemanaActual = MAX(Calendario[Semana_Hidrologica])
+			RETURN
+			CALCULATE(
+			    MINX(
+			        VALUES(Calendario[Año_Hidrologico]),
+			        CALCULATE(AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))))
+			    ),
+			    ALL(Calendario),
+			    Calendario[Semana_Hidrologica] = SemanaActual,
+			    Calendario[Año_Hidrologico]    < AnioActual
+			)
+		lineageTag: 9ea0139c-b007-4e7b-b8f9-62007cbbac79
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Temp_Max_Historico =
+			VAR AnioActual   = MAX(Calendario[Año_Hidrologico])
+			VAR SemanaActual = MAX(Calendario[Semana_Hidrologica])
+			RETURN
+			CALCULATE(
+			    MAX(Fact_Diaria_met[Temp_Max]),
+			    ALL(Calendario),
+			    Calendario[Semana_Hidrologica] = SemanaActual,
+			    Calendario[Año_Hidrologico]    < AnioActual
+			)
+		lineageTag: 244f7d9f-557c-4a44-a181-0900acd0db93
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Temp_Min_Historico =
+			VAR AnioActual   = MAX(Calendario[Año_Hidrologico])
+			VAR SemanaActual = MAX(Calendario[Semana_Hidrologica])
+			RETURN
+			CALCULATE(
+			    MIN(Fact_Diaria_met[Temp_Min]),
+			    ALL(Calendario),
+			    Calendario[Semana_Hidrologica] = SemanaActual,
+			    Calendario[Año_Hidrologico]    < AnioActual
+			)
+		lineageTag: 5e2324bb-e65b-4b58-adc6-c02087286c40
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Temp_Media_Historico =
+			VAR AnioActual   = MAX(Calendario[Año_Hidrologico])
+			VAR SemanaActual = MAX(Calendario[Semana_Hidrologica])
+			RETURN
+			CALCULATE(
+			    AVERAGEX(
+			        VALUES(Calendario[Año_Hidrologico]),
+			        CALCULATE(AVERAGE(Fact_Diaria_met[Temp_Media]))
+			    ),
+			    ALL(Calendario),
+			    Calendario[Semana_Hidrologica] = SemanaActual,
+			    Calendario[Año_Hidrologico]    < AnioActual
+			)
+		lineageTag: 15f3023b-1173-4ecf-be72-a2628c6c7b00
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure _Anio_Hidro_Actual =
+			
+			MAX(Calendario[Año_Hidrologico])
+		formatString: 0
+		lineageTag: 62185eeb-ee6b-4c6c-a7b0-25fbea2b3bae
+
+	measure Precip_Acumulada_Anual =
+			CALCULATE(
+			    AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))),
+			    FILTER(
+			        ALL(Calendario),
+			        Calendario[Año_Hidrologico]    = MAX(Calendario[Año_Hidrologico]) &&
+			        Calendario[Semana_Hidrologica] <= MAX(Calendario[Semana_Hidrologica])
+			    )
+			)
+		lineageTag: f1cedc54-0a3c-44a8-8236-2869c36bede4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Precip_Acumulada_Anual_Anterior =
+			CALCULATE(
+			    AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))),
+			    FILTER(
+			        ALL(Calendario),
+			        Calendario[Año_Hidrologico]    = MAX(Calendario[Año_Hidrologico]) - 1 &&
+			        Calendario[Semana_Hidrologica] <= MAX(Calendario[Semana_Hidrologica])
+			    )
+			)
+		lineageTag: 89cdae6e-7ef8-43f1-ae79-e3080b17e97f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure ETO_Acumulada_Anual =
+			CALCULATE(
+			    AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[ETO_Total]))),
+			    FILTER(
+			        ALL(Calendario),
+			        Calendario[Año_Hidrologico]    = MAX(Calendario[Año_Hidrologico]) &&
+			        Calendario[Semana_Hidrologica] <= MAX(Calendario[Semana_Hidrologica])
+			    )
+			)
+		lineageTag: 32432317-625c-47e2-adea-2d8f3144bf2b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Balance_Acumulado_Anual = ```
+			
+			[Precip_Acumulada_Anual] - [ETO_Acumulada_Anual]
+			
+			```
+		lineageTag: eec4bcc1-6b6e-4ef4-8c33-86fffe6e9cd4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Delta_Precip_YoY = ```
+			
+			VAR AnioActual   = MAX(Calendario[Año_Hidrologico])
+			VAR SemanaActual = MAX(Calendario[Semana_Hidrologica])
+			VAR actual = [Precip_Semanal]
+			VAR anterior = 
+			    CALCULATE(
+			        [Precip_Semanal],
+			        FILTER(
+			            ALL(Calendario),
+			            Calendario[Semana_Hidrologica] = SemanaActual &&
+			            Calendario[Año_Hidrologico]    = AnioActual - 1
+			        )
+			    )
+			RETURN
+			    IF(
+			        NOT ISBLANK(anterior) && anterior <> 0,
+			        actual - anterior,
+			        BLANK()
+			    )
+			```
+		lineageTag: c274b7cd-9001-4f6b-b8b9-544c6cfa7c16
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Delta_Temp_Media_YoY = ```
+			
+			VAR AnioActual   = MAX(Calendario[Año_Hidrologico])
+			VAR SemanaActual = MAX(Calendario[Semana_Hidrologica])
+			VAR actual = [Temp_Media]
+			VAR anterior = 
+			    CALCULATE(
+			        [Temp_Media],
+			        FILTER(
+			            ALL(Calendario),
+			            Calendario[Semana_Hidrologica] = SemanaActual &&
+			            Calendario[Año_Hidrologico]    = AnioActual - 1
+			        )
+			    )
+			RETURN
+			    IF(NOT ISBLANK(anterior), actual - anterior, BLANK())
+			```
+		lineageTag: a2a04087-89f6-4f47-a15e-8f0fe097f592
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Delta_Balance_YoY = ```
+			
+			VAR AnioActual   = MAX(Calendario[Año_Hidrologico])
+			VAR SemanaActual = MAX(Calendario[Semana_Hidrologica])
+			VAR actual = [Balance_Semanal]
+			VAR anterior = 
+			    CALCULATE(
+			        [Balance_Semanal],
+			        FILTER(
+			            ALL(Calendario),
+			            Calendario[Semana_Hidrologica] = SemanaActual &&
+			            Calendario[Año_Hidrologico]    = AnioActual - 1
+			        )
+			    )
+			RETURN
+			    IF(NOT ISBLANK(anterior), actual - anterior, BLANK())
+			```
+		lineageTag: 3eea419a-2f45-4773-8415-40fd4d07dfe0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Estaciones_Deficit_Critico =
+			
+			CALCULATE(
+			    DISTINCTCOUNT(Fact_Diaria_met[estacionid]),
+			    FILTER(
+			        VALUES(Fact_Diaria_met[estacionid]),
+			        CALCULATE(SUM(Fact_Diaria_met[Balance_Hidrico])) < -20
+			    )
+			)
+		formatString: 0
+		lineageTag: 2c53d91a-54d9-4732-a63b-d33682fe2e40
+
+	measure Estaciones_Superavit =
+			
+			CALCULATE(
+			    DISTINCTCOUNT(Fact_Diaria_met[estacionid]),
+			    FILTER(
+			        VALUES(Fact_Diaria_met[estacionid]),
+			        CALCULATE(SUM(Fact_Diaria_met[Balance_Hidrico])) > 0
+			    )
+			)
+		formatString: 0
+		lineageTag: 9873ea0c-764a-4264-8984-86eb4bc9e751
+
+	measure Semaforo_Balance =
+			
+			VAR balance = [Balance_Semanal]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        balance < -20, 1,
+			        balance < 0,   2,
+			        3
+			    )
+		formatString: 0
+		lineageTag: fe66a0e5-2297-44cd-a66e-3f3ff7eb4bd1
+
+	measure _Conteo_Filas_Diarias = COUNTROWS(Fact_Diaria_met)
+		formatString: 0
+		lineageTag: 05310be8-1039-4bfd-993c-9483396e3825
+
+	measure _Conteo_Estaciones_Met = DISTINCTCOUNT(Fact_Diaria_met[estacionid])
+		formatString: 0
+		lineageTag: 25e2106b-d0e4-4306-896e-3635c31cb578
+
+	measure Semaforo_Deficit =
+			
+			IF([Estaciones_Deficit_Critico] > 0, 1, 3)
+		formatString: 0
+		lineageTag: da5e84f1-d6e4-42e4-b779-f4866e57e26b
+
+	measure IC_Media = AVERAGE(Fact_Subdiaria_met_aux[IC_Media_Diurno])
+		lineageTag: 80bad702-1403-4185-a72e-a499061ffdf3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Rad_Media_Diurna = AVERAGE(Fact_Subdiaria_met_aux[Rad_Media_Diurna])
+		lineageTag: 8771be53-abd6-4a5f-b9a0-3dde502351bd
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Rad_Max_Diurna = MAX(Fact_Subdiaria_met_aux[Rad_Max_Diurna])
+		lineageTag: 768dd7ae-fe85-45cd-970c-c9dd1b047ae4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure IC_Media_Diurno = AVERAGE(Fact_Subdiaria_met_aux[IC_Media_Diurno])
+		lineageTag: 045437cc-d6c4-4e45-9807-7df1a075c2ed
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure IC_Max_Diurno = MAX(Fact_Subdiaria_met_aux[IC_Max_Diurno])
+		lineageTag: 87ed0880-f7bb-41a2-acef-9c1967d55b51
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Viento_Max = MAX(Fact_Subdiaria_met_aux[Viento_Max])
+		lineageTag: b3fe61cf-3148-4f30-8977-23f6842a8602
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Balance_Por_Semana =
+			// Balance de las 3 semanas previas a la seleccionada:
+			// Σ balance diario por estación, promediado entre estaciones (igual que Balance_Semanal)
+			VAR SemanaActual = CALCULATE(MAX(Calendario[Semana_Hidrologica]), ALLSELECTED(Calendario))
+			VAR AnioActual   = CALCULATE(MAX(Calendario[Año_Hidrologico]),    ALLSELECTED(Calendario))
+			VAR SemanaEje    = MAX(Semanas_Grafica[Semana_Hidrologica])
+			VAR AnioEje      = MAX(Semanas_Grafica[Año_Hidrologico])
+			RETURN
+			IF(
+			    AnioEje = AnioActual &&
+			    SemanaEje >= SemanaActual - 3 &&
+			    SemanaEje <= SemanaActual - 1,
+			    CALCULATE(
+			        AVERAGEX(
+			            VALUES(Estaciones_met[estacionid]),
+			            CALCULATE(SUM(Fact_Diaria_met[Balance_Hidrico]))
+			        ),
+			        ALL(Calendario),
+			        TREATAS({SemanaEje}, Calendario[Semana_Hidrologica]),
+			        TREATAS({AnioEje},   Calendario[Año_Hidrologico])
+			    )
+			)
+		lineageTag: 5f945170-0e31-4068-82c0-a805307eec47
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure VPD_Media_Diurna = AVERAGE(Fact_Subdiaria_met_aux[VPD_Media_Diurna])
+		lineageTag: e51d0fb5-5eca-45dd-b3eb-8aed8d229910
+
+	measure VPD_Max_Diurna = MAX(Fact_Subdiaria_met_aux[VPD_Max_Diurna])
+		lineageTag: e0c67521-4f64-443e-90d0-e817a80e2cff
+
+	measure Semaforo_VPD =
+			VAR vpd = [VPD_Max_Diurna]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        vpd > 3.0, 1,
+			        vpd > 2.0, 2,
+			        3
+			    )
+		lineageTag: 8558731d-4155-4338-8592-d9ce35630c16
+
+	measure Temp_Nocturna_Media = AVERAGE(Fact_Subdiaria_met_aux[Temp_Nocturna_Media])
+		lineageTag: a37b49a6-3d4c-47ed-8f09-b5ba72837ada
+
+	measure Semaforo_Temp_Nocturna =
+			VAR tn = [Temp_Nocturna_Media]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        tn > 24, 1,
+			        tn > 22, 2,
+			        3
+			    )
+		lineageTag: 4a5c02b3-8324-4968-914d-9016d134f7ae
+
+	measure Mojadura_Horas_Semanal = AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Subdiaria_met_aux[Mojadura_Horas_Diurna])))
+		lineageTag: 17a4da14-d264-4b42-822c-3244fa5a5998
+
+	/// Horas con radiación > 40 W/m² (duración del día con luz, no heliofanía)
+	measure Horas_Luz =
+			// Horas del periodo de luz (primera a última lectura > 40 W/m²), sumadas por estación
+			// en el periodo y promediadas entre estaciones
+			AVERAGEX(
+			    VALUES(Estaciones_met[estacionid]),
+			    CALCULATE(SUM(Fact_Subdiaria_met_aux[Duracion_Luz_h]))
+			)
+		lineageTag: 18af3386-b36c-4503-aa30-3789dbecdcfa
+
+	measure Horas_Estres_Termico_Semanal = AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Subdiaria_met_aux[Horas_Estres_Termico])))
+		lineageTag: bdb3a4f8-9171-419a-a9b8-2c3c03c00a59
+
+	measure Semaforo_Estres_Termico =
+			VAR horas = [Horas_Estres_Termico_Semanal]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        horas > 28, 1,
+			        horas > 14, 2,
+			        3
+			    )
+		lineageTag: fe87209b-6f35-4c78-88d1-8a19a0181a03
+
+	measure N_Lecturas_Promedio = AVERAGE(Fact_Subdiaria_met_aux[N_Lecturas])
+		lineageTag: 182a249d-f138-4af2-9cc9-8ea1d1c249d2
+
+	measure Dia_Completo_Pct =
+			DIVIDE(
+			    CALCULATE(
+			        COUNTROWS(Fact_Subdiaria_met_aux),
+			        Fact_Subdiaria_met_aux[Dia_Completo] = TRUE()
+			    ),
+			    COUNTROWS(Fact_Subdiaria_met_aux),
+			    0
+			) * 100
+		lineageTag: a36679b8-6e41-49ea-84b3-b6643ccd40c8
+
+	measure GDD_Semanal_Base10 = AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[GDD_Base10])))
+		lineageTag: 5ffd133c-79e7-4bd5-a0aa-fb7331469098
+
+	measure GDD_Semanal_Base15 = AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[GDD_Base15])))
+		lineageTag: fb07a24f-8523-4d28-8dca-350b6ca0f7df
+
+	measure Dias_Riesgo_Roya =
+			VAR AnioActual   = MAX(Calendario[Año_Hidrologico])
+			VAR SemanaActual = MAX(Calendario[Semana_Hidrologica])
+			VAR Periodo =
+			    FILTER(
+			        ALL(Calendario),
+			        Calendario[Año_Hidrologico]    = AnioActual &&
+			        Calendario[Semana_Hidrologica] = SemanaActual
+			    )
+			// Promedio de días por estación (solo estaciones con datos en el periodo)
+			VAR Estaciones =
+			    FILTER(
+			        VALUES(Estaciones_met[estacionid]),
+			        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met, Periodo))
+			    )
+			RETURN
+			AVERAGEX(
+			    Estaciones,
+			    CALCULATE(
+			        COUNTROWS(Fact_Diaria_met),
+			        Periodo,
+			        Fact_Diaria_met[Temp_Media] >= 15,
+			        Fact_Diaria_met[Temp_Media] <= 25,
+			        Fact_Diaria_met[HR_Media]   > 80,
+			        FILTER(
+			            CALCULATETABLE(VALUES(Calendario[Fecha]), Periodo),
+			            CALCULATE(MAX(Fact_Subdiaria_met_aux[Mojadura_Horas_Diurna])) > 6
+			        )
+			    ) + 0
+			)
+		lineageTag: 4c5dee66-52e4-420a-ab24-f5a44d59a469
+
+	measure Semaforo_Roya =
+			VAR dias = [Dias_Riesgo_Roya]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        dias >= 3, 1,
+			        dias >= 1, 2,
+			        3
+			    )
+		lineageTag: ec321889-c548-46bd-a6e0-79583e21ea6f
+
+	measure Dias_Riesgo_Carbon =
+			// Promedio de días por estación (solo estaciones con datos en el periodo)
+			VAR Estaciones =
+			    FILTER(
+			        VALUES(Estaciones_met[estacionid]),
+			        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+			    )
+			RETURN
+			AVERAGEX(
+			    Estaciones,
+			    CALCULATE(
+			        COUNTROWS(Fact_Diaria_met),
+			        Fact_Diaria_met[Temp_Media] >= 25,
+			        Fact_Diaria_met[Temp_Media] <= 30,
+			        Fact_Diaria_met[Dia_Seco]   = TRUE()
+			    ) + 0
+			)
+		lineageTag: bce33bec-3795-499a-8f69-9075be672f30
+
+	measure Semaforo_Carbon =
+			VAR dias = [Dias_Riesgo_Carbon]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        dias >= 5, 1,
+			        dias >= 3, 2,
+			        3
+			    )
+		lineageTag: 8dfea872-1442-4375-a124-2e5f985ce3cf
+
+	measure Dias_Riesgo_Salivosa =
+			// Promedio de días por estación (solo estaciones con datos en el periodo)
+			VAR Estaciones =
+			    FILTER(
+			        VALUES(Estaciones_met[estacionid]),
+			        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+			    )
+			RETURN
+			AVERAGEX(
+			    Estaciones,
+			    CALCULATE(
+			        COUNTROWS(Fact_Diaria_met),
+			        Fact_Diaria_met[Temp_Media] >= 22,
+			        Fact_Diaria_met[Temp_Media] <= 28,
+			        Fact_Diaria_met[HR_Media]   > 80,
+			        Fact_Diaria_met[Precip_Total] > 5
+			    ) + 0
+			)
+		lineageTag: 1efb9101-42fd-4774-838f-4494639664e5
+
+	measure Semaforo_Salivosa =
+			VAR dias = [Dias_Riesgo_Salivosa]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        dias >= 4, 1,
+			        dias >= 2, 2,
+			        3
+			    )
+		lineageTag: f433c611-42a1-406f-b706-3fa5f9f78c92
+
+	measure Dias_Riesgo_Barrenador =
+			// Promedio de días por estación (solo estaciones con datos en el periodo)
+			VAR Estaciones =
+			    FILTER(
+			        VALUES(Estaciones_met[estacionid]),
+			        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+			    )
+			RETURN
+			AVERAGEX(
+			    Estaciones,
+			    CALCULATE(
+			        COUNTROWS(Fact_Diaria_met),
+			        Fact_Diaria_met[Temp_Media] > 24,
+			        Fact_Diaria_met[HR_Media]   >= 60,
+			        Fact_Diaria_met[HR_Media]   <= 80,
+			        Fact_Diaria_met[Dia_Seco]   = TRUE()
+			    ) + 0
+			)
+		lineageTag: 0817d155-9659-4769-ab49-191304b32d74
+
+	measure Semaforo_Barrenador =
+			VAR dias = [Dias_Riesgo_Barrenador]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        dias >= 4, 1,
+			        dias >= 2, 2,
+			        3
+			    )
+		lineageTag: 9c2d49fd-89ba-40d9-a86e-2238ff1e8e95
+
+	measure Dias_Riesgo_Sigatoka =
+			VAR AnioActual   = MAX(Calendario[Año_Hidrologico])
+			VAR SemanaActual = MAX(Calendario[Semana_Hidrologica])
+			VAR Periodo =
+			    FILTER(
+			        ALL(Calendario),
+			        Calendario[Año_Hidrologico]    = AnioActual &&
+			        Calendario[Semana_Hidrologica] = SemanaActual
+			    )
+			// Promedio de días por estación (solo estaciones con datos en el periodo)
+			VAR Estaciones =
+			    FILTER(
+			        VALUES(Estaciones_met[estacionid]),
+			        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met, Periodo))
+			    )
+			RETURN
+			AVERAGEX(
+			    Estaciones,
+			    CALCULATE(
+			        COUNTROWS(Fact_Diaria_met),
+			        Periodo,
+			        Fact_Diaria_met[Temp_Media] >= 25,
+			        Fact_Diaria_met[Temp_Media] <= 28,
+			        Fact_Diaria_met[HR_Media]   > 90,
+			        FILTER(
+			            CALCULATETABLE(VALUES(Calendario[Fecha]), Periodo),
+			            CALCULATE(MAX(Fact_Subdiaria_met_aux[Mojadura_Horas_Nocturna])) > 4
+			        )
+			    ) + 0
+			)
+		lineageTag: 68d9ad12-8670-4643-af7a-bda7ff9ba7fd
+
+	measure Semaforo_Sigatoka =
+			VAR dias = [Dias_Riesgo_Sigatoka]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        dias >= 3, 1,
+			        dias >= 1, 2,
+			        3
+			    )
+		lineageTag: de2a180d-b432-40d5-bc48-08078237998a
+
+	measure Riesgo_Volcamiento =
+			VAR viento = [Viento_Max]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        viento > 60, 1,
+			        viento > 40, 2,
+			        3
+			    )
+		lineageTag: c4e2e881-163a-4aa3-81be-fdfdc0ebfefa
+
+	measure Dias_Riesgo_Moko =
+			VAR PrecipSemanal = [Precip_Semanal]
+			VAR BalanceSemanal = [Balance_Semanal]
+			RETURN
+			    IF(
+			        PrecipSemanal > 100 && BalanceSemanal > 0,
+			        1, 3
+			    )
+		lineageTag: edca32ea-2389-4606-812e-81661b572940
+
+	measure Dias_Riesgo_Phytophthora =
+			// Promedio de días por estación (solo estaciones con datos en el periodo)
+			VAR Estaciones =
+			    FILTER(
+			        VALUES(Estaciones_met[estacionid]),
+			        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+			    )
+			RETURN
+			AVERAGEX(
+			    Estaciones,
+			    CALCULATE(
+			        COUNTROWS(Fact_Diaria_met),
+			        Fact_Diaria_met[Balance_Hidrico] > 0,
+			        Fact_Diaria_met[Temp_Media] >= 20,
+			        Fact_Diaria_met[Temp_Media] <= 30
+			    ) + 0
+			)
+		lineageTag: 59ce782e-93c1-4288-a604-c4e902d013c0
+
+	measure Semaforo_Phytophthora =
+			VAR dias = [Dias_Riesgo_Phytophthora]
+			VAR balance = [Balance_Semanal]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        dias >= 3 && balance > 50, 1,
+			        dias >= 1, 2,
+			        3
+			    )
+		lineageTag: 21521abf-3236-4a2b-b1c1-619c958e5551
+
+	measure Dias_Riesgo_Frio_Aguacate =
+			// Promedio de días por estación (solo estaciones con datos en el periodo)
+			VAR Estaciones =
+			    FILTER(
+			        VALUES(Estaciones_met[estacionid]),
+			        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+			    )
+			RETURN
+			AVERAGEX(
+			    Estaciones,
+			    CALCULATE(
+			        COUNTROWS(Fact_Diaria_met),
+			        Fact_Diaria_met[Temp_Min] < 12
+			    ) + 0
+			)
+		lineageTag: e59b9606-0213-45a7-b000-8734a46f8d50
+
+	measure Semaforo_Frio_Aguacate =
+			VAR dias = [Dias_Riesgo_Frio_Aguacate]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        dias >= 3, 1,
+			        dias >= 1, 2,
+			        3
+			    )
+		lineageTag: 1142bf11-6000-4e70-a32e-629dd599b68c
+
+	measure Semaforo_PC_Palma =
+			VAR PrecipSemanal = [Precip_Semanal]
+			VAR TempMedia = [Temp_Media]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        PrecipSemanal > 150 && TempMedia < 26, 1,
+			        PrecipSemanal > 100 && TempMedia < 26, 2,
+			        3
+			    )
+		lineageTag: 7e27ccb0-485f-42c8-9c55-c4b54addc6f2
+
+	measure Dias_Riesgo_Mancha_Asfalto =
+			// Promedio de días por estación (solo estaciones con datos en el periodo)
+			VAR Estaciones =
+			    FILTER(
+			        VALUES(Estaciones_met[estacionid]),
+			        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+			    )
+			RETURN
+			AVERAGEX(
+			    Estaciones,
+			    CALCULATE(
+			        COUNTROWS(Fact_Diaria_met),
+			        Fact_Diaria_met[Temp_Media] >= 20,
+			        Fact_Diaria_met[Temp_Media] <= 28,
+			        Fact_Diaria_met[HR_Media]   > 80
+			    ) + 0
+			)
+		lineageTag: 07e372a9-c588-4653-a4cf-20d442f5713d
+
+	measure Semaforo_Mancha_Asfalto =
+			VAR dias = [Dias_Riesgo_Mancha_Asfalto]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        dias >= 4, 1,
+			        dias >= 2, 2,
+			        3
+			    )
+		lineageTag: a0539d24-5707-4a30-9a1e-8a556214df91
+
+	measure Dias_Sequia_Critica_Granos =
+			// Promedio de días por estación (solo estaciones con datos en el periodo)
+			VAR Estaciones =
+			    FILTER(
+			        VALUES(Estaciones_met[estacionid]),
+			        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+			    )
+			RETURN
+			AVERAGEX(
+			    Estaciones,
+			    CALCULATE(
+			        COUNTROWS(Fact_Diaria_met),
+			        Fact_Diaria_met[Dia_Seco] = TRUE()
+			    ) + 0
+			)
+		lineageTag: 8aa2f2dd-6dd9-48f1-a9d8-1fcc5cee636e
+
+	measure Semaforo_Sequia_Granos =
+			VAR dias = [Dias_Sequia_Critica_Granos]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        dias >= 5, 1,
+			        dias >= 3, 2,
+			        3
+			    )
+		lineageTag: cb1f4ad0-c0e0-4c3b-bf16-fd71cc24b553
+
+	measure Rad_Acumulada_Semanal =
+			CALCULATE(
+			    AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Rad_MJ]))),
+			    FILTER(
+			        Calendario,
+			        Calendario[Semana_Hidrologica] = MAX(Calendario[Semana_Hidrologica]) &&
+			        Calendario[Año_Hidrologico]    = MAX(Calendario[Año_Hidrologico])
+			    )
+			)
+		lineageTag: 9ef557be-203d-4ea7-b9d2-bd539ae76a19
+
+	measure VPD_Media_Nocturna = AVERAGE(Fact_Subdiaria_met_aux[VPD_Media_Nocturna])
+		lineageTag: 298774a9-433b-4813-8484-0ff959528f87
+
+	measure Mojadura_Horas_Nocturna_Semanal = AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Subdiaria_met_aux[Mojadura_Horas_Nocturna])))
+		lineageTag: 62d1a2a2-dd00-4cf1-b94d-18216c2ae033
+
+	measure Mojadura_Horas_Total_Semanal = AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Subdiaria_met_aux[Mojadura_Horas_Total])))
+		lineageTag: 0a82c983-97d3-422f-9d73-2217a5f42e6f
+
+	measure HR_Max = MAX(Fact_Diaria_met[HR_Max])
+		lineageTag: 10ea9621-efb5-4a28-be6b-b0c442e7c13f
+
+	measure GDD_Cana_ST_Semanal = AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[GDD_Cana_ST])))
+		lineageTag: b1d88438-cb15-411f-ace7-03a6d93b9f5c
+
+	measure GDD_Banano_ST_Semanal = AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[GDD_Banano_ST])))
+		lineageTag: 07bdcd6f-8a1f-454f-bc72-cbd1ca581796
+
+	measure GDD_Aguacate_ST_Semanal = AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[GDD_Aguacate_ST])))
+		lineageTag: 099f2a8a-fdce-4956-a395-5d6d86b89ce9
+
+	measure GDD_Palma_ST_Semanal = AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[GDD_Palma_ST])))
+		lineageTag: 7cbda8ba-6773-4fa1-86f9-a1bb795f0d95
+
+	measure GDD_Maiz_ST_Semanal = AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[GDD_Maiz_ST])))
+		lineageTag: 0b50f9db-f22d-4aa3-95d0-87e5139eb50f
+
+	measure GDD_Cana_ST_Acumulado =
+			CALCULATE(
+			    AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[GDD_Cana_ST]))),
+			    FILTER(
+			        ALL(Calendario),
+			        Calendario[Año_Hidrologico]    = MAX(Calendario[Año_Hidrologico]) &&
+			        Calendario[Semana_Hidrologica] <= MAX(Calendario[Semana_Hidrologica])
+			    )
+			)
+		lineageTag: f84687d1-eefc-45ed-aa2a-e25286fe9815
+
+	measure GDD_Cana_ST_Acumulado_Anterior =
+			CALCULATE(
+			    AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[GDD_Cana_ST]))),
+			    FILTER(
+			        ALL(Calendario),
+			        Calendario[Año_Hidrologico]    = MAX(Calendario[Año_Hidrologico]) - 1 &&
+			        Calendario[Semana_Hidrologica] <= MAX(Calendario[Semana_Hidrologica])
+			    )
+			)
+		lineageTag: 38155183-4d25-4e2c-aa15-995342077587
+
+	measure GDD_Banano_ST_Acumulado =
+			CALCULATE(
+			    AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[GDD_Banano_ST]))),
+			    FILTER(
+			        ALL(Calendario),
+			        Calendario[Año_Hidrologico]    = MAX(Calendario[Año_Hidrologico]) &&
+			        Calendario[Semana_Hidrologica] <= MAX(Calendario[Semana_Hidrologica])
+			    )
+			)
+		lineageTag: 76c501ae-d1e1-4c45-af27-406fd09d7471
+
+	measure GDD_Banano_ST_Acumulado_Anterior =
+			CALCULATE(
+			    AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[GDD_Banano_ST]))),
+			    FILTER(
+			        ALL(Calendario),
+			        Calendario[Año_Hidrologico]    = MAX(Calendario[Año_Hidrologico]) - 1 &&
+			        Calendario[Semana_Hidrologica] <= MAX(Calendario[Semana_Hidrologica])
+			    )
+			)
+		lineageTag: 6006c4b0-a2c4-4f9d-a55c-b9edcf4539d2
+
+	measure GDD_Aguacate_ST_Acumulado =
+			CALCULATE(
+			    AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[GDD_Aguacate_ST]))),
+			    FILTER(
+			        ALL(Calendario),
+			        Calendario[Año_Hidrologico]    = MAX(Calendario[Año_Hidrologico]) &&
+			        Calendario[Semana_Hidrologica] <= MAX(Calendario[Semana_Hidrologica])
+			    )
+			)
+		lineageTag: 0ee69d33-9da6-4b98-8ee9-a0a361b9f65a
+
+	measure GDD_Palma_ST_Acumulado =
+			CALCULATE(
+			    AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[GDD_Palma_ST]))),
+			    FILTER(
+			        ALL(Calendario),
+			        Calendario[Año_Hidrologico]    = MAX(Calendario[Año_Hidrologico]) &&
+			        Calendario[Semana_Hidrologica] <= MAX(Calendario[Semana_Hidrologica])
+			    )
+			)
+		lineageTag: f705d055-cc2b-4412-83bf-5355cce68566
+
+	measure GDD_Maiz_ST_Acumulado =
+			CALCULATE(
+			    AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[GDD_Maiz_ST]))),
+			    FILTER(
+			        ALL(Calendario),
+			        Calendario[Año_Hidrologico]    = MAX(Calendario[Año_Hidrologico]) &&
+			        Calendario[Semana_Hidrologica] <= MAX(Calendario[Semana_Hidrologica])
+			    )
+			)
+		lineageTag: 7abd8742-194f-4ad0-8add-759d23322dae
+
+	measure Amplitud_Termica_Historico =
+			VAR AnioActual   = MAX(Calendario[Año_Hidrologico])
+			VAR SemanaActual = MAX(Calendario[Semana_Hidrologica])
+			RETURN
+			CALCULATE(
+			    AVERAGEX(
+			        VALUES(Calendario[Año_Hidrologico]),
+			        CALCULATE(AVERAGE(Fact_Diaria_met[Amplitud_Termica]))
+			    ),
+			    ALL(Calendario),
+			    Calendario[Semana_Hidrologica] = SemanaActual,
+			    Calendario[Año_Hidrologico]    < AnioActual
+			)
+		lineageTag: 076961ce-8393-4152-9bff-7856c12071d3
+
+	measure ETO_Historico_Promedio =
+			VAR AnioActual   = MAX(Calendario[Año_Hidrologico])
+			VAR SemanaActual = MAX(Calendario[Semana_Hidrologica])
+			RETURN
+			CALCULATE(
+			    AVERAGEX(
+			        VALUES(Calendario[Año_Hidrologico]),
+			        CALCULATE(AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[ETO_Total]))))
+			    ),
+			    ALL(Calendario),
+			    Calendario[Semana_Hidrologica] = SemanaActual,
+			    Calendario[Año_Hidrologico]    < AnioActual
+			)
+		lineageTag: 3e3bfa1f-ea1e-4d32-ae40-4ff7f5c93d8d
+
+	measure Balance_Historico_Promedio =
+			VAR AnioActual   = MAX(Calendario[Año_Hidrologico])
+			VAR SemanaActual = MAX(Calendario[Semana_Hidrologica])
+			RETURN
+			CALCULATE(
+			    AVERAGEX(
+			        VALUES(Calendario[Año_Hidrologico]),
+			        CALCULATE(AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Balance_Hidrico]))))
+			    ),
+			    ALL(Calendario),
+			    Calendario[Semana_Hidrologica] = SemanaActual,
+			    Calendario[Año_Hidrologico]    < AnioActual
+			)
+		lineageTag: f66550ae-f89e-428b-b920-494f2560da47
+
+	measure Rad_Historico_Promedio =
+			VAR AnioActual   = MAX(Calendario[Año_Hidrologico])
+			VAR SemanaActual = MAX(Calendario[Semana_Hidrologica])
+			RETURN
+			CALCULATE(
+			    AVERAGEX(
+			        VALUES(Calendario[Año_Hidrologico]),
+			        CALCULATE(AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Rad_MJ]))))
+			    ),
+			    ALL(Calendario),
+			    Calendario[Semana_Hidrologica] = SemanaActual,
+			    Calendario[Año_Hidrologico]    < AnioActual
+			)
+		lineageTag: 26db5379-5efb-46da-ac16-a0d89d9ad37e
+
+	measure Delta_ETO_YoY =
+			VAR AnioActual   = MAX(Calendario[Año_Hidrologico])
+			VAR SemanaActual = MAX(Calendario[Semana_Hidrologica])
+			VAR actual = [ETO_Semanal]
+			VAR anterior =
+			    CALCULATE(
+			        [ETO_Semanal],
+			        FILTER(
+			            ALL(Calendario),
+			            Calendario[Semana_Hidrologica] = SemanaActual &&
+			            Calendario[Año_Hidrologico]    = AnioActual - 1
+			        )
+			    )
+			RETURN
+			    IF(NOT ISBLANK(anterior), actual - anterior, BLANK())
+		lineageTag: f3cb6168-88d2-422f-8333-41e836ab246c
+
+	measure Delta_Rad_YoY =
+			VAR AnioActual   = MAX(Calendario[Año_Hidrologico])
+			VAR SemanaActual = MAX(Calendario[Semana_Hidrologica])
+			VAR actual =
+			    CALCULATE(
+			        AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Rad_MJ]))),
+			        FILTER(
+			            Calendario,
+			            Calendario[Semana_Hidrologica] = SemanaActual &&
+			            Calendario[Año_Hidrologico]    = AnioActual
+			        )
+			    )
+			VAR anterior =
+			    CALCULATE(
+			        AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Rad_MJ]))),
+			        FILTER(
+			            ALL(Calendario),
+			            Calendario[Semana_Hidrologica] = SemanaActual &&
+			            Calendario[Año_Hidrologico]    = AnioActual - 1
+			        )
+			    )
+			RETURN
+			    IF(NOT ISBLANK(anterior), actual - anterior, BLANK())
+		lineageTag: 4c174f8d-b14e-4f0f-a3de-076800b74a19
+
+	measure Dias_Riesgo_Roya_Nocturna =
+			VAR AnioActual   = MAX(Calendario[Año_Hidrologico])
+			VAR SemanaActual = MAX(Calendario[Semana_Hidrologica])
+			VAR Periodo =
+			    FILTER(
+			        ALL(Calendario),
+			        Calendario[Año_Hidrologico]    = AnioActual &&
+			        Calendario[Semana_Hidrologica] = SemanaActual
+			    )
+			// Promedio de días por estación (solo estaciones con datos en el periodo)
+			VAR Estaciones =
+			    FILTER(
+			        VALUES(Estaciones_met[estacionid]),
+			        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met, Periodo))
+			    )
+			RETURN
+			AVERAGEX(
+			    Estaciones,
+			    CALCULATE(
+			        COUNTROWS(Fact_Diaria_met),
+			        Periodo,
+			        Fact_Diaria_met[Temp_Media] >= 15,
+			        Fact_Diaria_met[Temp_Media] <= 25,
+			        Fact_Diaria_met[HR_Media]   > 80,
+			        FILTER(
+			            CALCULATETABLE(VALUES(Calendario[Fecha]), Periodo),
+			            CALCULATE(MAX(Fact_Subdiaria_met_aux[Mojadura_Horas_Total])) > 8
+			        )
+			    ) + 0
+			)
+		lineageTag: ad01d742-0f3f-41b8-9db6-cf7ca85e4146
+
+	measure Semaforo_Roya_Nocturna =
+			VAR dias = [Dias_Riesgo_Roya_Nocturna]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        dias >= 3, 1,
+			        dias >= 1, 2,
+			        3
+			    )
+		lineageTag: ae81d26e-b3e3-4e98-a804-334ebc853f85
+
+	measure GDD_Display_cana = ```
+			
+			"Acumulado: " & FORMAT([GDD_Cana_ST_Acumulado], "0.0") & 
+			" | Año ant.: " & FORMAT([GDD_Cana_ST_Acumulado_Anterior], "0.0")
+			```
+		lineageTag: 2806f027-2a89-4e2b-aca4-471196aba48b
+
+	measure GDD_Cana_ST_Acumulado_Grafica =
+			VAR AnioActual = CALCULATE(
+			    MAX(Calendario[Año_Hidrologico]),
+			    ALLSELECTED(Calendario)
+			)
+			VAR SemanaMax = CALCULATE(
+			    MAX(Calendario[Semana_Hidrologica]),
+			    ALLSELECTED(Calendario)
+			)
+			VAR SemanaEje = MAX('Semanas_Anio'[Semana_Num])
+			RETURN
+			IF(
+			    SemanaEje <= SemanaMax,
+			    CALCULATE(
+			        AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[GDD_Cana_ST]))),
+			        ALL(Calendario),
+			        Calendario[Año_Hidrologico]    = AnioActual,
+			        Calendario[Semana_Hidrologica] <= SemanaEje
+			    ),
+			    BLANK()
+			)
+		lineageTag: 3e8f4197-d53b-4300-9f6a-136d0f09d2e4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure GDD_Cana_ST_Acumulado_Anterior_Grafica =
+			VAR AnioActual = CALCULATE(
+			    MAX(Calendario[Año_Hidrologico]),
+			    ALLSELECTED(Calendario)
+			)
+			VAR SemanaEje = MAX('Semanas_Anio'[Semana_Num])
+			RETURN
+			CALCULATE(
+			    AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[GDD_Cana_ST]))),
+			    ALL(Calendario),
+			    Calendario[Año_Hidrologico]    = AnioActual - 1,
+			    Calendario[Semana_Hidrologica] <= SemanaEje
+			)
+		lineageTag: 6b675000-c745-4778-9f33-e28e5fc9eba7
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Rad_Acumulada_Anual_Grafica =
+			VAR AnioActual = CALCULATE(
+			    MAX(Calendario[Año_Hidrologico]),
+			    ALLSELECTED(Calendario)
+			)
+			VAR SemanaEje = MAX(Semanas_Anio[Semana_Num])
+			RETURN
+			IF(
+			    SemanaEje <= CALCULATE(
+			        MAX(Calendario[Semana_Hidrologica]),
+			        ALLSELECTED(Calendario)
+			    ),
+			    CALCULATE(
+			        AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Rad_MJ]))),
+			        ALL(Calendario),
+			        Calendario[Año_Hidrologico]    = AnioActual,
+			        Calendario[Semana_Hidrologica] <= SemanaEje
+			    ),
+			    BLANK()
+			)
+		lineageTag: 4828f635-4257-4087-8751-c0979d1df11b
+
+	measure Rad_Acumulada_Anual_Anterior_Grafica =
+			VAR AnioActual = CALCULATE(
+			    MAX(Calendario[Año_Hidrologico]),
+			    ALLSELECTED(Calendario)
+			)
+			VAR SemanaEje = MAX(Semanas_Anio[Semana_Num])
+			RETURN
+			CALCULATE(
+			    AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Rad_MJ]))),
+			    ALL(Calendario),
+			    Calendario[Año_Hidrologico]    = AnioActual - 1,
+			    Calendario[Semana_Hidrologica] <= SemanaEje
+			)
+		lineageTag: dfc377ca-3856-4546-ac32-481f4fd6eb28
+
+	measure Rad_Acumulada_Anual =
+			CALCULATE(
+			    AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Rad_MJ]))),
+			    FILTER(
+			        ALL(Calendario),
+			        Calendario[Año_Hidrologico]    = MAX(Calendario[Año_Hidrologico]) &&
+			        Calendario[Semana_Hidrologica] <= MAX(Calendario[Semana_Hidrologica])
+			    )
+			)
+		lineageTag: 3e062a82-2ec4-4b22-b4bb-5faa15b9323e
+
+	measure Rad_Acumulada_Anual_Anterior =
+			CALCULATE(
+			    AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Rad_MJ]))),
+			    FILTER(
+			        ALL(Calendario),
+			        Calendario[Año_Hidrologico]    = MAX(Calendario[Año_Hidrologico]) - 1 &&
+			        Calendario[Semana_Hidrologica] <= MAX(Calendario[Semana_Hidrologica])
+			    )
+			)
+		lineageTag: e201a74f-3764-4b4b-a4fa-9a84808a1543
+
+	measure Delta_Rad_Acumulada_YoY =
+			VAR actual   = [Rad_Acumulada_Anual]
+			VAR anterior = [Rad_Acumulada_Anual_Anterior]
+			RETURN
+			    IF(NOT ISBLANK(anterior), actual - anterior, BLANK())
+		lineageTag: 02dab9fa-47af-47b4-816e-2b2b55ec04bd
+
+	measure Viento_Max_Diurno = MAX(Fact_Subdiaria_met_aux[Viento_Max_Diurno])
+		lineageTag: 4f7e30df-7c01-4f27-b426-089c40063a5b
+
+	measure Viento_Media_Diurna = AVERAGE(Fact_Subdiaria_met_aux[Viento_Media_Diurna])
+		lineageTag: 366f4a78-a669-4c23-a110-3addf6cc5e44
+
+	measure Viento_Max_Nocturno = MAX(Fact_Subdiaria_met_aux[Viento_Max_Nocturno])
+		lineageTag: 2dce3567-0d31-4666-9765-1b75c764e07f
+
+	measure Viento_Media_Nocturna = AVERAGE(Fact_Subdiaria_met_aux[Viento_Media_Nocturna])
+		lineageTag: 0c0731df-6334-4ce6-8104-cc8c067e3202
+
+	measure Semaforo_Viento =
+			VAR viento = [Viento_Max_Diurno]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        viento > 60, 1,
+			        viento > 40, 2,
+			        3
+			    )
+		lineageTag: c3196c09-0793-4c9c-9035-4231e0e06766
+
+	measure ETO_Max_Diurna = MAX(Fact_Subdiaria_met_aux[ETO_Max_Diurna])
+		lineageTag: 74e4f52d-41d3-4398-86ad-e06c7a432068
+
+	measure ETO_Acum_Diurna_Semanal = AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Subdiaria_met_aux[ETO_Acum_Diurna])))
+		lineageTag: 0315fbe7-b17b-4303-8789-9036b1c5405a
+
+	measure ETO_Acum_Nocturna_Semanal = AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Subdiaria_met_aux[ETO_Acum_Nocturna])))
+		lineageTag: be9f4751-16d3-48a8-82a9-dda2c8c697f4
+
+	measure Hora_Temp_Max_Diurna = AVERAGE(Fact_Subdiaria_met_aux[Hora_Temp_Max_Diurna])
+		lineageTag: eaf564a7-d6ef-4f9d-a947-11c0af3517b7
+
+	measure Hora_VPD_Max_Diurna = AVERAGE(Fact_Subdiaria_met_aux[Hora_VPD_Max_Diurna])
+		lineageTag: 3bb0ede1-9e1b-48b1-8770-1f0661e22619
+
+	measure Hora_IC_Max_Diurno = AVERAGE(Fact_Subdiaria_met_aux[Hora_IC_Max_Diurno])
+		lineageTag: ce512bd8-83b2-488c-a5bf-ea461ac73507
+
+	measure Hora_Temp_Min_Nocturna = AVERAGE(Fact_Subdiaria_met_aux[Hora_Temp_Min_Nocturna])
+		lineageTag: a8767ec1-22ee-41f2-beaf-1dafd7b9460e
+
+	measure Hora_ETO_Max_Diurna = AVERAGE(Fact_Subdiaria_met_aux[Hora_ETO_Max_Diurna])
+		lineageTag: a6fe22b8-040c-436a-8ad8-139ecb8835bc
+
+	measure Hora_Inicio_Mojadura = AVERAGE(Fact_Subdiaria_met_aux[Hora_Inicio_Mojadura])
+		lineageTag: 76e6cd5f-612b-410c-848b-b9abe68f835f
+
+	measure Hora_Fin_Mojadura = AVERAGE(Fact_Subdiaria_met_aux[Hora_Fin_Mojadura])
+		lineageTag: 1ff64706-a0e2-449a-adb0-85fef20510dc
+
+	measure VPD_Min_Nocturno = MIN(Fact_Subdiaria_met_aux[VPD_Min_Nocturno])
+		lineageTag: 4798e745-233e-4de2-ac4c-e82e19a0b665
+
+	measure Temp_Min_Nocturna = MIN(Fact_Subdiaria_met_aux[Temp_Min_Nocturna])
+		lineageTag: c9764bb8-db87-4a29-b482-a945520cb6f5
+
+	measure Direccion_Viento_Max =
+			// Media circular (vectorial) de la dirección: evita que 350° y 10° den 180°
+			VAR T = FILTER(Fact_Subdiaria_met_aux, NOT ISBLANK(Fact_Subdiaria_met_aux[Direccion_Viento_Max]))
+			VAR sn = AVERAGEX(T, SIN(RADIANS(Fact_Subdiaria_met_aux[Direccion_Viento_Max])))
+			VAR cs = AVERAGEX(T, COS(RADIANS(Fact_Subdiaria_met_aux[Direccion_Viento_Max])))
+			VAR ang =
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(sn) || ISBLANK(cs), BLANK(),
+			        cs > 0, DEGREES(ATAN(sn / cs)),
+			        cs < 0, DEGREES(ATAN(sn / cs)) + 180,
+			        sn > 0, 90,
+			        sn < 0, 270,
+			        BLANK()
+			    )
+			RETURN
+			IF(NOT ISBLANK(ang), MOD(ang + 360, 360))
+		lineageTag: ab321129-12c1-4d8e-bd82-62ca90285e31
+
+	measure Direccion_Predominante_Diurna =
+			// Media circular (vectorial) de la dirección: evita que 350° y 10° den 180°
+			VAR T = FILTER(Fact_Subdiaria_met_aux, NOT ISBLANK(Fact_Subdiaria_met_aux[Direccion_Predominante_Diurna]))
+			VAR sn = AVERAGEX(T, SIN(RADIANS(Fact_Subdiaria_met_aux[Direccion_Predominante_Diurna])))
+			VAR cs = AVERAGEX(T, COS(RADIANS(Fact_Subdiaria_met_aux[Direccion_Predominante_Diurna])))
+			VAR ang =
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(sn) || ISBLANK(cs), BLANK(),
+			        cs > 0, DEGREES(ATAN(sn / cs)),
+			        cs < 0, DEGREES(ATAN(sn / cs)) + 180,
+			        sn > 0, 90,
+			        sn < 0, 270,
+			        BLANK()
+			    )
+			RETURN
+			IF(NOT ISBLANK(ang), MOD(ang + 360, 360))
+		lineageTag: f2536c80-85ed-48fb-bbf0-746917c27b30
+
+	measure Duracion_Mojadura =
+			
+			IF(
+			    NOT ISBLANK([Hora_Fin_Mojadura]) && NOT ISBLANK([Hora_Inicio_Mojadura]),
+			    [Hora_Fin_Mojadura] - [Hora_Inicio_Mojadura],
+			    BLANK()
+			)
+		lineageTag: e232f359-0c0f-44b7-86a8-93ac17e0e4e1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Indice_Riesgo_Hora =
+			
+			AVERAGE(Fact_Horaria_riesgo[Indice_Riesgo])
+		lineageTag: ceddaea1-f527-4f99-a242-839ca0601057
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Condicion_Roya_Hora =
+			
+			AVERAGE(Fact_Horaria_riesgo[Flag_Roya])
+		lineageTag: 1d78e88e-7ca8-487a-b409-29a15af06594
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Condicion_Barrenador_Hora =
+			
+			AVERAGE(Fact_Horaria_riesgo[Flag_Barrenador])
+		lineageTag: 51320485-0717-4712-adb8-b00aa46b1b2a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Condicion_Salivosa_Hora =
+			
+			AVERAGE(Fact_Horaria_riesgo[Flag_Salivosa])
+		lineageTag: 17aeac4c-0ccf-4cbb-8212-a782acdf54f0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Condicion_Carbon_Hora =
+			
+			AVERAGE(Fact_Horaria_riesgo[Flag_Carbon])
+		lineageTag: 9225a74e-1fd4-4433-b46f-1eb7b81d4924
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Condicion_Plaga_Hora =
+			
+			VAR EsRoya      = CALCULATE(HASONEVALUE(Plagas[id]), Plagas[id] = 1)
+			VAR EsCarbon    = CALCULATE(HASONEVALUE(Plagas[id]), Plagas[id] = 2)
+			VAR EsSalivosa  = CALCULATE(HASONEVALUE(Plagas[id]), Plagas[id] = 3)
+			VAR EsBarrenador = CALCULATE(HASONEVALUE(Plagas[id]), Plagas[id] = 4)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    EsRoya,       [Condicion_Roya_Hora],
+			    EsCarbon,     [Condicion_Carbon_Hora],
+			    EsSalivosa,   [Condicion_Salivosa_Hora],
+			    EsBarrenador, [Condicion_Barrenador_Hora],
+			    [Indice_Riesgo_Hora]
+			)
+		lineageTag: b7381dcd-4eec-47a7-afa7-8e6e9b1a55d2
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Frec_Dir_Periodo =
+			// % de horas-estación en que el viento sopla desde el sector en contexto
+			// (usar con Direcciones_Viento[Direccion] en el eje)
+			DIVIDE([_Viento_Horas_Sector], [_Viento_Horas_Validas])
+		formatString: 0.0%
+		displayFolder: Viento
+		lineageTag: ee6e8a93-669a-4332-95b8-e9a58b2bd86a
+
+	measure _Viento_Umbral_Calma =
+			// Umbral de calma (km/h). 1.8 km/h ≈ 0.5 m/s (criterio OMM).
+			// Si la API entrega m/s, cambiar a 0.5
+			1.8
+		formatString: 0.0
+		displayFolder: Viento
+		lineageTag: b7665ad1-8035-4a06-81d1-03384c69c50c
+
+	measure _Viento_Horas_Validas =
+			VAR HoraDesde = SELECTEDVALUE(Periodos_Dia[HoraDesde], 0)
+			VAR HoraHasta = SELECTEDVALUE(Periodos_Dia[HoraHasta], 23)
+			VAR U = [_Viento_Umbral_Calma]
+			RETURN
+			CALCULATE(
+			    COUNTROWS(Fact_Horaria_riesgo),
+			    Fact_Horaria_riesgo[Hora] >= HoraDesde,
+			    Fact_Horaria_riesgo[Hora] <= HoraHasta,
+			    FILTER(
+			        ALL(Fact_Horaria_riesgo[Viento_Media], Fact_Horaria_riesgo[Sector_Viento]),
+			        NOT ISBLANK(Fact_Horaria_riesgo[Viento_Media])
+			            && (Fact_Horaria_riesgo[Viento_Media] < U
+			                || NOT ISBLANK(Fact_Horaria_riesgo[Sector_Viento]))
+			    ),
+			    ALL(Direcciones_Viento)
+			)
+		formatString: #,0
+		displayFolder: Viento
+		lineageTag: b9fb5177-b85c-40c2-bb55-47a34d1c94e4
+
+	measure _Viento_Horas_Sector =
+			VAR HoraDesde = SELECTEDVALUE(Periodos_Dia[HoraDesde], 0)
+			VAR HoraHasta = SELECTEDVALUE(Periodos_Dia[HoraHasta], 23)
+			VAR U = [_Viento_Umbral_Calma]
+			RETURN
+			CALCULATE(
+			    COUNTROWS(Fact_Horaria_riesgo),
+			    Fact_Horaria_riesgo[Hora] >= HoraDesde,
+			    Fact_Horaria_riesgo[Hora] <= HoraHasta,
+			    Fact_Horaria_riesgo[Viento_Media] >= U,
+			    NOT ISBLANK(Fact_Horaria_riesgo[Sector_Viento])
+			)
+		formatString: #,0
+		displayFolder: Viento
+		lineageTag: eb0e5328-58b1-495a-8210-8384d72e4f3d
+
+	measure Pct_Calmas_Viento =
+			VAR Validas = [_Viento_Horas_Validas]
+			RETURN
+			IF(
+			    Validas > 0,
+			    1 - DIVIDE(CALCULATE([_Viento_Horas_Sector], ALL(Direcciones_Viento)), Validas)
+			)
+		formatString: 0.0%
+		displayFolder: Viento
+		lineageTag: a1176cdd-3ab8-485e-bec1-e0d817de535d
+
+	measure Viento_Media_Periodo =
+			VAR HoraDesde = SELECTEDVALUE(Periodos_Dia[HoraDesde], 0)
+			VAR HoraHasta = SELECTEDVALUE(Periodos_Dia[HoraHasta], 23)
+			RETURN
+			CALCULATE(
+			    AVERAGE(Fact_Horaria_riesgo[Viento_Media]),
+			    Fact_Horaria_riesgo[Hora] >= HoraDesde,
+			    Fact_Horaria_riesgo[Hora] <= HoraHasta,
+			    ALL(Direcciones_Viento)
+			)
+		formatString: 0.0
+		displayFolder: Viento
+		lineageTag: 113fbbae-ca82-4cd2-9999-0fe602cb773e
+
+	measure Viento_Media_Sector =
+			VAR HoraDesde = SELECTEDVALUE(Periodos_Dia[HoraDesde], 0)
+			VAR HoraHasta = SELECTEDVALUE(Periodos_Dia[HoraHasta], 23)
+			VAR U = [_Viento_Umbral_Calma]
+			RETURN
+			CALCULATE(
+			    AVERAGE(Fact_Horaria_riesgo[Viento_Media]),
+			    Fact_Horaria_riesgo[Hora] >= HoraDesde,
+			    Fact_Horaria_riesgo[Hora] <= HoraHasta,
+			    Fact_Horaria_riesgo[Viento_Media] >= U,
+			    NOT ISBLANK(Fact_Horaria_riesgo[Sector_Viento])
+			)
+		formatString: 0.0
+		displayFolder: Viento
+		lineageTag: 9335f934-faa4-44b0-ac7f-e707fcfcfbb5
+
+	measure Dir_Predominante =
+			VAR T =
+			    ADDCOLUMNS(
+			        ALL(Direcciones_Viento[Orden], Direcciones_Viento[Direccion]),
+			        "@n", [_Viento_Horas_Sector]
+			    )
+			VAR Mx = MAXX(T, [@n])
+			RETURN
+			IF(Mx > 0, CONCATENATEX(FILTER(T, [@n] = Mx), Direcciones_Viento[Direccion], "/"))
+		displayFolder: Viento
+		lineageTag: 75c4b9be-360f-4fdc-b732-6f8177de66bb
+
+	measure Rosa_Vientos_SVG =
+			// Rosa de vientos como imagen SVG (categoría de datos: URL de imagen).
+			// Pétalos = % de horas-estación por sector; color = velocidad media del sector.
+			VAR U        = [_Viento_Umbral_Calma]
+			VAR Unidad   = "km/h"
+			VAR cx       = 150
+			VAR cy       = 150
+			VAR R0       = 130
+			VAR px       = 350
+			VAR Periodo  = SELECTEDVALUE(Periodos_Dia[Periodo], "Todas las horas")
+			VAR Total    = [_Viento_Horas_Validas]
+			VAR Sectores =
+			    ADDCOLUMNS(
+			        ALL(Direcciones_Viento[Orden], Direcciones_Viento[Direccion]),
+			        "@Pct", DIVIDE([_Viento_Horas_Sector], Total) * 100,
+			        "@Vel", [Viento_Media_Sector]
+			    )
+			VAR MaxPct   = MAXX(Sectores, [@Pct])
+			VAR Paso     = SWITCH(TRUE(), MaxPct <= 4, 1, MaxPct <= 10, 2, MaxPct <= 25, 5, MaxPct <= 50, 10, 20)
+			VAR Escala   = MAX(CEILING(MaxPct / Paso, 1) * Paso, Paso)
+			VAR Dominante = CONCATENATEX(FILTER(Sectores, [@Pct] = MaxPct && MaxPct > 0), Direcciones_Viento[Direccion], "/")
+			VAR Calmas   = 100 - SUMX(Sectores, [@Pct])
+			VAR VelMedia = [Viento_Media_Periodo]
+			VAR C1 = "rgb(198,219,239)"
+			VAR C2 = "rgb(107,174,214)"
+			VAR C3 = "rgb(33,113,181)"
+			VAR C4 = "rgb(8,48,107)"
+			VAR Anillos =
+			    CONCATENATEX(
+			        GENERATESERIES(1, Escala / Paso, 1),
+			        VAR rr = [Value] * Paso / Escala * R0
+			        RETURN
+			            "<circle cx='" & cx & "' cy='" & cy & "' r='" & FORMAT(rr, "0.0", "en-US")
+			            & "' fill='none' stroke='rgb(205,205,205)' stroke-width='0.8'/>"
+			            & "<text x='" & FORMAT(cx + rr * SIN(RADIANS(67.5)) + 2, "0.0", "en-US")
+			            & "' y='" & FORMAT(cy - rr * COS(RADIANS(67.5)) - 2, "0.0", "en-US")
+			            & "' font-size='9' fill='rgb(110,110,110)' stroke='white' stroke-width='2.5' paint-order='stroke'>" & FORMAT([Value] * Paso, "0") & "%</text>",
+			        ""
+			    )
+			VAR Ejes =
+			    "<line x1='" & cx - R0 & "' y1='" & cy & "' x2='" & cx + R0 & "' y2='" & cy & "' stroke='rgb(225,225,225)'/>"
+			    & "<line x1='" & cx & "' y1='" & cy - R0 & "' x2='" & cx & "' y2='" & cy + R0 & "' stroke='rgb(225,225,225)'/>"
+			    & "<text x='" & cx & "' y='" & cy - R0 - 8 & "' text-anchor='middle' font-size='13' font-weight='bold' fill='rgb(60,60,60)'>N</text>"
+			    & "<text x='" & cx + R0 + 8 & "' y='" & cy + 5 & "' text-anchor='start' font-size='13' font-weight='bold' fill='rgb(60,60,60)'>E</text>"
+			    & "<text x='" & cx & "' y='" & cy + R0 + 20 & "' text-anchor='middle' font-size='13' font-weight='bold' fill='rgb(60,60,60)'>S</text>"
+			    & "<text x='" & cx - R0 - 8 & "' y='" & cy + 5 & "' text-anchor='end' font-size='13' font-weight='bold' fill='rgb(60,60,60)'>O</text>"
+			VAR Petalos =
+			    CONCATENATEX(
+			        FILTER(Sectores, [@Pct] > 0),
+			        VAR c   = (Direcciones_Viento[Orden] - 1) * 45
+			        VAR r   = [@Pct] / Escala * R0
+			        VAR a1  = RADIANS(c - 20)
+			        VAR a2  = RADIANS(c + 20)
+			        VAR v   = [@Vel]
+			        VAR col = SWITCH(TRUE(), v < 5, C1, v < 10, C2, v < 20, C3, C4)
+			        RETURN
+			            "<path d='M" & cx & "," & cy
+			            & " L" & FORMAT(cx + r * SIN(a1), "0.0", "en-US") & "," & FORMAT(cy - r * COS(a1), "0.0", "en-US")
+			            & " A" & FORMAT(r, "0.0", "en-US") & "," & FORMAT(r, "0.0", "en-US") & " 0 0,1 "
+			            & FORMAT(cx + r * SIN(a2), "0.0", "en-US") & "," & FORMAT(cy - r * COS(a2), "0.0", "en-US")
+			            & " Z' fill='" & col & "' stroke='white' stroke-width='1'/>",
+			        ""
+			    )
+			VAR Panel =
+			    "<text x='" & px & "' y='30' font-size='15' font-weight='bold' fill='rgb(40,40,40)'>Rosa de vientos · " & Periodo & "</text>"
+			    & "<text x='" & px & "' y='58' font-size='13' fill='rgb(60,60,60)'>Dirección predominante: <tspan font-weight='bold'>"
+			        & Dominante & "</tspan> (" & FORMAT(MaxPct, "0.0", "en-US") & "%)</text>"
+			    & "<text x='" & px & "' y='78' font-size='13' fill='rgb(60,60,60)'>Velocidad media: <tspan font-weight='bold'>"
+			        & FORMAT(VelMedia, "0.0", "en-US") & " " & Unidad & "</tspan></text>"
+			    & "<text x='" & px & "' y='98' font-size='13' fill='rgb(60,60,60)'>Calmas (menos de " & FORMAT(U, "0.0", "en-US") & " " & Unidad
+			        & "): <tspan font-weight='bold'>" & FORMAT(Calmas, "0.0", "en-US") & "%</tspan></text>"
+			    & "<text x='" & px & "' y='118' font-size='13' fill='rgb(60,60,60)'>Horas-estación analizadas: "
+			        & FORMAT(Total, "#,0", "en-US") & "</text>"
+			    & "<text x='" & px & "' y='150' font-size='12' font-weight='bold' fill='rgb(90,90,90)'>Frecuencia por sector (% · vel. media)</text>"
+			    & CONCATENATEX(
+			        Sectores,
+			        VAR i = Direcciones_Viento[Orden] - 1
+			        VAR x = px + INT(i / 4) * 140
+			        VAR y = 170 + MOD(i, 4) * 18
+			        RETURN
+			            "<text x='" & x & "' y='" & y & "' font-size='11' fill='rgb(60,60,60)'><tspan font-weight='bold'>"
+			            & Direcciones_Viento[Direccion] & "</tspan><tspan x='" & x + 28 & "'>"
+			            & FORMAT(COALESCE([@Pct], 0), "0.0", "en-US") & "% · "
+			            & IF(ISBLANK([@Vel]), "-", FORMAT([@Vel], "0.0", "en-US")) & "</tspan></text>",
+			        "",
+			        Direcciones_Viento[Orden], ASC
+			    )
+			    & "<text x='" & px & "' y='255' font-size='12' fill='rgb(90,90,90)'>Color: velocidad media del sector (" & Unidad & ")</text>"
+			    & "<rect x='" & px & "' y='263' width='14' height='10' fill='" & C1 & "'/><text x='" & px + 18 & "' y='272' font-size='10' fill='rgb(60,60,60)'>0-5</text>"
+			    & "<rect x='" & px + 70 & "' y='263' width='14' height='10' fill='" & C2 & "'/><text x='" & px + 88 & "' y='272' font-size='10' fill='rgb(60,60,60)'>5-10</text>"
+			    & "<rect x='" & px + 140 & "' y='263' width='14' height='10' fill='" & C3 & "'/><text x='" & px + 158 & "' y='272' font-size='10' fill='rgb(60,60,60)'>10-20</text>"
+			    & "<rect x='" & px + 210 & "' y='263' width='14' height='10' fill='" & C4 & "'/><text x='" & px + 228 & "' y='272' font-size='10' fill='rgb(60,60,60)'>20+</text>"
+			VAR Contenido =
+			    IF(
+			        COALESCE(Total, 0) = 0,
+			        "<text x='310' y='150' text-anchor='middle' font-size='14' fill='rgb(120,120,120)'>Sin datos de viento para la selección</text>",
+			        Anillos & Ejes & Petalos & Panel
+			    )
+			VAR Svg =
+			    "<svg xmlns='http://www.w3.org/2000/svg' width='620' height='310' viewBox='0 0 620 300' font-family='Segoe UI, Arial, sans-serif'>"
+			    & "<rect width='620' height='300' fill='white'/>" & Contenido & "</svg>"
+			VAR Cod1 = SUBSTITUTE(SUBSTITUTE(Svg, "%", "%25"), "#", "%23")
+			VAR Cod2 = SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(Cod1, "·", "%C2%B7"), "ñ", "%C3%B1"), "ó", "%C3%B3")
+			VAR Cod3 = SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(Cod2, "á", "%C3%A1"), "é", "%C3%A9"), "í", "%C3%AD"), "ú", "%C3%BA")
+			RETURN
+			    "data:image/svg+xml;utf8," & Cod3
+		displayFolder: Viento
+		lineageTag: 16499719-500a-4c52-9a63-834f1daad00b
+		dataCategory: ImageUrl
+
+	measure Rad_Media_Luz =
+			// Irradiancia media del periodo de luz (W/m²)
+			AVERAGE(Fact_Subdiaria_met_aux[Rad_Media_Luz])
+		formatString: 0.0
+		displayFolder: Radiación
+		lineageTag: ad2c42e3-3385-4fed-8d49-245b4ae1f264
+
+	measure Energia_Luz_MJ =
+			// Energía diurna diaria promedio (MJ/m²/día) = irradiancia media de luz × duración de luz
+			AVERAGE(Fact_Subdiaria_met_aux[Energia_Luz_MJ])
+		formatString: 0.00
+		displayFolder: Radiación
+		lineageTag: 1c9c5b22-e101-4030-a12b-be1f58d89f12
+
+	measure Duracion_Luz_Media =
+			// Duración media del periodo de luz por día (h)
+			AVERAGE(Fact_Subdiaria_met_aux[Duracion_Luz_h])
+		formatString: 0.0
+		displayFolder: Radiación
+		lineageTag: beefb568-aeba-4d9e-bfbe-7e26d60794e2
+
+	measure Hora_Inicio_Luz = AVERAGE(Fact_Subdiaria_met_aux[Hora_Inicio_Luz])
+		formatString: 0.00
+		displayFolder: Radiación
+		lineageTag: e6f3aac4-95f6-429d-8f9a-756a1f8104f3
+
+	measure Hora_Fin_Luz = AVERAGE(Fact_Subdiaria_met_aux[Hora_Fin_Luz])
+		formatString: 0.00
+		displayFolder: Radiación
+		lineageTag: 547b4948-e8ab-4253-aed5-c275c8268f51
+
+	column Column
+		formatString: 0
+		lineageTag: 4a43f51a-7fde-4903-b7b3-e87f991a9814
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Column]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Medidas = calculated
+		mode: import
+		source = Row("Column", BLANK())
+
+	annotation PBI_Id = e619fb096c3549b6b19f922cb6961e15
+
+	annotation 436ba87b-9c83-4389-a31b-ebd06a36be98 = {"Expression":""}
+

@@ -1,0 +1,482 @@
+table Fact_Horaria_riesgo
+	lineageTag: bc37c599-afbc-48db-8578-57377859e40b
+
+	refreshPolicy
+		policyType: basic
+		rollingWindowGranularity: year
+		rollingWindowPeriods: 5
+		incrementalGranularity: day
+		incrementalPeriods: 7
+		sourceExpression =
+			let
+			    // Lecturas de 15 min directo de la API (misma función que Fact_Subdiaria_met_aux)
+			    Fuente = TablaEstaciones_met,
+			
+			    EjecutarAPI = Table.AddColumn(
+			        Fuente,
+			        "Lecturas",
+			        each fxLecturasEstacion_met([estacionid], RangeStart, RangeEnd)
+			    ),
+			
+			    ExpandirLista = Table.ExpandListColumn(EjecutarAPI, "Lecturas"),
+			
+			    ExpandirCampos = Table.ExpandRecordColumn(
+			        ExpandirLista,
+			        "Lecturas",
+			        {
+			            "fecha", "temperatura", "humedad_relativa",
+			            "mojadura", "precipitacion",
+			            "velocidad_viento", "direccion_viento"
+			        }
+			    ),
+			
+			    CambiarTipos = Table.TransformColumnTypes(
+			        ExpandirCampos,
+			        {
+			            {"estacionid",       Int64.Type},
+			            {"fecha",            type datetime},
+			            {"temperatura",      type number},
+			            {"humedad_relativa", type number},
+			            {"mojadura",         type number},
+			            {"precipitacion",    type number},
+			            {"velocidad_viento", type number},
+			            {"direccion_viento", type number}
+			        }
+			    ),
+			
+			    // ── FILTRO INCREMENTAL ────────────────────────────────────────────
+			    FiltrarIncremental = Table.SelectRows(
+			        CambiarTipos,
+			        each
+			            [fecha] >= List.Max({RangeStart, #datetime(2008, 1, 1, 0, 0, 0)}) and
+			            [fecha] < RangeEnd
+			    ),
+			
+			    SeleccionarColumnas = Table.AddColumn(
+			        FiltrarIncremental, "Fecha",
+			        each Date.From([fecha]), type date
+			    ),
+			
+			    // Extraer hora
+			    AgregarHora = Table.AddColumn(
+			        SeleccionarColumnas, "Hora",
+			        each Time.Hour(DateTime.Time([fecha])), Int64.Type
+			    ),
+			
+			    // Componentes vectoriales del viento ponderadas por velocidad
+			    // (direccion_viento = de donde sopla, grados desde el N en sentido horario)
+			    AgregarU = Table.AddColumn(
+			        AgregarHora, "Viento_U",
+			        each if [velocidad_viento] <> null and [direccion_viento] <> null
+			             then [velocidad_viento] * Number.Sin([direccion_viento] * Number.PI / 180)
+			             else null,
+			        type number
+			    ),
+			    AgregarV = Table.AddColumn(
+			        AgregarU, "Viento_V",
+			        each if [velocidad_viento] <> null and [direccion_viento] <> null
+			             then [velocidad_viento] * Number.Cos([direccion_viento] * Number.PI / 180)
+			             else null,
+			        type number
+			    ),
+			
+			    // Agrupar por estacion + fecha + hora
+			    Agrupado = Table.Group(
+			        AgregarV,
+			        {"estacionid", "Fecha", "Hora"},
+			        {
+			            {"Temp_Media",    each List.Average([temperatura]),      type number},
+			            {"HR_Media",      each List.Average([humedad_relativa]), type number},
+			            {"Mojadura_Max",  each List.Max([mojadura]),             type number},
+			            {"Precip_Total",  each List.Sum([precipitacion]),        type number},
+			            {"Viento_Media",  each List.Average([velocidad_viento]),  type number},
+			            {"Viento_U",      each List.Sum([Viento_U]),               type number},
+			            {"Viento_V",      each List.Sum([Viento_V]),               type number}
+			        }
+			    ),
+			
+			
+			    // Dirección resultante horaria (0-360°) y sector de 45° (1=N ... 8=NO)
+			    AgregarDir = Table.AddColumn(
+			        Agrupado, "Dir_Viento",
+			        each if [Viento_U] = null or [Viento_V] = null or ([Viento_U] = 0 and [Viento_V] = 0)
+			             then null
+			             else Number.Mod(Number.Atan2([Viento_U], [Viento_V]) * 180 / Number.PI + 360, 360),
+			        type number
+			    ),
+			    AgregarSector = Table.AddColumn(
+			        AgregarDir, "Sector_Viento",
+			        each if [Dir_Viento] = null then null
+			             else Number.Mod(Number.RoundDown(([Dir_Viento] + 22.5) / 45), 8) + 1,
+			        Int64.Type
+			    ),
+			    QuitarUV = Table.RemoveColumns(AgregarSector, {"Viento_U", "Viento_V"}),
+			
+			    // Flags de condición por hora
+			    AgregarRoya = Table.AddColumn(
+			        QuitarUV, "Flag_Roya",
+			        each if [Temp_Media] <> null and [HR_Media] <> null and [Mojadura_Max] <> null
+			             and [Temp_Media] >= 15 and [Temp_Media] <= 25
+			             and [HR_Media] > 80
+			             and [Mojadura_Max] > 4
+			             then 1 else 0,
+			        Int64.Type
+			    ),
+			
+			    AgregarSalivosa = Table.AddColumn(
+			        AgregarRoya, "Flag_Salivosa",
+			        each if [Temp_Media] <> null and [HR_Media] <> null and [Precip_Total] <> null
+			             and [Temp_Media] >= 22 and [Temp_Media] <= 28
+			             and [HR_Media] > 80
+			             and [Precip_Total] > 0
+			             then 1 else 0,
+			        Int64.Type
+			    ),
+			
+			    AgregarBarrenador = Table.AddColumn(
+			        AgregarSalivosa, "Flag_Barrenador",
+			        each if [Temp_Media] <> null and [HR_Media] <> null and [Precip_Total] <> null
+			             and [Temp_Media] > 24
+			             and [HR_Media] >= 60 and [HR_Media] <= 80
+			             and [Precip_Total] < 1
+			             then 1 else 0,
+			        Int64.Type
+			    ),
+			
+			    AgregarCarbon = Table.AddColumn(
+			        AgregarBarrenador, "Flag_Carbon",
+			        each if [Temp_Media] <> null and [Precip_Total] <> null
+			             and [Temp_Media] >= 25 and [Temp_Media] <= 30
+			             and [Precip_Total] < 1
+			             then 1 else 0,
+			        Int64.Type
+			    ),
+			
+			    AgregarIndice = Table.AddColumn(
+			        AgregarCarbon, "Indice_Riesgo",
+			        each [Flag_Roya] + [Flag_Salivosa] + [Flag_Barrenador] + [Flag_Carbon],
+			        Int64.Type
+			    ),
+			
+			    TiposFinales = Table.TransformColumnTypes(
+			        AgregarIndice,
+			        {
+			            {"estacionid", Int64.Type},
+			            {"Fecha",      type date},
+			            {"Hora",       Int64.Type}
+			        }
+			    )
+			
+			in
+			    TiposFinales
+
+	column estacionid
+		dataType: int64
+		formatString: 0
+		lineageTag: 340464b4-d73d-48f8-b687-458bf05471d2
+		summarizeBy: none
+		sourceColumn: estacionid
+
+		annotation SummarizationSetBy = Automatic
+
+	column Fecha
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 545382cd-158d-48f0-89e7-853eba9ba363
+		summarizeBy: none
+		sourceColumn: Fecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Hora
+		dataType: int64
+		formatString: 0
+		lineageTag: 50d0ffcd-fa25-4678-9a3a-48b2b70fe868
+		summarizeBy: none
+		sourceColumn: Hora
+
+		annotation SummarizationSetBy = Automatic
+
+	column Temp_Media
+		dataType: double
+		lineageTag: 0d00897b-59d3-4fb6-9804-76be02deaf74
+		summarizeBy: sum
+		sourceColumn: Temp_Media
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column HR_Media
+		dataType: double
+		lineageTag: 45869ab3-e5f3-4757-a9b9-6260897c4c7f
+		summarizeBy: sum
+		sourceColumn: HR_Media
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Mojadura_Max
+		dataType: double
+		lineageTag: 24a49d28-1080-4796-a27f-7522f3cbbe5e
+		summarizeBy: sum
+		sourceColumn: Mojadura_Max
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Precip_Total
+		dataType: double
+		lineageTag: d9ab1684-4ccd-4800-8502-771370fbf83d
+		summarizeBy: sum
+		sourceColumn: Precip_Total
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Flag_Roya
+		dataType: int64
+		formatString: 0
+		lineageTag: eee5c0ac-d6a4-4816-a1aa-09525c95ba04
+		summarizeBy: sum
+		sourceColumn: Flag_Roya
+
+		annotation SummarizationSetBy = Automatic
+
+	column Flag_Salivosa
+		dataType: int64
+		formatString: 0
+		lineageTag: 60c6de9c-463a-48c9-9499-ada1fe975d10
+		summarizeBy: sum
+		sourceColumn: Flag_Salivosa
+
+		annotation SummarizationSetBy = Automatic
+
+	column Flag_Barrenador
+		dataType: int64
+		formatString: 0
+		lineageTag: b4a3cfac-c25a-40f7-976b-32b32316acc4
+		summarizeBy: sum
+		sourceColumn: Flag_Barrenador
+
+		annotation SummarizationSetBy = Automatic
+
+	column Flag_Carbon
+		dataType: int64
+		formatString: 0
+		lineageTag: b96d8edb-d2d5-4793-9295-575d134d8e66
+		summarizeBy: sum
+		sourceColumn: Flag_Carbon
+
+		annotation SummarizationSetBy = Automatic
+
+	column Indice_Riesgo
+		dataType: int64
+		formatString: 0
+		lineageTag: e84f341d-36de-4203-a13e-719f08dc0d68
+		summarizeBy: sum
+		sourceColumn: Indice_Riesgo
+
+		annotation SummarizationSetBy = Automatic
+
+	column Viento_Media
+		dataType: double
+		formatString: 0.0
+		lineageTag: 05119282-c82b-4127-aa3e-436a7a30cd97
+		summarizeBy: none
+		sourceColumn: Viento_Media
+
+		annotation SummarizationSetBy = User
+
+	column Dir_Viento
+		dataType: double
+		formatString: 0
+		lineageTag: e43eb9e9-aa35-4124-9f1a-ad005a7384e3
+		summarizeBy: none
+		sourceColumn: Dir_Viento
+
+		annotation SummarizationSetBy = User
+
+	column Sector_Viento
+		dataType: int64
+		formatString: 0
+		lineageTag: 24c7cc8b-9bd5-4756-bce6-7d04a5b86258
+		summarizeBy: none
+		sourceColumn: Sector_Viento
+
+		annotation SummarizationSetBy = User
+
+	partition Fact_Horaria_riesgo = m
+		mode: import
+		source =
+				let
+				    // Lecturas de 15 min directo de la API (misma función que Fact_Subdiaria_met_aux)
+				    Fuente = TablaEstaciones_met,
+				
+				    EjecutarAPI = Table.AddColumn(
+				        Fuente,
+				        "Lecturas",
+				        each fxLecturasEstacion_met([estacionid], RangeStart, RangeEnd)
+				    ),
+				
+				    ExpandirLista = Table.ExpandListColumn(EjecutarAPI, "Lecturas"),
+				
+				    ExpandirCampos = Table.ExpandRecordColumn(
+				        ExpandirLista,
+				        "Lecturas",
+				        {
+				            "fecha", "temperatura", "humedad_relativa",
+				            "mojadura", "precipitacion",
+				            "velocidad_viento", "direccion_viento"
+				        }
+				    ),
+				
+				    CambiarTipos = Table.TransformColumnTypes(
+				        ExpandirCampos,
+				        {
+				            {"estacionid",       Int64.Type},
+				            {"fecha",            type datetime},
+				            {"temperatura",      type number},
+				            {"humedad_relativa", type number},
+				            {"mojadura",         type number},
+				            {"precipitacion",    type number},
+				            {"velocidad_viento", type number},
+				            {"direccion_viento", type number}
+				        }
+				    ),
+				
+				    // ── FILTRO INCREMENTAL ────────────────────────────────────────────
+				    FiltrarIncremental = Table.SelectRows(
+				        CambiarTipos,
+				        each
+				            [fecha] >= List.Max({RangeStart, #datetime(2008, 1, 1, 0, 0, 0)}) and
+				            [fecha] < RangeEnd
+				    ),
+				
+				    SeleccionarColumnas = Table.AddColumn(
+				        FiltrarIncremental, "Fecha",
+				        each Date.From([fecha]), type date
+				    ),
+				
+				    // Extraer hora
+				    AgregarHora = Table.AddColumn(
+				        SeleccionarColumnas, "Hora",
+				        each Time.Hour(DateTime.Time([fecha])), Int64.Type
+				    ),
+				
+				    // Componentes vectoriales del viento ponderadas por velocidad
+				    // (direccion_viento = de donde sopla, grados desde el N en sentido horario)
+				    AgregarU = Table.AddColumn(
+				        AgregarHora, "Viento_U",
+				        each if [velocidad_viento] <> null and [direccion_viento] <> null
+				             then [velocidad_viento] * Number.Sin([direccion_viento] * Number.PI / 180)
+				             else null,
+				        type number
+				    ),
+				    AgregarV = Table.AddColumn(
+				        AgregarU, "Viento_V",
+				        each if [velocidad_viento] <> null and [direccion_viento] <> null
+				             then [velocidad_viento] * Number.Cos([direccion_viento] * Number.PI / 180)
+				             else null,
+				        type number
+				    ),
+				
+				    // Agrupar por estacion + fecha + hora
+				    Agrupado = Table.Group(
+				        AgregarV,
+				        {"estacionid", "Fecha", "Hora"},
+				        {
+				            {"Temp_Media",    each List.Average([temperatura]),      type number},
+				            {"HR_Media",      each List.Average([humedad_relativa]), type number},
+				            {"Mojadura_Max",  each List.Max([mojadura]),             type number},
+				            {"Precip_Total",  each List.Sum([precipitacion]),        type number},
+				            {"Viento_Media",  each List.Average([velocidad_viento]),  type number},
+				            {"Viento_U",      each List.Sum([Viento_U]),               type number},
+				            {"Viento_V",      each List.Sum([Viento_V]),               type number}
+				        }
+				    ),
+				
+				
+				    // Dirección resultante horaria (0-360°) y sector de 45° (1=N ... 8=NO)
+				    AgregarDir = Table.AddColumn(
+				        Agrupado, "Dir_Viento",
+				        each if [Viento_U] = null or [Viento_V] = null or ([Viento_U] = 0 and [Viento_V] = 0)
+				             then null
+				             else Number.Mod(Number.Atan2([Viento_U], [Viento_V]) * 180 / Number.PI + 360, 360),
+				        type number
+				    ),
+				    AgregarSector = Table.AddColumn(
+				        AgregarDir, "Sector_Viento",
+				        each if [Dir_Viento] = null then null
+				             else Number.Mod(Number.RoundDown(([Dir_Viento] + 22.5) / 45), 8) + 1,
+				        Int64.Type
+				    ),
+				    QuitarUV = Table.RemoveColumns(AgregarSector, {"Viento_U", "Viento_V"}),
+				
+				    // Flags de condición por hora
+				    AgregarRoya = Table.AddColumn(
+				        QuitarUV, "Flag_Roya",
+				        each if [Temp_Media] <> null and [HR_Media] <> null and [Mojadura_Max] <> null
+				             and [Temp_Media] >= 15 and [Temp_Media] <= 25
+				             and [HR_Media] > 80
+				             and [Mojadura_Max] > 4
+				             then 1 else 0,
+				        Int64.Type
+				    ),
+				
+				    AgregarSalivosa = Table.AddColumn(
+				        AgregarRoya, "Flag_Salivosa",
+				        each if [Temp_Media] <> null and [HR_Media] <> null and [Precip_Total] <> null
+				             and [Temp_Media] >= 22 and [Temp_Media] <= 28
+				             and [HR_Media] > 80
+				             and [Precip_Total] > 0
+				             then 1 else 0,
+				        Int64.Type
+				    ),
+				
+				    AgregarBarrenador = Table.AddColumn(
+				        AgregarSalivosa, "Flag_Barrenador",
+				        each if [Temp_Media] <> null and [HR_Media] <> null and [Precip_Total] <> null
+				             and [Temp_Media] > 24
+				             and [HR_Media] >= 60 and [HR_Media] <= 80
+				             and [Precip_Total] < 1
+				             then 1 else 0,
+				        Int64.Type
+				    ),
+				
+				    AgregarCarbon = Table.AddColumn(
+				        AgregarBarrenador, "Flag_Carbon",
+				        each if [Temp_Media] <> null and [Precip_Total] <> null
+				             and [Temp_Media] >= 25 and [Temp_Media] <= 30
+				             and [Precip_Total] < 1
+				             then 1 else 0,
+				        Int64.Type
+				    ),
+				
+				    AgregarIndice = Table.AddColumn(
+				        AgregarCarbon, "Indice_Riesgo",
+				        each [Flag_Roya] + [Flag_Salivosa] + [Flag_Barrenador] + [Flag_Carbon],
+				        Int64.Type
+				    ),
+				
+				    TiposFinales = Table.TransformColumnTypes(
+				        AgregarIndice,
+				        {
+				            {"estacionid", Int64.Type},
+				            {"Fecha",      type date},
+				            {"Hora",       Int64.Type}
+				        }
+				    )
+				
+				in
+				    TiposFinales
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Text
+

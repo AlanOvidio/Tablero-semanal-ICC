@@ -1,0 +1,69 @@
+table Periodos_Dia
+	lineageTag: 587cec53-d100-4af2-9927-9444e64d683f
+
+	column id
+		dataType: int64
+		formatString: 0
+		lineageTag: 2a452b62-fd92-4900-9d9d-34f1967eeced
+		summarizeBy: sum
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column Periodo
+		dataType: string
+		lineageTag: f3148d7f-d71d-45b6-ba3b-5e519ab46765
+		summarizeBy: none
+		sourceColumn: Periodo
+		sortByColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column HoraDesde
+		dataType: int64
+		formatString: 0
+		lineageTag: 5a3d3dfc-b7aa-432e-b62d-df620ad73d2d
+		summarizeBy: sum
+		sourceColumn: HoraDesde
+
+		annotation SummarizationSetBy = Automatic
+
+	column HoraHasta
+		dataType: int64
+		formatString: 0
+		lineageTag: 114582f5-a1e5-496b-8c83-cf4e29df3211
+		summarizeBy: sum
+		sourceColumn: HoraHasta
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Periodos_Dia = m
+		mode: import
+		source =
+				let
+				    Tabla = Table.FromRows(
+				        {
+				            {0, "Todas las horas",  0,  23},
+				            {1, "Madrugada (00:00-05:59)",        0,   5},
+				            {2, "Mañana (06:00-11:59)",           6,  11},
+				            {3, "Tarde (12:00-17:59)",           12,  17},
+				            {4, "Noche (18:00-23:59)",           18,  23}
+				        },
+				        {"id", "Periodo", "HoraDesde", "HoraHasta"}
+				    ),
+				    Tipos = Table.TransformColumnTypes(
+				        Tabla,
+				        {
+				            {"id",        Int64.Type},
+				            {"Periodo",   type text},
+				            {"HoraDesde", Int64.Type},
+				            {"HoraHasta", Int64.Type}
+				        }
+				    )
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,280 @@
+table Fact_Meteorologia
+	lineageTag: 58493de9-5a55-4d29-895d-845d5fa93cfa
+
+	refreshPolicy
+		policyType: basic
+		rollingWindowGranularity: year
+		rollingWindowPeriods: 18
+		incrementalGranularity: day
+		incrementalPeriods: 7
+		sourceExpression =
+			let
+			    Fuente = TablaEstaciones_met,
+			
+			    EjecutarAPI = Table.AddColumn(
+			        Fuente,
+			        "Lecturas",
+			        each fxLecturasEstacion_met([estacionid], RangeStart, RangeEnd)
+			    ),
+			
+			    ExpandirLista = Table.ExpandListColumn(EjecutarAPI, "Lecturas"),
+			
+			    ExpandirCampos = Table.ExpandRecordColumn(
+			        ExpandirLista,
+			        "Lecturas",
+			        {
+			            "fecha", "temperatura", "radiacion",
+			            "humedad_relativa", "precipitacion", "velocidad_viento",
+			            "presion_atmosferica", "mojadura", "direccion_viento",
+			            "eto", "indice_calor", "updated_at", "created_at"
+			        }
+			    ),
+			
+			    CambiarTipos = Table.TransformColumnTypes(
+			        ExpandirCampos,
+			        {
+			            {"estacionid",          Int64.Type},
+			            {"fecha",               type datetime},
+			            {"temperatura",         type number},
+			            {"radiacion",           type number},
+			            {"humedad_relativa",    type number},
+			            {"precipitacion",       type number},
+			            {"velocidad_viento",    type number},
+			            {"presion_atmosferica", type number},
+			            {"mojadura",            type number},
+			            {"direccion_viento",    type number},
+			            {"eto",                 type number},
+			            {"indice_calor",        type number},
+			            {"updated_at",          type datetime},
+			            {"created_at",          type datetime}
+			        }
+			    ),
+			
+			    // ── FILTRO INCREMENTAL PRIMERO ────────────────────────────────────
+			    FiltrarIncremental = Table.SelectRows(
+			        CambiarTipos,
+			        each
+			            [fecha] >= List.Max({RangeStart, #datetime(2008, 1, 1, 0, 0, 0)}) and
+			            [fecha] < RangeEnd
+			    ),
+			
+			    // Columna Fecha tipo date para relacionar con Calendario
+			    AgregarFecha = Table.AddColumn(
+			        FiltrarIncremental, "Fecha",
+			        each Date.From([fecha]), type date
+			    )
+			
+			in
+			    AgregarFecha
+
+	column estacionid
+		dataType: int64
+		formatString: 0
+		lineageTag: 7582b959-385a-487f-87ce-b5b18ecb9551
+		summarizeBy: sum
+		sourceColumn: estacionid
+
+		annotation SummarizationSetBy = Automatic
+
+	column fecha
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: dcbc5f07-9336-4957-aea8-2b30460fd8e3
+		summarizeBy: none
+		sourceColumn: fecha
+
+		annotation SummarizationSetBy = Automatic
+
+	column temperatura
+		dataType: double
+		lineageTag: 3788b8da-8840-4f84-b8a9-9925170052a0
+		summarizeBy: sum
+		sourceColumn: temperatura
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column radiacion
+		dataType: double
+		lineageTag: 844ec4ac-1f4d-454b-bd96-c5d6df1bc339
+		summarizeBy: sum
+		sourceColumn: radiacion
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column humedad_relativa
+		dataType: double
+		formatString: 0
+		lineageTag: d85e6d53-9572-4bee-bfbb-c31043a26df3
+		summarizeBy: sum
+		sourceColumn: humedad_relativa
+
+		annotation SummarizationSetBy = Automatic
+
+	column precipitacion
+		dataType: double
+		lineageTag: 13602cae-658a-4962-a9c6-e4d3e82d40ce
+		summarizeBy: sum
+		sourceColumn: precipitacion
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column velocidad_viento
+		dataType: double
+		lineageTag: 886161e4-1b09-496f-b73b-9b6f29b8a4bc
+		summarizeBy: sum
+		sourceColumn: velocidad_viento
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column presion_atmosferica
+		dataType: double
+		lineageTag: b2bd5d65-dab0-40e0-a48c-3457916a2abd
+		summarizeBy: sum
+		sourceColumn: presion_atmosferica
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column mojadura
+		dataType: double
+		formatString: 0
+		lineageTag: cda0deaa-5a8d-4c43-9ac0-a0714523c420
+		summarizeBy: sum
+		sourceColumn: mojadura
+
+		annotation SummarizationSetBy = Automatic
+
+	column direccion_viento
+		dataType: double
+		lineageTag: 500ac8c9-2cda-4eb7-8d36-cfa153ff165b
+		summarizeBy: sum
+		sourceColumn: direccion_viento
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column eto
+		dataType: double
+		lineageTag: bdac6cd2-fdf9-4261-9ef1-5171293ce258
+		summarizeBy: sum
+		sourceColumn: eto
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column indice_calor
+		dataType: double
+		lineageTag: b123711d-178e-404a-87a8-39f9dbe4e7b1
+		summarizeBy: sum
+		sourceColumn: indice_calor
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column updated_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: a7d345c2-c607-4780-b601-873999289cc2
+		summarizeBy: none
+		sourceColumn: updated_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column created_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 946c17ef-cafe-4738-9785-ea6af9da6d53
+		summarizeBy: none
+		sourceColumn: created_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Fecha 2'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: e5794c71-c0c2-40a0-83c1-c5863bd5ec13
+		summarizeBy: none
+		sourceColumn: Fecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition Fact_Meteorologia = m
+		mode: import
+		source =
+				let
+				    Fuente = TablaEstaciones_met,
+				
+				    EjecutarAPI = Table.AddColumn(
+				        Fuente,
+				        "Lecturas",
+				        each fxLecturasEstacion_met([estacionid], RangeStart, RangeEnd)
+				    ),
+				
+				    ExpandirLista = Table.ExpandListColumn(EjecutarAPI, "Lecturas"),
+				
+				    ExpandirCampos = Table.ExpandRecordColumn(
+				        ExpandirLista,
+				        "Lecturas",
+				        {
+				            "fecha", "temperatura", "radiacion",
+				            "humedad_relativa", "precipitacion", "velocidad_viento",
+				            "presion_atmosferica", "mojadura", "direccion_viento",
+				            "eto", "indice_calor", "updated_at", "created_at"
+				        }
+				    ),
+				
+				    CambiarTipos = Table.TransformColumnTypes(
+				        ExpandirCampos,
+				        {
+				            {"estacionid",          Int64.Type},
+				            {"fecha",               type datetime},
+				            {"temperatura",         type number},
+				            {"radiacion",           type number},
+				            {"humedad_relativa",    type number},
+				            {"precipitacion",       type number},
+				            {"velocidad_viento",    type number},
+				            {"presion_atmosferica", type number},
+				            {"mojadura",            type number},
+				            {"direccion_viento",    type number},
+				            {"eto",                 type number},
+				            {"indice_calor",        type number},
+				            {"updated_at",          type datetime},
+				            {"created_at",          type datetime}
+				        }
+				    ),
+				
+				    // ── FILTRO INCREMENTAL PRIMERO ────────────────────────────────────
+				    FiltrarIncremental = Table.SelectRows(
+				        CambiarTipos,
+				        each
+				            [fecha] >= List.Max({RangeStart, #datetime(2008, 1, 1, 0, 0, 0)}) and
+				            [fecha] < RangeEnd
+				    ),
+				
+				    // Columna Fecha tipo date para relacionar con Calendario
+				    AgregarFecha = Table.AddColumn(
+				        FiltrarIncremental, "Fecha",
+				        each Date.From([fecha]), type date
+				    )
+				
+				in
+				    AgregarFecha
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

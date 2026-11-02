@@ -1,0 +1,42 @@
+relationship da0b7bf3-2964-8fed-435b-f59a7f9ebd22
+	fromColumn: Fact_Diaria_met.Fecha
+	toColumn: Calendario.Fecha
+
+relationship 85fa1c61-5930-2793-16a1-2b39cac7675a
+	fromColumn: Fact_Diaria_met.estacionid
+	toColumn: Estaciones_met.estacionid
+
+relationship 7ca4b110-41b0-a728-b5e8-bfc4cab09142
+	isActive: false
+	fromColumn: Fact_Meteorologia.'Fecha 2'
+	toColumn: Calendario.Fecha
+
+relationship b83d969f-ca9f-5f63-86cb-22b6b774ecdf
+	isActive: false
+	fromColumn: Fact_Meteorologia.estacionid
+	toColumn: Estaciones_met.estacionid
+
+relationship AutoDetected_f0136fc6-a2bd-43e6-b38f-539f58d49661
+	fromColumn: Fact_Subdiaria_met_aux.estacionid
+	toColumn: Estaciones_met.estacionid
+
+relationship 780a2aae-dddc-0dc6-5caa-5894d4ab0159
+	fromColumn: Fact_Subdiaria_met_aux.Fecha
+	toColumn: Calendario.Fecha
+
+relationship 8d7f95b8-e319-f240-6e53-753ac342f059
+	fromColumn: Fact_Horaria_riesgo.Fecha
+	toColumn: Calendario.Fecha
+
+relationship 7b3af197-8a8c-8bbf-2541-b38e8ec343c6
+	fromColumn: Fact_Horaria_riesgo.estacionid
+	toColumn: Estaciones_met.estacionid
+
+relationship 33562c4d-bc23-0718-761d-3f048cdcce6e
+	fromColumn: Fact_Horaria_riesgo.Hora
+	toColumn: Horas_Dia.Hora
+
+relationship b2847546-c611-4c82-b7d4-a4c3be200b7b
+	fromColumn: Fact_Horaria_riesgo.Sector_Viento
+	toColumn: Direcciones_Viento.Orden
+

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "ff3ee83505f7aab7cef2",
+  "displayName": "Resumen Semanal",
+  "displayOption": "ActualSize",
+  "height": 2628,
+  "width": 1300,
+  "objects": {
+    "background": [
+      {
+        "properties": {
+          "transparency": {
+            "expr": {
+              "Literal": {
+                "Value": "0D"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "outspacePane": [
+      {
+        "properties": {
+          "width": {
+            "expr": {
+              "Literal": {
+                "Value": "343L"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "type": "Tooltip",
+  "visualInteractions": [
+    {
+      "source": "5856a37b6baf35358943",
+      "target": "5b2aaf3f0cdfb18bf5d3",
+      "type": "DataFilter"
+    },
+    {
+      "source": "5b2aaf3f0cdfb18bf5d3",
+      "target": "5856a37b6baf35358943",
+      "type": "DataFilter"
+    },
+    {
+      "source": "e58943fe6a4f7b6b5988",
+      "target": "3afd62b4549002e5dbb9",
+      "type": "DataFilter"
+    },
+    {
+      "source": "781803d3c2e9135debe3",
+      "target": "3afd62b4549002e5dbb9",
+      "type": "DataFilter"
+    },
+    {
+      "source": "3afd62b4549002e5dbb9",
+      "target": "781803d3c2e9135debe3",
+      "type": "DataFilter"
+    }
+  ]
+}

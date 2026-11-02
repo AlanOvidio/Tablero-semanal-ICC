@@ -1,0 +1,19 @@
+# ── Power BI Project: archivos locales que NO deben versionarse ──
+# Caché de datos importados (decenas de MB; se regenera al actualizar)
+**/.pbi/cache.abf
+# Configuración local de cada usuario/equipo
+**/.pbi/localSettings.json
+
+# ── Respaldos manuales previos a usar Git (Git ya guarda el historial) ──
+_respaldo*/
+
+# ── Copias de conflicto de OneDrive (nombre de equipo como sufijo) ──
+*-AlanOvidio.*
+*-AlanOvidio/
+
+# ── Sistema / herramientas ──
+Thumbs.db
+desktop.ini
+.DS_Store
+__pycache__/
+*.pyc

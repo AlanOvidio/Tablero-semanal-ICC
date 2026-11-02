@@ -1,0 +1,111 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "name": "2b9962a00de0ac99b88a",
+  "position": {
+    "x": 40.446096654275095,
+    "y": 0,
+    "z": 0,
+    "height": 381.85873605947955,
+    "width": 1063.4944237918216,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Estaciones_met"
+                    }
+                  },
+                  "Property": "finca"
+                }
+              },
+              "queryRef": "Estaciones_met.finca",
+              "nativeQueryRef": "finca"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Dias_Riesgo_Carbon"
+                }
+              },
+              "queryRef": "_Medidas.Dias_Riesgo_Carbon",
+              "nativeQueryRef": "Dias_Riesgo_Carbon"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Dias_Riesgo_Barrenador"
+                }
+              },
+              "queryRef": "_Medidas.Dias_Riesgo_Barrenador",
+              "nativeQueryRef": "Dias_Riesgo_Barrenador"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Dias_Riesgo_Roya"
+                }
+              },
+              "queryRef": "_Medidas.Dias_Riesgo_Roya",
+              "nativeQueryRef": "Dias_Riesgo_Roya"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Dias_Riesgo_Salivosa"
+                }
+              },
+              "queryRef": "_Medidas.Dias_Riesgo_Salivosa",
+              "nativeQueryRef": "Dias_Riesgo_Salivosa"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_Medidas"
+                  }
+                },
+                "Property": "Dias_Riesgo_Carbon"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

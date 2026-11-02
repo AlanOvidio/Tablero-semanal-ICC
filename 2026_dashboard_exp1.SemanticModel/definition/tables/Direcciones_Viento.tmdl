@@ -1,0 +1,73 @@
+table Direcciones_Viento
+	lineageTag: 5030a08e-14d0-40d8-8941-dd9de605339b
+
+	column Direccion
+		dataType: string
+		lineageTag: 011b045d-0b69-4792-b7a3-900f7be061e2
+		summarizeBy: none
+		sourceColumn: Direccion
+
+		annotation SummarizationSetBy = Automatic
+
+	column Desde
+		dataType: double
+		lineageTag: 10f94e47-8dde-45b8-b1bc-199f346d7ced
+		summarizeBy: sum
+		sourceColumn: Desde
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Hasta
+		dataType: double
+		lineageTag: 9c92447d-08b8-47b9-bca4-763efc4ae2d4
+		summarizeBy: sum
+		sourceColumn: Hasta
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Orden
+		dataType: int64
+		formatString: 0
+		lineageTag: 11e65547-481e-40c6-9a5e-17d6a99772c6
+		summarizeBy: sum
+		sourceColumn: Orden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Direcciones_Viento = m
+		mode: import
+		source =
+				let
+				    Tabla = Table.FromRows(
+				        {
+				            {1, "N",   337.5, 22.5},
+				            {2, "NE",  22.5,  67.5},
+				            {3, "E",   67.5,  112.5},
+				            {4, "SE",  112.5, 157.5},
+				            {5, "S",   157.5, 202.5},
+				            {6, "SO",  202.5, 247.5},
+				            {7, "O",   247.5, 292.5},
+				            {8, "NO",  292.5, 337.5}
+				        },
+				        {"Orden", "Direccion", "Desde", "Hasta"}
+				    ),
+				    Tipos = Table.TransformColumnTypes(
+				        Tabla,
+				        {
+				            {"Orden",     Int64.Type},
+				            {"Direccion", type text},
+				            {"Desde",     type number},
+				            {"Hasta",     type number}
+				        }
+				    )
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

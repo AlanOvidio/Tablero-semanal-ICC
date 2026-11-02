@@ -1,0 +1,1584 @@
+table Fact_Subdiaria_met_aux
+	lineageTag: 2f1efd50-9d0e-47c5-8eb1-b0bcde6f53e5
+
+	refreshPolicy
+		policyType: basic
+		rollingWindowGranularity: year
+		rollingWindowPeriods: 5
+		incrementalGranularity: day
+		incrementalPeriods: 7
+		sourceExpression =
+			let
+			    Fuente = TablaEstaciones_met,
+			
+			    EjecutarAPI = Table.AddColumn(
+			        Fuente,
+			        "Lecturas",
+			        each fxLecturasEstacion_met([estacionid], RangeStart, RangeEnd)
+			    ),
+			
+			    ExpandirLista = Table.ExpandListColumn(EjecutarAPI, "Lecturas"),
+			
+			    ExpandirCampos = Table.ExpandRecordColumn(
+			        ExpandirLista,
+			        "Lecturas",
+			        {
+			            "fecha", "precipitacion", "velocidad_viento",
+			            "temperatura", "radiacion", "humedad_relativa",
+			            "mojadura", "indice_calor", "direccion_viento", "eto"
+			        },
+			        {
+			            "fecha", "precipitacion", "velocidad_viento",
+			            "temperatura", "radiacion", "humedad_relativa",
+			            "mojadura", "indice_calor", "direccion_viento", "eto"
+			        }
+			    ),
+			
+			    CambiarTipos = Table.TransformColumnTypes(
+			        ExpandirCampos,
+			        {
+			            {"estacionid",       Int64.Type},
+			            {"fecha",            type datetime},
+			            {"precipitacion",    type number},
+			            {"velocidad_viento", type number},
+			            {"temperatura",      type number},
+			            {"radiacion",        type number},
+			            {"humedad_relativa", type number},
+			            {"mojadura",         type number},
+			            {"indice_calor",     type number},
+			            {"direccion_viento", type number},
+			            {"eto",              type number}
+			        }
+			    ),
+			
+			    FiltrarIncremental = Table.SelectRows(
+			        CambiarTipos,
+			        each
+			            [fecha] >= List.Max({RangeStart, #datetime(2008, 1, 1, 0, 0, 0)}) and
+			            [fecha] < RangeEnd
+			    ),
+			
+			    AgregarFecha = Table.AddColumn(
+			        FiltrarIncremental, "Fecha",
+			        each Date.From([fecha]), type date
+			    ),
+			
+			    AgregarHora = Table.AddColumn(
+			        AgregarFecha, "Hora",
+			        each Time.Hour(DateTime.Time([fecha])), Int64.Type
+			    ),
+			
+			    AgregarEsDiurno = Table.AddColumn(
+			        AgregarHora, "Es_Diurno",
+			        each [Hora] >= 6 and [Hora] <= 18, type logical
+			    ),
+			
+			    AgregarEsNocturno = Table.AddColumn(
+			        AgregarEsDiurno, "Es_Nocturno",
+			        each [Hora] >= 19 or [Hora] < 6, type logical
+			    ),
+			
+			    AgregarVPD = Table.AddColumn(
+			        AgregarEsNocturno, "VPD",
+			        each
+			            let
+			                T  = [temperatura],
+			                HR = [humedad_relativa],
+			                es = 0.6108 * Number.Exp(17.27 * T / (T + 237.3))
+			            in
+			                (1 - HR / 100) * es,
+			        type number
+			    ),
+			
+			    AgregarMojadura_Flag = Table.AddColumn(
+			        AgregarVPD, "Mojadura_Flag",
+			        each if [mojadura] <> null and [mojadura] > 4 then 0.25 else 0,
+			        type number
+			    ),
+			
+			    AgregarBrillo_Flag = Table.AddColumn(
+			        AgregarMojadura_Flag, "Brillo_Flag",
+			        each if [radiacion] <> null and [radiacion] > 40 then 0.25 else 0,
+			        type number
+			    ),
+			
+			    AgregarEstres_Flag = Table.AddColumn(
+			        AgregarBrillo_Flag, "Estres_Flag",
+			        each if [temperatura] <> null and [radiacion] <> null and [temperatura] > 35 and [radiacion] > 800 then 0.25 else 0,
+			        type number
+			    ),
+			
+			    Agrupado = Table.Group(
+			        AgregarEstres_Flag,
+			        {"estacionid", "Fecha"},
+			        {
+			            // ── Control de calidad ────────────────────────────────────
+			            {"N_Lecturas",
+			                each Table.RowCount(_),
+			                Int64.Type},
+			
+			            // ── Variables generales ───────────────────────────────────
+			            {"Precip_Max15min",
+			                each List.Max([precipitacion]),
+			                type number},
+			
+			            // ── Viento general ────────────────────────────────────────
+			            {"Viento_Max",
+			                each List.Max([velocidad_viento]),
+			                type number},
+			
+			            {"Hora_Viento_Max",
+			                each
+			                    let
+			                        maxV  = List.Max([velocidad_viento]),
+			                        pares = List.Select(
+			                            List.Zip({[velocidad_viento], [Hora]}),
+			                            each _{0} = maxV
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.First(pares){1},
+			                Int64.Type},
+			
+			            {"Direccion_Viento_Max",
+			                each
+			                    let
+			                        maxV  = List.Max([velocidad_viento]),
+			                        pares = List.Select(
+			                            List.Zip({[velocidad_viento], [direccion_viento]}),
+			                            each _{0} = maxV
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.First(pares){1},
+			                type number},
+			
+			            // ── Viento diurno ─────────────────────────────────────────
+			            {"Viento_Max_Diurno",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[velocidad_viento], [Es_Diurno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Max(List.Transform(pares, each _{0})),
+			                type number},
+			
+			            {"Viento_Media_Diurna",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[velocidad_viento], [Es_Diurno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Average(List.Transform(pares, each _{0})),
+			                type number},
+			
+			            {"Direccion_Predominante_Diurna",
+			                each
+			                    let
+			                        // promedio vectorial ponderado por velocidad (no aritmético)
+			                        pares = List.Select(
+			                            List.Zip({[velocidad_viento], [direccion_viento], [Es_Diurno]}),
+			                            each _{2} = true and _{0} <> null and _{1} <> null
+			                        ),
+			                        u = List.Sum(List.Transform(pares, each _{0} * Number.Sin(_{1} * Number.PI / 180))),
+			                        v = List.Sum(List.Transform(pares, each _{0} * Number.Cos(_{1} * Number.PI / 180)))
+			                    in
+			                        if List.IsEmpty(pares) or (u = 0 and v = 0) then null
+			                        else Number.Mod(Number.Atan2(u, v) * 180 / Number.PI + 360, 360),
+			                type number},
+			
+			            // ── Viento nocturno ───────────────────────────────────────
+			            {"Viento_Max_Nocturno",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[velocidad_viento], [Es_Nocturno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Max(List.Transform(pares, each _{0})),
+			                type number},
+			
+			            {"Viento_Media_Nocturna",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[velocidad_viento], [Es_Nocturno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Average(List.Transform(pares, each _{0})),
+			                type number},
+			
+			            // ── Temperatura nocturna ──────────────────────────────────
+			            {"Temp_Nocturna_Media",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[temperatura], [Es_Nocturno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Average(List.Transform(pares, each _{0})),
+			                type number},
+			
+			            {"Temp_Min_Nocturna",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[temperatura], [Es_Nocturno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Min(List.Transform(pares, each _{0})),
+			                type number},
+			
+			            // ── Horas de extremos ─────────────────────────────────────
+			            {"Hora_Temp_Max_Diurna",
+			                each
+			                    let
+			                        pares   = List.Select(
+			                            List.Zip({[temperatura], [Hora], [Es_Diurno]}),
+			                            each _{2} = true
+			                        ),
+			                        maxT    = if List.IsEmpty(pares) then null
+			                                  else List.Max(List.Transform(pares, each _{0})),
+			                        horaMax = List.Select(pares, each _{0} = maxT)
+			                    in
+			                        if List.IsEmpty(horaMax) then null
+			                        else List.First(horaMax){1},
+			                Int64.Type},
+			
+			            {"Hora_VPD_Max_Diurna",
+			                each
+			                    let
+			                        pares   = List.Select(
+			                            List.Zip({[VPD], [Hora], [Es_Diurno]}),
+			                            each _{2} = true
+			                        ),
+			                        maxV    = if List.IsEmpty(pares) then null
+			                                  else List.Max(List.Transform(pares, each _{0})),
+			                        horaMax = List.Select(pares, each _{0} = maxV)
+			                    in
+			                        if List.IsEmpty(horaMax) then null
+			                        else List.First(horaMax){1},
+			                Int64.Type},
+			
+			            {"Hora_IC_Max_Diurno",
+			                each
+			                    let
+			                        pares   = List.Select(
+			                            List.Zip({[indice_calor], [Hora], [Es_Diurno]}),
+			                            each _{2} = true
+			                        ),
+			                        maxIC   = if List.IsEmpty(pares) then null
+			                                  else List.Max(List.Transform(pares, each _{0})),
+			                        horaMax = List.Select(pares, each _{0} = maxIC)
+			                    in
+			                        if List.IsEmpty(horaMax) then null
+			                        else List.First(horaMax){1},
+			                Int64.Type},
+			
+			            {"Hora_Temp_Min_Nocturna",
+			                each
+			                    let
+			                        pares   = List.Select(
+			                            List.Zip({[temperatura], [Hora], [Es_Nocturno]}),
+			                            each _{2} = true
+			                        ),
+			                        minT    = if List.IsEmpty(pares) then null
+			                                  else List.Min(List.Transform(pares, each _{0})),
+			                        horaMin = List.Select(pares, each _{0} = minT)
+			                    in
+			                        if List.IsEmpty(horaMin) then null
+			                        else List.First(horaMin){1},
+			                Int64.Type},
+			
+			            {"Hora_ETO_Max_Diurna",
+			                each
+			                    let
+			                        pares   = List.Select(
+			                            List.Zip({[eto], [Hora], [Es_Diurno]}),
+			                            each _{2} = true
+			                        ),
+			                        maxETO  = if List.IsEmpty(pares) then null
+			                                  else List.Max(List.Transform(pares, each _{0})),
+			                        horaMax = List.Select(pares, each _{0} = maxETO)
+			                    in
+			                        if List.IsEmpty(horaMax) then null
+			                        else List.First(horaMax){1},
+			                Int64.Type},
+			
+			            // ── Mojadura ──────────────────────────────────────────────
+			            {"Mojadura_Horas_Total",
+			                each List.Sum([Mojadura_Flag]),
+			                type number},
+			
+			            {"Mojadura_Horas_Diurna",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[Mojadura_Flag], [Es_Diurno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        List.Sum(List.Transform(pares, each _{0})),
+			                type number},
+			
+			            {"Mojadura_Horas_Nocturna",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[Mojadura_Flag], [Es_Nocturno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        List.Sum(List.Transform(pares, each _{0})),
+			                type number},
+			
+			            {"Hora_Inicio_Mojadura",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[Mojadura_Flag], [Hora]}),
+			                            each _{0} > 0
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Min(List.Transform(pares, each _{1})),
+			                Int64.Type},
+			
+			            {"Hora_Fin_Mojadura",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[Mojadura_Flag], [Hora]}),
+			                            each _{0} > 0
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Max(List.Transform(pares, each _{1})),
+			                Int64.Type},
+			
+			            // ── Radiación diurna ──────────────────────────────────────
+			            {"Rad_Media_Diurna",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[radiacion], [Es_Diurno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Average(List.Transform(pares, each _{0})),
+			                type number},
+			
+			            {"Rad_Max_Diurna",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[radiacion], [Es_Diurno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Max(List.Transform(pares, each _{0})),
+			                type number},
+			
+			            // ── Periodo de luz (radiación > 40 W/m²) ─────────────────
+			            // La luz define el periodo diurno: de la primera a la última lectura > 40 W/m².
+			            {"Hora_Inicio_Luz",
+			                each
+			                    let
+			                        t = List.Transform(
+			                                List.Select(List.Zip({[radiacion], [fecha]}), each _{0} <> null and _{0} > 40),
+			                                each Time.Hour(DateTime.Time(_{1})) + Time.Minute(DateTime.Time(_{1})) / 60)
+			                    in
+			                        if List.IsEmpty(t) then null else List.Min(t),
+			                type number},
+			            {"Hora_Fin_Luz",
+			                each
+			                    let
+			                        t = List.Transform(
+			                                List.Select(List.Zip({[radiacion], [fecha]}), each _{0} <> null and _{0} > 40),
+			                                each Time.Hour(DateTime.Time(_{1})) + Time.Minute(DateTime.Time(_{1})) / 60)
+			                    in
+			                        if List.IsEmpty(t) then null else List.Max(t),
+			                type number},
+			            // Irradiancia media de las lecturas disponibles DENTRO del periodo de luz
+			            // (incluye bajones por nubosidad; los faltantes no cuentan como cero)
+			            {"Rad_Media_Luz",
+			                each
+			                    let
+			                        hora   = (d) => Time.Hour(DateTime.Time(d)) + Time.Minute(DateTime.Time(d)) / 60,
+			                        pares  = List.Select(List.Zip({[radiacion], [fecha]}), each _{0} <> null),
+			                        luz    = List.Transform(List.Select(pares, each _{0} > 40), each hora(_{1})),
+			                        ini    = if List.IsEmpty(luz) then null else List.Min(luz),
+			                        fin    = if List.IsEmpty(luz) then null else List.Max(luz),
+			                        dentro = if ini = null then {} else
+			                                 List.Select(pares, each hora(_{1}) >= ini and hora(_{1}) <= fin)
+			                    in
+			                        if List.IsEmpty(dentro) then null
+			                        else List.Average(List.Transform(dentro, each _{0})),
+			                type number},
+			
+			            // ── Índice de calor diurno ────────────────────────────────
+			            {"IC_Max_Diurno",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[indice_calor], [Es_Diurno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Max(List.Transform(pares, each _{0})),
+			                type number},
+			
+			            {"IC_Media_Diurno",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[indice_calor], [Es_Diurno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Average(List.Transform(pares, each _{0})),
+			                type number},
+			
+			            // ── Brillo solar y estrés térmico ─────────────────────────
+			            {"Brillo_Solar_Horas",
+			                each List.Sum([Brillo_Flag]),
+			                type number},
+			
+			            {"Horas_Estres_Termico",
+			                each List.Sum([Estres_Flag]),
+			                type number},
+			
+			            // ── ETO subdiaria ─────────────────────────────────────────
+			            {"ETO_Max_Diurna",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[eto], [Es_Diurno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Max(List.Transform(pares, each _{0})),
+			                type number},
+			
+			            {"ETO_Acum_Diurna",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[eto], [Es_Diurno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Sum(List.Transform(pares, each _{0})),
+			                type number},
+			
+			            {"ETO_Acum_Nocturna",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[eto], [Es_Nocturno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Sum(List.Transform(pares, each _{0})),
+			                type number},
+			
+			            // ── VPD diurno ────────────────────────────────────────────
+			            {"VPD_Media_Diurna",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[VPD], [Es_Diurno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Average(List.Transform(pares, each _{0})),
+			                type number},
+			
+			            {"VPD_Max_Diurna",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[VPD], [Es_Diurno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Max(List.Transform(pares, each _{0})),
+			                type number},
+			
+			            // ── VPD nocturno ──────────────────────────────────────────
+			            {"VPD_Media_Nocturna",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[VPD], [Es_Nocturno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Average(List.Transform(pares, each _{0})),
+			                type number},
+			
+			            {"VPD_Min_Nocturno",
+			                each
+			                    let
+			                        pares = List.Select(
+			                            List.Zip({[VPD], [Es_Nocturno]}),
+			                            each _{1} = true
+			                        )
+			                    in
+			                        if List.IsEmpty(pares) then null
+			                        else List.Min(List.Transform(pares, each _{0})),
+			                type number}
+			        }
+			    ),
+			
+			    // Duración del periodo de luz (h) y energía diurna (MJ/m²)
+			    AgregarDuracionLuz = Table.AddColumn(
+			        Agrupado, "Duracion_Luz_h",
+			        each if [Hora_Inicio_Luz] = null then null
+			             else [Hora_Fin_Luz] - [Hora_Inicio_Luz] + 0.25,
+			        type number
+			    ),
+			    AgregarEnergiaLuz = Table.AddColumn(
+			        AgregarDuracionLuz, "Energia_Luz_MJ",
+			        each if [Rad_Media_Luz] = null or [Duracion_Luz_h] = null then null
+			             else [Rad_Media_Luz] * [Duracion_Luz_h] * 3600 / 1000000,
+			        type number
+			    ),
+			    AgregarDiaCompleto = Table.AddColumn(
+			        AgregarEnergiaLuz, "Dia_Completo",
+			        each [N_Lecturas] >= 80, type logical
+			    ),
+			
+			    TiposFinales = Table.TransformColumnTypes(
+			        AgregarDiaCompleto,
+			        {
+			            {"estacionid", Int64.Type},
+			            {"Fecha",      type date}
+			        }
+			    )
+			
+			in
+			    TiposFinales
+
+	column estacionid
+		dataType: int64
+		formatString: 0
+		lineageTag: 2702a550-e45e-41f1-82cb-7b81bfcfe4c5
+		summarizeBy: none
+		sourceColumn: estacionid
+
+		annotation SummarizationSetBy = Automatic
+
+	column Fecha
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 35d07446-10c1-4f13-a305-6b60771e068d
+		summarizeBy: none
+		sourceColumn: Fecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column N_Lecturas
+		dataType: int64
+		formatString: 0
+		lineageTag: 86b8ce7b-7cda-4130-9b10-655b54fd93f8
+		summarizeBy: sum
+		sourceColumn: N_Lecturas
+
+		annotation SummarizationSetBy = Automatic
+
+	column Precip_Max15min
+		dataType: double
+		lineageTag: 5fc62203-7085-406a-9abd-dcbef2c7931e
+		summarizeBy: sum
+		sourceColumn: Precip_Max15min
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Dia_Completo
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: ee23045b-bec6-4ce5-91d5-7b7e109ce675
+		summarizeBy: none
+		sourceColumn: Dia_Completo
+
+		annotation SummarizationSetBy = Automatic
+
+	column Viento_Max
+		dataType: double
+		lineageTag: f323f527-841e-4b03-8c38-b94fd23e9859
+		summarizeBy: sum
+		sourceColumn: Viento_Max
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Temp_Nocturna_Media
+		dataType: double
+		lineageTag: e48d0844-f5d1-471f-8a79-59dc874fcab6
+		summarizeBy: sum
+		sourceColumn: Temp_Nocturna_Media
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Rad_Media_Diurna
+		dataType: double
+		lineageTag: 8a2ce923-9f0c-456d-b0e6-7c50e030b21b
+		summarizeBy: sum
+		sourceColumn: Rad_Media_Diurna
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Rad_Max_Diurna
+		dataType: double
+		lineageTag: fee13d3b-35ad-4dc5-b866-cbe85230927f
+		summarizeBy: sum
+		sourceColumn: Rad_Max_Diurna
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column IC_Max_Diurno
+		dataType: double
+		lineageTag: f7c019ea-cfee-4e63-8ea5-74258c9de83a
+		summarizeBy: sum
+		sourceColumn: IC_Max_Diurno
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column IC_Media_Diurno
+		dataType: double
+		lineageTag: d22c4867-d6ca-4a21-acd4-08d22be2f467
+		summarizeBy: sum
+		sourceColumn: IC_Media_Diurno
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Mojadura_Horas_Diurna
+		dataType: double
+		lineageTag: eed73a30-3f45-425a-8baf-38e3a42e798d
+		summarizeBy: sum
+		sourceColumn: Mojadura_Horas_Diurna
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Brillo_Solar_Horas
+		dataType: double
+		lineageTag: 8992dba7-da04-4f02-9976-df15154978d1
+		summarizeBy: sum
+		sourceColumn: Brillo_Solar_Horas
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Horas_Estres_Termico
+		dataType: double
+		lineageTag: baa58191-5bf8-4091-abb7-f6f3109ffd8d
+		summarizeBy: sum
+		sourceColumn: Horas_Estres_Termico
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column VPD_Media_Diurna
+		dataType: double
+		lineageTag: cddf182e-9b49-4953-a322-2adef68a6dd1
+		summarizeBy: sum
+		sourceColumn: VPD_Media_Diurna
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column VPD_Max_Diurna
+		dataType: double
+		lineageTag: 3c09fcf9-4a6f-4b39-9027-91fc0bcf5e85
+		summarizeBy: sum
+		sourceColumn: VPD_Max_Diurna
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Mojadura_Horas_Total
+		dataType: double
+		lineageTag: 577eae10-fb3d-437d-a7c2-780f3c81e7ae
+		summarizeBy: sum
+		sourceColumn: Mojadura_Horas_Total
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Mojadura_Horas_Nocturna
+		dataType: double
+		lineageTag: 133b7c54-d88b-464b-9d7b-d6cd3b2638a8
+		summarizeBy: sum
+		sourceColumn: Mojadura_Horas_Nocturna
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column VPD_Media_Nocturna
+		dataType: double
+		lineageTag: a5304c68-6208-4a0c-84c6-2826f1aef066
+		summarizeBy: sum
+		sourceColumn: VPD_Media_Nocturna
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Hora_Viento_Max
+		dataType: int64
+		formatString: 0
+		lineageTag: a69b2459-e4a5-4964-a7eb-683f9905f934
+		summarizeBy: sum
+		sourceColumn: Hora_Viento_Max
+
+		annotation SummarizationSetBy = Automatic
+
+	column Direccion_Viento_Max
+		dataType: double
+		lineageTag: 852c4d57-e9c2-49fa-ae8a-8e113ada8452
+		summarizeBy: sum
+		sourceColumn: Direccion_Viento_Max
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Viento_Max_Diurno
+		dataType: double
+		lineageTag: 6908d373-8931-4142-9c0d-17f24e3bc684
+		summarizeBy: sum
+		sourceColumn: Viento_Max_Diurno
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Viento_Media_Diurna
+		dataType: double
+		lineageTag: 70b94fc6-fffa-4984-be60-1df1cdae5059
+		summarizeBy: sum
+		sourceColumn: Viento_Media_Diurna
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Direccion_Predominante_Diurna
+		dataType: double
+		lineageTag: d8fdf9c8-d935-49fb-8607-64707486a453
+		summarizeBy: sum
+		sourceColumn: Direccion_Predominante_Diurna
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Viento_Max_Nocturno
+		dataType: double
+		lineageTag: 532cd4d8-52a2-4ad6-9e5f-68b523969c02
+		summarizeBy: sum
+		sourceColumn: Viento_Max_Nocturno
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Viento_Media_Nocturna
+		dataType: double
+		lineageTag: 748bd3ca-8e4b-4dd2-9473-f84e50c0fe81
+		summarizeBy: sum
+		sourceColumn: Viento_Media_Nocturna
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Temp_Min_Nocturna
+		dataType: double
+		lineageTag: 1900413e-014b-491f-abb2-e8cec1c5f71c
+		summarizeBy: sum
+		sourceColumn: Temp_Min_Nocturna
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Hora_Temp_Max_Diurna
+		dataType: int64
+		formatString: 0
+		lineageTag: dba62847-e617-4b6f-9b42-c10adf4b78b6
+		summarizeBy: sum
+		sourceColumn: Hora_Temp_Max_Diurna
+
+		annotation SummarizationSetBy = Automatic
+
+	column Hora_VPD_Max_Diurna
+		dataType: int64
+		formatString: 0
+		lineageTag: d64edb4b-ddb1-4015-95ea-1ad07603d02f
+		summarizeBy: sum
+		sourceColumn: Hora_VPD_Max_Diurna
+
+		annotation SummarizationSetBy = Automatic
+
+	column Hora_IC_Max_Diurno
+		dataType: int64
+		formatString: 0
+		lineageTag: 2892cbfe-8b08-4ebb-a411-20431e014c21
+		summarizeBy: sum
+		sourceColumn: Hora_IC_Max_Diurno
+
+		annotation SummarizationSetBy = Automatic
+
+	column Hora_Temp_Min_Nocturna
+		dataType: int64
+		formatString: 0
+		lineageTag: c8b8ee7a-e99a-4869-a874-923b2c402c80
+		summarizeBy: sum
+		sourceColumn: Hora_Temp_Min_Nocturna
+
+		annotation SummarizationSetBy = Automatic
+
+	column Hora_ETO_Max_Diurna
+		dataType: int64
+		formatString: 0
+		lineageTag: 841ea00c-c7c1-4307-8865-557cffd3b4f0
+		summarizeBy: sum
+		sourceColumn: Hora_ETO_Max_Diurna
+
+		annotation SummarizationSetBy = Automatic
+
+	column Hora_Inicio_Mojadura
+		dataType: int64
+		formatString: 0
+		lineageTag: 79bf0858-34c0-493a-9814-b7cc70a24cc8
+		summarizeBy: sum
+		sourceColumn: Hora_Inicio_Mojadura
+
+		annotation SummarizationSetBy = Automatic
+
+	column Hora_Fin_Mojadura
+		dataType: int64
+		formatString: 0
+		lineageTag: 541a7f33-bba4-42b0-9bae-7117abc59b03
+		summarizeBy: sum
+		sourceColumn: Hora_Fin_Mojadura
+
+		annotation SummarizationSetBy = Automatic
+
+	column ETO_Max_Diurna
+		dataType: double
+		lineageTag: 98ceb223-5c65-4362-9c59-0c6eac9b8634
+		summarizeBy: sum
+		sourceColumn: ETO_Max_Diurna
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ETO_Acum_Diurna
+		dataType: double
+		lineageTag: f7b0d2d7-260c-42f7-bf25-a3109aed2ec5
+		summarizeBy: sum
+		sourceColumn: ETO_Acum_Diurna
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ETO_Acum_Nocturna
+		dataType: double
+		lineageTag: 9378e23d-fba0-470a-8d12-d2fc31d775f2
+		summarizeBy: sum
+		sourceColumn: ETO_Acum_Nocturna
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column VPD_Min_Nocturno
+		dataType: double
+		lineageTag: b19876db-d371-4bd0-a033-8625158a0f39
+		summarizeBy: sum
+		sourceColumn: VPD_Min_Nocturno
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Hora_Inicio_Luz
+		dataType: double
+		formatString: 0.00
+		lineageTag: 3eb4c07c-9590-4164-9099-cf9d8445af4d
+		summarizeBy: none
+		sourceColumn: Hora_Inicio_Luz
+
+		annotation SummarizationSetBy = User
+
+	column Hora_Fin_Luz
+		dataType: double
+		formatString: 0.00
+		lineageTag: 9c67152c-ca18-422b-82ef-c7d06894a174
+		summarizeBy: none
+		sourceColumn: Hora_Fin_Luz
+
+		annotation SummarizationSetBy = User
+
+	column Duracion_Luz_h
+		dataType: double
+		formatString: 0.00
+		lineageTag: cac646e9-70f4-4e56-92d9-95c10f2e6327
+		summarizeBy: none
+		sourceColumn: Duracion_Luz_h
+
+		annotation SummarizationSetBy = User
+
+	column Rad_Media_Luz
+		dataType: double
+		formatString: 0.0
+		lineageTag: 2ec0cdfb-e28c-46bd-9331-315957beea32
+		summarizeBy: none
+		sourceColumn: Rad_Media_Luz
+
+		annotation SummarizationSetBy = User
+
+	column Energia_Luz_MJ
+		dataType: double
+		formatString: 0.00
+		lineageTag: 3bdd395e-f573-4385-836a-a3d490fd383c
+		summarizeBy: none
+		sourceColumn: Energia_Luz_MJ
+
+		annotation SummarizationSetBy = User
+
+	partition Fact_Subdiaria_met_aux = m
+		mode: import
+		source =
+				let
+				    Fuente = TablaEstaciones_met,
+				
+				    EjecutarAPI = Table.AddColumn(
+				        Fuente,
+				        "Lecturas",
+				        each fxLecturasEstacion_met([estacionid], RangeStart, RangeEnd)
+				    ),
+				
+				    ExpandirLista = Table.ExpandListColumn(EjecutarAPI, "Lecturas"),
+				
+				    ExpandirCampos = Table.ExpandRecordColumn(
+				        ExpandirLista,
+				        "Lecturas",
+				        {
+				            "fecha", "precipitacion", "velocidad_viento",
+				            "temperatura", "radiacion", "humedad_relativa",
+				            "mojadura", "indice_calor", "direccion_viento", "eto"
+				        },
+				        {
+				            "fecha", "precipitacion", "velocidad_viento",
+				            "temperatura", "radiacion", "humedad_relativa",
+				            "mojadura", "indice_calor", "direccion_viento", "eto"
+				        }
+				    ),
+				
+				    CambiarTipos = Table.TransformColumnTypes(
+				        ExpandirCampos,
+				        {
+				            {"estacionid",       Int64.Type},
+				            {"fecha",            type datetime},
+				            {"precipitacion",    type number},
+				            {"velocidad_viento", type number},
+				            {"temperatura",      type number},
+				            {"radiacion",        type number},
+				            {"humedad_relativa", type number},
+				            {"mojadura",         type number},
+				            {"indice_calor",     type number},
+				            {"direccion_viento", type number},
+				            {"eto",              type number}
+				        }
+				    ),
+				
+				    FiltrarIncremental = Table.SelectRows(
+				        CambiarTipos,
+				        each
+				            [fecha] >= List.Max({RangeStart, #datetime(2008, 1, 1, 0, 0, 0)}) and
+				            [fecha] < RangeEnd
+				    ),
+				
+				    AgregarFecha = Table.AddColumn(
+				        FiltrarIncremental, "Fecha",
+				        each Date.From([fecha]), type date
+				    ),
+				
+				    AgregarHora = Table.AddColumn(
+				        AgregarFecha, "Hora",
+				        each Time.Hour(DateTime.Time([fecha])), Int64.Type
+				    ),
+				
+				    AgregarEsDiurno = Table.AddColumn(
+				        AgregarHora, "Es_Diurno",
+				        each [Hora] >= 6 and [Hora] <= 18, type logical
+				    ),
+				
+				    AgregarEsNocturno = Table.AddColumn(
+				        AgregarEsDiurno, "Es_Nocturno",
+				        each [Hora] >= 19 or [Hora] < 6, type logical
+				    ),
+				
+				    AgregarVPD = Table.AddColumn(
+				        AgregarEsNocturno, "VPD",
+				        each
+				            let
+				                T  = [temperatura],
+				                HR = [humedad_relativa],
+				                es = 0.6108 * Number.Exp(17.27 * T / (T + 237.3))
+				            in
+				                (1 - HR / 100) * es,
+				        type number
+				    ),
+				
+				    AgregarMojadura_Flag = Table.AddColumn(
+				        AgregarVPD, "Mojadura_Flag",
+				        each if [mojadura] <> null and [mojadura] > 4 then 0.25 else 0,
+				        type number
+				    ),
+				
+				    AgregarBrillo_Flag = Table.AddColumn(
+				        AgregarMojadura_Flag, "Brillo_Flag",
+				        each if [radiacion] <> null and [radiacion] > 40 then 0.25 else 0,
+				        type number
+				    ),
+				
+				    AgregarEstres_Flag = Table.AddColumn(
+				        AgregarBrillo_Flag, "Estres_Flag",
+				        each if [temperatura] <> null and [radiacion] <> null and [temperatura] > 35 and [radiacion] > 800 then 0.25 else 0,
+				        type number
+				    ),
+				
+				    Agrupado = Table.Group(
+				        AgregarEstres_Flag,
+				        {"estacionid", "Fecha"},
+				        {
+				            // ── Control de calidad ────────────────────────────────────
+				            {"N_Lecturas",
+				                each Table.RowCount(_),
+				                Int64.Type},
+				
+				            // ── Variables generales ───────────────────────────────────
+				            {"Precip_Max15min",
+				                each List.Max([precipitacion]),
+				                type number},
+				
+				            // ── Viento general ────────────────────────────────────────
+				            {"Viento_Max",
+				                each List.Max([velocidad_viento]),
+				                type number},
+				
+				            {"Hora_Viento_Max",
+				                each
+				                    let
+				                        maxV  = List.Max([velocidad_viento]),
+				                        pares = List.Select(
+				                            List.Zip({[velocidad_viento], [Hora]}),
+				                            each _{0} = maxV
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.First(pares){1},
+				                Int64.Type},
+				
+				            {"Direccion_Viento_Max",
+				                each
+				                    let
+				                        maxV  = List.Max([velocidad_viento]),
+				                        pares = List.Select(
+				                            List.Zip({[velocidad_viento], [direccion_viento]}),
+				                            each _{0} = maxV
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.First(pares){1},
+				                type number},
+				
+				            // ── Viento diurno ─────────────────────────────────────────
+				            {"Viento_Max_Diurno",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[velocidad_viento], [Es_Diurno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Max(List.Transform(pares, each _{0})),
+				                type number},
+				
+				            {"Viento_Media_Diurna",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[velocidad_viento], [Es_Diurno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Average(List.Transform(pares, each _{0})),
+				                type number},
+				
+				            {"Direccion_Predominante_Diurna",
+				                each
+				                    let
+				                        // promedio vectorial ponderado por velocidad (no aritmético)
+				                        pares = List.Select(
+				                            List.Zip({[velocidad_viento], [direccion_viento], [Es_Diurno]}),
+				                            each _{2} = true and _{0} <> null and _{1} <> null
+				                        ),
+				                        u = List.Sum(List.Transform(pares, each _{0} * Number.Sin(_{1} * Number.PI / 180))),
+				                        v = List.Sum(List.Transform(pares, each _{0} * Number.Cos(_{1} * Number.PI / 180)))
+				                    in
+				                        if List.IsEmpty(pares) or (u = 0 and v = 0) then null
+				                        else Number.Mod(Number.Atan2(u, v) * 180 / Number.PI + 360, 360),
+				                type number},
+				
+				            // ── Viento nocturno ───────────────────────────────────────
+				            {"Viento_Max_Nocturno",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[velocidad_viento], [Es_Nocturno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Max(List.Transform(pares, each _{0})),
+				                type number},
+				
+				            {"Viento_Media_Nocturna",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[velocidad_viento], [Es_Nocturno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Average(List.Transform(pares, each _{0})),
+				                type number},
+				
+				            // ── Temperatura nocturna ──────────────────────────────────
+				            {"Temp_Nocturna_Media",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[temperatura], [Es_Nocturno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Average(List.Transform(pares, each _{0})),
+				                type number},
+				
+				            {"Temp_Min_Nocturna",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[temperatura], [Es_Nocturno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Min(List.Transform(pares, each _{0})),
+				                type number},
+				
+				            // ── Horas de extremos ─────────────────────────────────────
+				            {"Hora_Temp_Max_Diurna",
+				                each
+				                    let
+				                        pares   = List.Select(
+				                            List.Zip({[temperatura], [Hora], [Es_Diurno]}),
+				                            each _{2} = true
+				                        ),
+				                        maxT    = if List.IsEmpty(pares) then null
+				                                  else List.Max(List.Transform(pares, each _{0})),
+				                        horaMax = List.Select(pares, each _{0} = maxT)
+				                    in
+				                        if List.IsEmpty(horaMax) then null
+				                        else List.First(horaMax){1},
+				                Int64.Type},
+				
+				            {"Hora_VPD_Max_Diurna",
+				                each
+				                    let
+				                        pares   = List.Select(
+				                            List.Zip({[VPD], [Hora], [Es_Diurno]}),
+				                            each _{2} = true
+				                        ),
+				                        maxV    = if List.IsEmpty(pares) then null
+				                                  else List.Max(List.Transform(pares, each _{0})),
+				                        horaMax = List.Select(pares, each _{0} = maxV)
+				                    in
+				                        if List.IsEmpty(horaMax) then null
+				                        else List.First(horaMax){1},
+				                Int64.Type},
+				
+				            {"Hora_IC_Max_Diurno",
+				                each
+				                    let
+				                        pares   = List.Select(
+				                            List.Zip({[indice_calor], [Hora], [Es_Diurno]}),
+				                            each _{2} = true
+				                        ),
+				                        maxIC   = if List.IsEmpty(pares) then null
+				                                  else List.Max(List.Transform(pares, each _{0})),
+				                        horaMax = List.Select(pares, each _{0} = maxIC)
+				                    in
+				                        if List.IsEmpty(horaMax) then null
+				                        else List.First(horaMax){1},
+				                Int64.Type},
+				
+				            {"Hora_Temp_Min_Nocturna",
+				                each
+				                    let
+				                        pares   = List.Select(
+				                            List.Zip({[temperatura], [Hora], [Es_Nocturno]}),
+				                            each _{2} = true
+				                        ),
+				                        minT    = if List.IsEmpty(pares) then null
+				                                  else List.Min(List.Transform(pares, each _{0})),
+				                        horaMin = List.Select(pares, each _{0} = minT)
+				                    in
+				                        if List.IsEmpty(horaMin) then null
+				                        else List.First(horaMin){1},
+				                Int64.Type},
+				
+				            {"Hora_ETO_Max_Diurna",
+				                each
+				                    let
+				                        pares   = List.Select(
+				                            List.Zip({[eto], [Hora], [Es_Diurno]}),
+				                            each _{2} = true
+				                        ),
+				                        maxETO  = if List.IsEmpty(pares) then null
+				                                  else List.Max(List.Transform(pares, each _{0})),
+				                        horaMax = List.Select(pares, each _{0} = maxETO)
+				                    in
+				                        if List.IsEmpty(horaMax) then null
+				                        else List.First(horaMax){1},
+				                Int64.Type},
+				
+				            // ── Mojadura ──────────────────────────────────────────────
+				            {"Mojadura_Horas_Total",
+				                each List.Sum([Mojadura_Flag]),
+				                type number},
+				
+				            {"Mojadura_Horas_Diurna",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[Mojadura_Flag], [Es_Diurno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        List.Sum(List.Transform(pares, each _{0})),
+				                type number},
+				
+				            {"Mojadura_Horas_Nocturna",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[Mojadura_Flag], [Es_Nocturno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        List.Sum(List.Transform(pares, each _{0})),
+				                type number},
+				
+				            {"Hora_Inicio_Mojadura",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[Mojadura_Flag], [Hora]}),
+				                            each _{0} > 0
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Min(List.Transform(pares, each _{1})),
+				                Int64.Type},
+				
+				            {"Hora_Fin_Mojadura",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[Mojadura_Flag], [Hora]}),
+				                            each _{0} > 0
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Max(List.Transform(pares, each _{1})),
+				                Int64.Type},
+				
+				            // ── Radiación diurna ──────────────────────────────────────
+				            {"Rad_Media_Diurna",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[radiacion], [Es_Diurno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Average(List.Transform(pares, each _{0})),
+				                type number},
+				
+				            {"Rad_Max_Diurna",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[radiacion], [Es_Diurno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Max(List.Transform(pares, each _{0})),
+				                type number},
+				
+				            // ── Periodo de luz (radiación > 40 W/m²) ─────────────────
+				            // La luz define el periodo diurno: de la primera a la última lectura > 40 W/m².
+				            {"Hora_Inicio_Luz",
+				                each
+				                    let
+				                        t = List.Transform(
+				                                List.Select(List.Zip({[radiacion], [fecha]}), each _{0} <> null and _{0} > 40),
+				                                each Time.Hour(DateTime.Time(_{1})) + Time.Minute(DateTime.Time(_{1})) / 60)
+				                    in
+				                        if List.IsEmpty(t) then null else List.Min(t),
+				                type number},
+				            {"Hora_Fin_Luz",
+				                each
+				                    let
+				                        t = List.Transform(
+				                                List.Select(List.Zip({[radiacion], [fecha]}), each _{0} <> null and _{0} > 40),
+				                                each Time.Hour(DateTime.Time(_{1})) + Time.Minute(DateTime.Time(_{1})) / 60)
+				                    in
+				                        if List.IsEmpty(t) then null else List.Max(t),
+				                type number},
+				            // Irradiancia media de las lecturas disponibles DENTRO del periodo de luz
+				            // (incluye bajones por nubosidad; los faltantes no cuentan como cero)
+				            {"Rad_Media_Luz",
+				                each
+				                    let
+				                        hora   = (d) => Time.Hour(DateTime.Time(d)) + Time.Minute(DateTime.Time(d)) / 60,
+				                        pares  = List.Select(List.Zip({[radiacion], [fecha]}), each _{0} <> null),
+				                        luz    = List.Transform(List.Select(pares, each _{0} > 40), each hora(_{1})),
+				                        ini    = if List.IsEmpty(luz) then null else List.Min(luz),
+				                        fin    = if List.IsEmpty(luz) then null else List.Max(luz),
+				                        dentro = if ini = null then {} else
+				                                 List.Select(pares, each hora(_{1}) >= ini and hora(_{1}) <= fin)
+				                    in
+				                        if List.IsEmpty(dentro) then null
+				                        else List.Average(List.Transform(dentro, each _{0})),
+				                type number},
+				
+				            // ── Índice de calor diurno ────────────────────────────────
+				            {"IC_Max_Diurno",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[indice_calor], [Es_Diurno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Max(List.Transform(pares, each _{0})),
+				                type number},
+				
+				            {"IC_Media_Diurno",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[indice_calor], [Es_Diurno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Average(List.Transform(pares, each _{0})),
+				                type number},
+				
+				            // ── Brillo solar y estrés térmico ─────────────────────────
+				            {"Brillo_Solar_Horas",
+				                each List.Sum([Brillo_Flag]),
+				                type number},
+				
+				            {"Horas_Estres_Termico",
+				                each List.Sum([Estres_Flag]),
+				                type number},
+				
+				            // ── ETO subdiaria ─────────────────────────────────────────
+				            {"ETO_Max_Diurna",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[eto], [Es_Diurno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Max(List.Transform(pares, each _{0})),
+				                type number},
+				
+				            {"ETO_Acum_Diurna",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[eto], [Es_Diurno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Sum(List.Transform(pares, each _{0})),
+				                type number},
+				
+				            {"ETO_Acum_Nocturna",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[eto], [Es_Nocturno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Sum(List.Transform(pares, each _{0})),
+				                type number},
+				
+				            // ── VPD diurno ────────────────────────────────────────────
+				            {"VPD_Media_Diurna",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[VPD], [Es_Diurno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Average(List.Transform(pares, each _{0})),
+				                type number},
+				
+				            {"VPD_Max_Diurna",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[VPD], [Es_Diurno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Max(List.Transform(pares, each _{0})),
+				                type number},
+				
+				            // ── VPD nocturno ──────────────────────────────────────────
+				            {"VPD_Media_Nocturna",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[VPD], [Es_Nocturno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Average(List.Transform(pares, each _{0})),
+				                type number},
+				
+				            {"VPD_Min_Nocturno",
+				                each
+				                    let
+				                        pares = List.Select(
+				                            List.Zip({[VPD], [Es_Nocturno]}),
+				                            each _{1} = true
+				                        )
+				                    in
+				                        if List.IsEmpty(pares) then null
+				                        else List.Min(List.Transform(pares, each _{0})),
+				                type number}
+				        }
+				    ),
+				
+				    // Duración del periodo de luz (h) y energía diurna (MJ/m²)
+				    AgregarDuracionLuz = Table.AddColumn(
+				        Agrupado, "Duracion_Luz_h",
+				        each if [Hora_Inicio_Luz] = null then null
+				             else [Hora_Fin_Luz] - [Hora_Inicio_Luz] + 0.25,
+				        type number
+				    ),
+				    AgregarEnergiaLuz = Table.AddColumn(
+				        AgregarDuracionLuz, "Energia_Luz_MJ",
+				        each if [Rad_Media_Luz] = null or [Duracion_Luz_h] = null then null
+				             else [Rad_Media_Luz] * [Duracion_Luz_h] * 3600 / 1000000,
+				        type number
+				    ),
+				    AgregarDiaCompleto = Table.AddColumn(
+				        AgregarEnergiaLuz, "Dia_Completo",
+				        each [N_Lecturas] >= 80, type logical
+				    ),
+				
+				    TiposFinales = Table.TransformColumnTypes(
+				        AgregarDiaCompleto,
+				        {
+				            {"estacionid", Int64.Type},
+				            {"Fecha",      type date}
+				        }
+				    )
+				
+				in
+				    TiposFinales
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Exception
+

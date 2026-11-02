@@ -1,0 +1,204 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 185086.03014723907
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 316.01947232185717,
+            "y": 185931.80921483814
+          },
+          "nodeIndex": "Estaciones_met",
+          "nodeLineageTag": "5fa51949-d0d5-46c2-8e57-eb2ad5f1c306",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 10
+        },
+        {
+          "location": {
+            "x": 658.3526091323356,
+            "y": 185453.43342078707
+          },
+          "nodeIndex": "Fact_Meteorologia",
+          "nodeLineageTag": "58493de9-5a55-4d29-895d-845d5fa93cfa",
+          "size": {
+            "height": 435.295982134934,
+            "width": 234
+          },
+          "zIndex": 11
+        },
+        {
+          "location": {
+            "x": 33.912934461373155,
+            "y": 186019.70157841546
+          },
+          "nodeIndex": "TablaEstaciones_met",
+          "nodeLineageTag": "80de8401-70b7-46e8-a96b-2e467f590a8f",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 1091.5758044749464,
+            "y": 185937.86507896433
+          },
+          "nodeIndex": "Calendario",
+          "nodeLineageTag": "aa2610df-ea34-410c-b6fe-8551cf04881a",
+          "size": {
+            "height": 299.16020229710421,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 656.95691908676065,
+            "y": 185945.46864418461
+          },
+          "nodeIndex": "Fact_Diaria_met",
+          "nodeLineageTag": "401635d7-fdaa-43e4-aa31-94df1ae98c8f",
+          "size": {
+            "height": 286.9184217570189,
+            "width": 234
+          },
+          "zIndex": 12
+        },
+        {
+          "location": {
+            "x": 1469.7738548189507,
+            "y": 185942.07500765007
+          },
+          "nodeIndex": "_Medidas",
+          "nodeLineageTag": "a4cc8d0f-dd65-4ae6-85b0-267d1aa4653d",
+          "size": {
+            "height": 451.2360826197845,
+            "width": 234
+          },
+          "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 1468.2481232556047,
+            "y": 185506.73498421456
+          },
+          "nodeIndex": "Semanas_Grafica",
+          "nodeLineageTag": "bd780575-a0e3-432a-839f-2246b5ff47ef",
+          "size": {
+            "height": 180.77084763682069,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 654.33408402006739,
+            "y": 186350.203336083
+          },
+          "nodeIndex": "Fact_Subdiaria_met_aux",
+          "nodeLineageTag": "2f1efd50-9d0e-47c5-8eb1-b0bcde6f53e5",
+          "size": {
+            "height": 394.43415757854018,
+            "width": 234
+          },
+          "zIndex": 14
+        },
+        {
+          "location": {
+            "x": 1468.8504344488947,
+            "y": 185373.91253385093
+          },
+          "nodeIndex": "Semanas_Anio",
+          "nodeLineageTag": "32ae696a-5ab9-46b9-bce3-b4a16a2a7982",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 1427.2578179115749,
+            "y": 187127.56357819602
+          },
+          "nodeIndex": "Horas_Dia",
+          "nodeLineageTag": "b3f64462-11fe-465b-aaea-861ae4feedb2",
+          "size": {
+            "height": 145,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 1279.1580180500853,
+            "y": 186875.44334810597
+          },
+          "nodeIndex": "Plagas",
+          "nodeLineageTag": "6c6aca5c-9df3-4be4-8538-1948a6083b20",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 7
+        },
+        {
+          "location": {
+            "x": 1102.8009736245569,
+            "y": 187047.43088858481
+          },
+          "nodeIndex": "Fact_Horaria_riesgo",
+          "nodeLineageTag": "bc37c599-afbc-48db-8578-57377859e40b",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 13
+        },
+        {
+          "location": {
+            "x": 1878.5960935686846,
+            "y": 185678.40956787934
+          },
+          "nodeIndex": "Periodos_Dia",
+          "nodeLineageTag": "587cec53-d100-4af2-9927-9444e64d683f",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 9
+        },
+        {
+          "location": {
+            "x": 1897.4910670610257,
+            "y": 185881.78794418898
+          },
+          "nodeIndex": "Direcciones_Viento",
+          "nodeLineageTag": "5030a08e-14d0-40d8-8941-dd9de605339b",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 8
+        }
+      ],
+      "name": "Todas las tablas",
+      "zoomValue": 49.590342827053796,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "Todas las tablas",
+  "defaultDiagram": "Todas las tablas"
+}

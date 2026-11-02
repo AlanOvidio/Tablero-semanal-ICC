@@ -1,0 +1,304 @@
+table Calendario
+	lineageTag: aa2610df-ea34-410c-b6fe-8551cf04881a
+	dataCategory: Time
+
+	column Fecha
+		dataType: dateTime
+		isKey
+		formatString: dd-mmm
+		lineageTag: 45ad791c-98f6-4abc-9002-6020149a6baf
+		summarizeBy: none
+		sourceColumn: Fecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Mes_Num
+		dataType: int64
+		formatString: 0
+		lineageTag: e22acbc7-27e7-421a-a356-07c7063c929c
+		summarizeBy: sum
+		sourceColumn: Mes_Num
+
+		annotation SummarizationSetBy = Automatic
+
+	column Dia_Semana
+		dataType: string
+		lineageTag: 62d3acdc-037a-468c-a05c-cda3cc9a40fb
+		summarizeBy: none
+		sourceColumn: Dia_Semana
+		sortByColumn: Dia_Semana_Num
+
+		annotation SummarizationSetBy = Automatic
+
+	column Año_Hidrologico
+		dataType: int64
+		formatString: 0
+		lineageTag: 2b871a76-b3d4-4a28-b590-11d9269fcff2
+		summarizeBy: sum
+		sourceColumn: Año_Hidrologico
+
+		annotation SummarizationSetBy = Automatic
+
+	column Semana_Hidrologica
+		dataType: int64
+		formatString: 0
+		lineageTag: abb9cc04-0b0f-401a-ace0-503bb6c19d9e
+		summarizeBy: sum
+		sourceColumn: Semana_Hidrologica
+
+		annotation SummarizationSetBy = Automatic
+
+	column Semana_Etiqueta
+		dataType: string
+		lineageTag: d549aeaf-58cd-481d-9566-779691c9831f
+		summarizeBy: none
+		sourceColumn: Semana_Etiqueta
+		sortByColumn: Inicio_Semana
+
+		annotation SummarizationSetBy = Automatic
+
+	column Anio
+		dataType: int64
+		formatString: 0
+		lineageTag: b79d43eb-decd-4116-8fa4-f0a6586b9f92
+		summarizeBy: sum
+		sourceColumn: Anio
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mes_Nombre
+		dataType: string
+		lineageTag: 592431fd-a23d-4739-8b8b-54bb4f62d551
+		summarizeBy: none
+		sourceColumn: Mes_Nombre
+		sortByColumn: Mes_Num
+
+		annotation SummarizationSetBy = Automatic
+
+	column Dia_Semana_Num
+		dataType: int64
+		formatString: 0
+		lineageTag: bfecc278-56c3-4f99-bb24-7bec82fdd630
+		summarizeBy: sum
+		sourceColumn: Dia_Semana_Num
+
+		annotation SummarizationSetBy = Automatic
+
+	column Inicio_Semana
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 8ebd3853-73c9-4de1-a83a-61eefa35756d
+		summarizeBy: none
+		sourceColumn: Inicio_Semana
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Fin_Semana
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 390c36ad-c9e8-49b4-af66-f9f9d2c80cae
+		summarizeBy: none
+		sourceColumn: Fin_Semana
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Semana_Anio_Etiqueta
+		dataType: string
+		lineageTag: 8ceeb753-fc49-42d0-9be1-cbb876e3a8f7
+		summarizeBy: none
+		sourceColumn: Semana_Anio_Etiqueta
+		sortByColumn: Inicio_Semana
+
+		annotation SummarizationSetBy = Automatic
+
+	column Semana_Anio_Num
+		dataType: int64
+		formatString: 0
+		lineageTag: eb7aa889-da14-41cf-89f3-f42ee3825b12
+		summarizeBy: sum
+		sourceColumn: Semana_Anio_Num
+
+		annotation SummarizationSetBy = Automatic
+
+	column Fecha_Corta
+		dataType: string
+		lineageTag: c62b3dcf-f6b7-4272-bde8-01492d5049e1
+		summarizeBy: none
+		sourceColumn: Fecha_Corta
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Jerarquía hidrológica'
+		lineageTag: 623d0f04-0e6f-483d-b404-c33f09eef519
+
+		level 'Año hidrológico'
+			lineageTag: a783d5e6-fe16-45b7-a80b-c8595aa74c4f
+			column: Año_Hidrologico
+
+		level Semana
+			lineageTag: 3be1f936-05a0-4716-a1c0-0fbb99315117
+			column: Semana_Hidrologica
+
+		level Fecha
+			lineageTag: 6b648f9f-f918-4fbe-8bdb-84851b46f02f
+			column: Fecha
+
+	partition Calendario = m
+		mode: import
+		source =
+				let
+				    FechaInicio = #date(2008, 1, 1),
+				    FechaFin    = Date.From(DateTime.LocalNow()),
+				
+				    MesInicioHidro = Date.Month(InicioAnioHidrologico),
+				    DiaInicioHidro = Date.Day(InicioAnioHidrologico),
+				
+				    ListaFechas = List.Dates(
+				        FechaInicio,
+				        Duration.Days(FechaFin - FechaInicio) + 1,
+				        #duration(1, 0, 0, 0)
+				    ),
+				
+				    Tabla = Table.FromList(
+				        ListaFechas,
+				        Splitter.SplitByNothing(),
+				        {"Fecha"}
+				    ),
+				
+				    TipoFecha = Table.TransformColumnTypes(
+				        Tabla, {{"Fecha", type date}}
+				    ),
+				
+				    AgregaAnio = Table.AddColumn(
+				        TipoFecha, "Anio",
+				        each Date.Year([Fecha]), Int64.Type
+				    ),
+				
+				    AgregaMes = Table.AddColumn(
+				        AgregaAnio, "Mes_Num",
+				        each Date.Month([Fecha]), Int64.Type
+				    ),
+				
+				    AgregaNombreMes = Table.AddColumn(
+				        AgregaMes, "Mes_Nombre",
+				        each Date.ToText([Fecha], "MMMM", "es-GT"), type text
+				    ),
+				
+				    AgregaDiaSemanaNum = Table.AddColumn(
+				        AgregaNombreMes, "Dia_Semana_Num",
+				        each Date.DayOfWeek([Fecha], Day.Monday), Int64.Type
+				    ),
+				
+				    AgregaDiaSemana = Table.AddColumn(
+				        AgregaDiaSemanaNum, "Dia_Semana",
+				        each Date.DayOfWeekName([Fecha], "es-GT"), type text
+				    ),
+				
+				    // Lunes de la semana a la que pertenece esta fecha
+				    AgregaInicioSemana = Table.AddColumn(
+				        AgregaDiaSemana, "Inicio_Semana",
+				        each Date.AddDays([Fecha], -[Dia_Semana_Num]), type date
+				    ),
+				
+				    // Domingo de esa misma semana
+				    AgregaFinSemana = Table.AddColumn(
+				        AgregaInicioSemana, "Fin_Semana",
+				        each Date.AddDays([Inicio_Semana], 6), type date
+				    ),
+				
+				    // Año hidrológico basado en Inicio_Semana
+				    // Si Inicio_Semana >= lunes de la semana del inicio hidrológico
+				    // → pertenece al año hidrológico SIGUIENTE
+				    AgregaAñoHidro = Table.AddColumn(
+				        AgregaFinSemana, "Año_Hidrologico",
+				        each
+				            let
+				                AnioIni     = Date.Year([Inicio_Semana]),
+				                InicioHidro = #date(AnioIni, MesInicioHidro, DiaInicioHidro),
+				                DiaSeiNov   = Date.DayOfWeek(InicioHidro, Day.Monday),
+				                LunesInicio = Date.AddDays(InicioHidro, -DiaSeiNov)
+				            in
+				                if [Inicio_Semana] >= LunesInicio
+				                then AnioIni + 1  // ← CORRECCIÓN: suma 1
+				                else AnioIni,
+				        Int64.Type
+				    ),
+				
+				    // Semana hidrológica basada en Inicio_Semana
+				    // El inicio del año hidrológico es AnioH - 1
+				    AgregaSemanaHidro = Table.AddColumn(
+				        AgregaAñoHidro, "Semana_Hidrologica",
+				        each
+				            let
+				                AnioH       = [Año_Hidrologico] - 1,  // ← CORRECCIÓN: resta 1
+				                InicioHidro = #date(AnioH, MesInicioHidro, DiaInicioHidro),
+				                DiaSeiNov   = Date.DayOfWeek(InicioHidro, Day.Monday),
+				                LunesInicio = Date.AddDays(InicioHidro, -DiaSeiNov),
+				                Dias        = Duration.Days([Inicio_Semana] - LunesInicio)
+				            in
+				                Number.IntegerDivide(Dias, 7) + 1,
+				        Int64.Type
+				    ),
+				
+				    // Etiqueta semana hidrológica
+				    AgregaEtiquetaSemana = Table.AddColumn(
+				        AgregaSemanaHidro, "Semana_Etiqueta",
+				        each
+				            Text.PadStart(Text.From([Semana_Hidrologica]), 2, "0") &
+				            " | " &
+				            Text.From([Año_Hidrologico]) &
+				            " (" &
+				            Date.ToText([Inicio_Semana], "dd-MMM", "es-GT") &
+				            " - " &
+				            Date.ToText([Fin_Semana], "dd-MMM", "es-GT") &
+				            ")",
+				        type text
+				    ),
+				
+				    // Etiqueta semana calendario estándar
+				    AgregaEtiquetaSemanaAnio = Table.AddColumn(
+				        AgregaEtiquetaSemana, "Semana_Anio_Etiqueta",
+				        each
+				            Text.From([Anio]) &
+				            " - S" &
+				            Text.PadStart(
+				                Text.From(Date.WeekOfYear([Inicio_Semana], Day.Monday)),
+				                2, "0"
+				            ) &
+				            " (" &
+				            Date.ToText([Inicio_Semana], "dd-MMM", "es-GT") &
+				            " - " &
+				            Date.ToText([Fin_Semana], "dd-MMM", "es-GT") &
+				            ")",
+				        type text
+				    ),
+				
+				    // Número de semana del año
+				    AgregaNumSemanaAnio = Table.AddColumn(
+				        AgregaEtiquetaSemanaAnio, "Semana_Anio_Num",
+				        each Date.WeekOfYear([Inicio_Semana], Day.Monday), Int64.Type
+				    ),
+				    //Agregar fecha corta
+				    AgregaFechaCorta = Table.AddColumn(
+				    AgregaNumSemanaAnio, "Fecha_Corta",
+				    each Date.ToText([Fecha], "dd-MMM", "es-GT"), type text
+				),
+				
+				    // Ordenamiento
+				    #"Filas ordenadas" = Table.Sort(
+				        AgregaFechaCorta, {{"Fecha", Order.Descending}}
+				    )
+				
+				in
+				    #"Filas ordenadas"
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

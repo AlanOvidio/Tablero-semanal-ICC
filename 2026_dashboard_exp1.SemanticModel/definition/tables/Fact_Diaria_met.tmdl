@@ -1,0 +1,576 @@
+table Fact_Diaria_met
+	lineageTag: 401635d7-fdaa-43e4-aa31-94df1ae98c8f
+
+	refreshPolicy
+		policyType: basic
+		rollingWindowGranularity: year
+		rollingWindowPeriods: 18
+		incrementalGranularity: day
+		incrementalPeriods: 7
+		sourceExpression =
+			let
+			    Fuente = TablaEstaciones_met,
+			
+			    EjecutarAPI = Table.AddColumn(
+			        Fuente,
+			        "Lecturas",
+			        each fxLecturasEstacion_met_diario([estacionid], RangeStart, RangeEnd)
+			    ),
+			
+			    ExpandirLista = Table.ExpandListColumn(EjecutarAPI, "Lecturas"),
+			
+			    ExpandirCampos = Table.ExpandRecordColumn(
+			        ExpandirLista,
+			        "Lecturas",
+			        {
+			            "dia", "tempavg", "tempmin", "tempmax",
+			            "radiaciontotal", "humedadavg", "humedadmin", "humedadmax",
+			            "vientoavg", "lluviasum", "etosum"
+			        },
+			        {
+			            "Fecha", "Temp_Media", "Temp_Min", "Temp_Max",
+			            "Rad_Total", "HR_Media", "HR_Min", "HR_Max",
+			            "Viento_Media", "Precip_Total", "ETO_Total"
+			        }
+			    ),
+			
+			    // ETO llega como texto; vacíos quedan null (no 0)
+			    ConvertirTextos = Table.TransformColumnTypes(
+			        ExpandirCampos,
+			        {{"ETO_Total", type text}}
+			    ),
+			
+			    ReemplazarNulos = Table.ReplaceValue(
+			        ConvertirTextos,
+			        null, null, Replacer.ReplaceValue,
+			        {"ETO_Total"}
+			    ),
+			
+			    ReemplazarVacios = Table.ReplaceValue(
+			        ReemplazarNulos,
+			        "", null, Replacer.ReplaceValue,
+			        {"ETO_Total"}
+			    ),
+			
+			    CambiarTipos = Table.TransformColumnTypes(
+			        ReemplazarVacios,
+			        {
+			            {"estacionid",  Int64.Type},
+			            {"Fecha",       type date},
+			            {"Temp_Media",  type number},
+			            {"Temp_Min",    type number},
+			            {"Temp_Max",    type number},
+			            {"Rad_Total",   type number},
+			            {"HR_Media",    type number},
+			            {"HR_Min",      type number},
+			            {"HR_Max",      type number},
+			            {"Viento_Media",type number},
+			            {"Precip_Total",type number},
+			            {"ETO_Total",   type number}
+			        }
+			    ),
+			
+			    // ── FILTRO INCREMENTAL PRIMERO ────────────────────────────────────
+			    FiltrarIncremental = Table.SelectRows(
+			        CambiarTipos,
+			        each
+			            [Fecha] >= Date.From(List.Max({RangeStart, #datetime(2008, 1, 1, 0, 0, 0)})) and
+			            [Fecha] < Date.From(RangeEnd)
+			    ),
+			
+			    // Radiación en MJ/m²/día: Σ lecturas 15 min (W/m²) × 900 s / 1e6
+			    AgregarRad_MJ = Table.AddColumn(
+			        FiltrarIncremental, "Rad_MJ",
+			        each [Rad_Total] * 900 / 1000000, type number
+			    ),
+			
+			    // Amplitud térmica
+			    AgregarAmplitud = Table.AddColumn(
+			        AgregarRad_MJ, "Amplitud_Termica",
+			        each [Temp_Max] - [Temp_Min], type number
+			    ),
+			
+			    // Balance hídrico diario
+			    AgregarBalance = Table.AddColumn(
+			        AgregarAmplitud, "Balance_Hidrico",
+			        each [Precip_Total] - [ETO_Total], type number
+			    ),
+			
+			    // Día seco
+			    AgregarDiaSeco = Table.AddColumn(
+			        AgregarBalance, "Dia_Seco",
+			        each [Precip_Total] < 1, type logical
+			    ),
+			
+			    // GDD base 10°C
+			    AgregarGDD_Base10 = Table.AddColumn(
+			        AgregarDiaSeco, "GDD_Base10",
+			        each
+			            let gdd = [Temp_Media] - 10
+			            in if gdd > 0 then gdd else 0,
+			        type number
+			    ),
+			
+			    // GDD base 15°C
+			    AgregarGDD_Base15 = Table.AddColumn(
+			        AgregarGDD_Base10, "GDD_Base15",
+			        each
+			            let gdd = [Temp_Media] - 15
+			            in if gdd > 0 then gdd else 0,
+			        type number
+			    ),
+			
+			    // Suma térmica caña (base 10, óptima 34)
+			    AgregarGDD_Cana_ST = Table.AddColumn(
+			        AgregarGDD_Base15, "GDD_Cana_ST",
+			        each
+			            if [Temp_Media] <= 10 then 0
+			            else if [Temp_Media] >= 34 then 34 - 10
+			            else [Temp_Media] - 10,
+			        type number
+			    ),
+			
+			    // Suma térmica banano (base 15, óptima 28)
+			    AgregarGDD_Banano_ST = Table.AddColumn(
+			        AgregarGDD_Cana_ST, "GDD_Banano_ST",
+			        each
+			            if [Temp_Media] <= 15 then 0
+			            else if [Temp_Media] >= 28 then 28 - 15
+			            else [Temp_Media] - 15,
+			        type number
+			    ),
+			
+			    // Suma térmica aguacate (base 10, óptima 24)
+			    AgregarGDD_Aguacate_ST = Table.AddColumn(
+			        AgregarGDD_Banano_ST, "GDD_Aguacate_ST",
+			        each
+			            if [Temp_Media] <= 10 then 0
+			            else if [Temp_Media] >= 24 then 24 - 10
+			            else [Temp_Media] - 10,
+			        type number
+			    ),
+			
+			    // Suma térmica palma (base 15, óptima 30)
+			    AgregarGDD_Palma_ST = Table.AddColumn(
+			        AgregarGDD_Aguacate_ST, "GDD_Palma_ST",
+			        each
+			            if [Temp_Media] <= 15 then 0
+			            else if [Temp_Media] >= 30 then 30 - 15
+			            else [Temp_Media] - 15,
+			        type number
+			    ),
+			
+			    // Suma térmica maíz (base 10, óptima 30)
+			    AgregarGDD_Maiz_ST = Table.AddColumn(
+			        AgregarGDD_Palma_ST, "GDD_Maiz_ST",
+			        each
+			            if [Temp_Media] <= 10 then 0
+			            else if [Temp_Media] >= 30 then 30 - 10
+			            else [Temp_Media] - 10,
+			        type number
+			    )
+			
+			in
+			    AgregarGDD_Maiz_ST
+
+	column estacionid
+		dataType: int64
+		formatString: 0
+		lineageTag: cbebb0cc-c51a-40de-8318-3cbd1d575632
+		summarizeBy: none
+		sourceColumn: estacionid
+
+		annotation SummarizationSetBy = Automatic
+
+	column Fecha
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 99e18539-32fc-4bab-a247-f9ee4e7cf28a
+		summarizeBy: none
+		sourceColumn: Fecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Temp_Max
+		dataType: double
+		lineageTag: d0806617-c288-4c35-8dbd-622660b13ad3
+		summarizeBy: sum
+		sourceColumn: Temp_Max
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Temp_Min
+		dataType: double
+		lineageTag: 4ca2ea4e-0635-4590-9725-2ee98d82c4e9
+		summarizeBy: sum
+		sourceColumn: Temp_Min
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Temp_Media
+		dataType: double
+		lineageTag: a67a2c01-9279-4be1-9ba8-4be90881fbf6
+		summarizeBy: sum
+		sourceColumn: Temp_Media
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column HR_Media
+		dataType: double
+		lineageTag: 179aa64a-f94b-4967-8277-031f9559fc43
+		summarizeBy: sum
+		sourceColumn: HR_Media
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column HR_Min
+		dataType: double
+		lineageTag: 630d3815-4021-4882-ab33-b015536345e3
+		summarizeBy: sum
+		sourceColumn: HR_Min
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Precip_Total
+		dataType: double
+		lineageTag: fe5a29d0-3971-4c7c-9aad-212adc5c0f47
+		summarizeBy: sum
+		sourceColumn: Precip_Total
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Viento_Media
+		dataType: double
+		lineageTag: 6b1b3a7e-11c8-4d3a-b111-337931b3b3d6
+		summarizeBy: sum
+		sourceColumn: Viento_Media
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ETO_Total
+		dataType: double
+		lineageTag: 79fb9645-a625-4726-af45-ba3281e63645
+		summarizeBy: sum
+		sourceColumn: ETO_Total
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Balance_Hidrico
+		dataType: double
+		lineageTag: 2757db0b-55cf-4822-aaf3-a0a8d102753b
+		summarizeBy: sum
+		sourceColumn: Balance_Hidrico
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Rad_Total
+		dataType: double
+		lineageTag: 53c9f667-a060-42fc-a29e-2410890dea10
+		summarizeBy: sum
+		sourceColumn: Rad_Total
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column HR_Max
+		dataType: double
+		lineageTag: 719fc16f-d33e-4f3e-b059-460a426f9826
+		summarizeBy: sum
+		sourceColumn: HR_Max
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Rad_MJ
+		dataType: double
+		lineageTag: 9bf2c462-a544-4e54-9b0f-36719b5bbf9b
+		summarizeBy: sum
+		sourceColumn: Rad_MJ
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Amplitud_Termica
+		dataType: double
+		lineageTag: 28501cb7-9784-4a5b-8e8d-97287080fb89
+		summarizeBy: sum
+		sourceColumn: Amplitud_Termica
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Dia_Seco
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 1ff3c7d9-d2e7-498b-981a-a1bb56a1edd5
+		summarizeBy: none
+		sourceColumn: Dia_Seco
+
+		annotation SummarizationSetBy = Automatic
+
+	column GDD_Base10
+		dataType: double
+		lineageTag: c1069f51-31f1-4969-acba-e0057f067619
+		summarizeBy: sum
+		sourceColumn: GDD_Base10
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column GDD_Base15
+		dataType: double
+		lineageTag: 04e5824f-0c6d-495a-bd4a-ec26a1464747
+		summarizeBy: sum
+		sourceColumn: GDD_Base15
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column GDD_Cana_ST
+		dataType: double
+		lineageTag: c7239bfd-40fa-4a78-9057-9d0bf09e2a5b
+		summarizeBy: sum
+		sourceColumn: GDD_Cana_ST
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column GDD_Banano_ST
+		dataType: double
+		lineageTag: a9e5fe68-78cc-4329-8d17-031ee237ef10
+		summarizeBy: sum
+		sourceColumn: GDD_Banano_ST
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column GDD_Aguacate_ST
+		dataType: double
+		lineageTag: 80ac1807-8821-4507-a8e4-d6b73b75fba8
+		summarizeBy: sum
+		sourceColumn: GDD_Aguacate_ST
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column GDD_Palma_ST
+		dataType: double
+		lineageTag: df89b7fe-a6e0-448a-b7b6-4f61bd4784ad
+		summarizeBy: sum
+		sourceColumn: GDD_Palma_ST
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column GDD_Maiz_ST
+		dataType: double
+		lineageTag: 49a31231-1a8f-4da5-88d4-d36a5aa9166a
+		summarizeBy: sum
+		sourceColumn: GDD_Maiz_ST
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Fact_Diaria_met = m
+		mode: import
+		source =
+				let
+				    Fuente = TablaEstaciones_met,
+				
+				    EjecutarAPI = Table.AddColumn(
+				        Fuente,
+				        "Lecturas",
+				        each fxLecturasEstacion_met_diario([estacionid], RangeStart, RangeEnd)
+				    ),
+				
+				    ExpandirLista = Table.ExpandListColumn(EjecutarAPI, "Lecturas"),
+				
+				    ExpandirCampos = Table.ExpandRecordColumn(
+				        ExpandirLista,
+				        "Lecturas",
+				        {
+				            "dia", "tempavg", "tempmin", "tempmax",
+				            "radiaciontotal", "humedadavg", "humedadmin", "humedadmax",
+				            "vientoavg", "lluviasum", "etosum"
+				        },
+				        {
+				            "Fecha", "Temp_Media", "Temp_Min", "Temp_Max",
+				            "Rad_Total", "HR_Media", "HR_Min", "HR_Max",
+				            "Viento_Media", "Precip_Total", "ETO_Total"
+				        }
+				    ),
+				
+				    // ETO llega como texto; vacíos quedan null (no 0)
+				    ConvertirTextos = Table.TransformColumnTypes(
+				        ExpandirCampos,
+				        {{"ETO_Total", type text}}
+				    ),
+				
+				    ReemplazarNulos = Table.ReplaceValue(
+				        ConvertirTextos,
+				        null, null, Replacer.ReplaceValue,
+				        {"ETO_Total"}
+				    ),
+				
+				    ReemplazarVacios = Table.ReplaceValue(
+				        ReemplazarNulos,
+				        "", null, Replacer.ReplaceValue,
+				        {"ETO_Total"}
+				    ),
+				
+				    CambiarTipos = Table.TransformColumnTypes(
+				        ReemplazarVacios,
+				        {
+				            {"estacionid",  Int64.Type},
+				            {"Fecha",       type date},
+				            {"Temp_Media",  type number},
+				            {"Temp_Min",    type number},
+				            {"Temp_Max",    type number},
+				            {"Rad_Total",   type number},
+				            {"HR_Media",    type number},
+				            {"HR_Min",      type number},
+				            {"HR_Max",      type number},
+				            {"Viento_Media",type number},
+				            {"Precip_Total",type number},
+				            {"ETO_Total",   type number}
+				        }
+				    ),
+				
+				    // ── FILTRO INCREMENTAL PRIMERO ────────────────────────────────────
+				    FiltrarIncremental = Table.SelectRows(
+				        CambiarTipos,
+				        each
+				            [Fecha] >= Date.From(List.Max({RangeStart, #datetime(2008, 1, 1, 0, 0, 0)})) and
+				            [Fecha] < Date.From(RangeEnd)
+				    ),
+				
+				    // Radiación en MJ/m²/día: Σ lecturas 15 min (W/m²) × 900 s / 1e6
+				    AgregarRad_MJ = Table.AddColumn(
+				        FiltrarIncremental, "Rad_MJ",
+				        each [Rad_Total] * 900 / 1000000, type number
+				    ),
+				
+				    // Amplitud térmica
+				    AgregarAmplitud = Table.AddColumn(
+				        AgregarRad_MJ, "Amplitud_Termica",
+				        each [Temp_Max] - [Temp_Min], type number
+				    ),
+				
+				    // Balance hídrico diario
+				    AgregarBalance = Table.AddColumn(
+				        AgregarAmplitud, "Balance_Hidrico",
+				        each [Precip_Total] - [ETO_Total], type number
+				    ),
+				
+				    // Día seco
+				    AgregarDiaSeco = Table.AddColumn(
+				        AgregarBalance, "Dia_Seco",
+				        each [Precip_Total] < 1, type logical
+				    ),
+				
+				    // GDD base 10°C
+				    AgregarGDD_Base10 = Table.AddColumn(
+				        AgregarDiaSeco, "GDD_Base10",
+				        each
+				            let gdd = [Temp_Media] - 10
+				            in if gdd > 0 then gdd else 0,
+				        type number
+				    ),
+				
+				    // GDD base 15°C
+				    AgregarGDD_Base15 = Table.AddColumn(
+				        AgregarGDD_Base10, "GDD_Base15",
+				        each
+				            let gdd = [Temp_Media] - 15
+				            in if gdd > 0 then gdd else 0,
+				        type number
+				    ),
+				
+				    // Suma térmica caña (base 10, óptima 34)
+				    AgregarGDD_Cana_ST = Table.AddColumn(
+				        AgregarGDD_Base15, "GDD_Cana_ST",
+				        each
+				            if [Temp_Media] <= 10 then 0
+				            else if [Temp_Media] >= 34 then 34 - 10
+				            else [Temp_Media] - 10,
+				        type number
+				    ),
+				
+				    // Suma térmica banano (base 15, óptima 28)
+				    AgregarGDD_Banano_ST = Table.AddColumn(
+				        AgregarGDD_Cana_ST, "GDD_Banano_ST",
+				        each
+				            if [Temp_Media] <= 15 then 0
+				            else if [Temp_Media] >= 28 then 28 - 15
+				            else [Temp_Media] - 15,
+				        type number
+				    ),
+				
+				    // Suma térmica aguacate (base 10, óptima 24)
+				    AgregarGDD_Aguacate_ST = Table.AddColumn(
+				        AgregarGDD_Banano_ST, "GDD_Aguacate_ST",
+				        each
+				            if [Temp_Media] <= 10 then 0
+				            else if [Temp_Media] >= 24 then 24 - 10
+				            else [Temp_Media] - 10,
+				        type number
+				    ),
+				
+				    // Suma térmica palma (base 15, óptima 30)
+				    AgregarGDD_Palma_ST = Table.AddColumn(
+				        AgregarGDD_Aguacate_ST, "GDD_Palma_ST",
+				        each
+				            if [Temp_Media] <= 15 then 0
+				            else if [Temp_Media] >= 30 then 30 - 15
+				            else [Temp_Media] - 15,
+				        type number
+				    ),
+				
+				    // Suma térmica maíz (base 10, óptima 30)
+				    AgregarGDD_Maiz_ST = Table.AddColumn(
+				        AgregarGDD_Palma_ST, "GDD_Maiz_ST",
+				        each
+				            if [Temp_Media] <= 10 then 0
+				            else if [Temp_Media] >= 30 then 30 - 10
+				            else [Temp_Media] - 10,
+				        type number
+				    )
+				
+				in
+				    AgregarGDD_Maiz_ST
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+
