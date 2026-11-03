@@ -154,7 +154,7 @@ table Calendario
 		source =
 				let
 				    FechaInicio = #date(2008, 1, 1),
-				    FechaFin    = Date.From(DateTime.LocalNow()),
+				    FechaFin    = Date.From(DateTimeZone.SwitchZone(DateTimeZone.UtcNow(), -6)),  // hora de Guatemala también en el servicio (UTC)
 				
 				    MesInicioHidro = Date.Month(InicioAnioHidrologico),
 				    DiaInicioHidro = Date.Day(InicioAnioHidrologico),

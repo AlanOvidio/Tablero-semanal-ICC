@@ -27,6 +27,17 @@ En el **servicio** estos parámetros no se usan: cada tabla con actualización i
 
 ## Publicar y actualizar en el servicio
 
+### Pasos para publicar una versión nueva
+
+1. Cerrar Desktop, confirmar en GitHub Desktop que no hay cambios sin commit y abrir `2026_dashboard_exp1.pbip` **de esta carpeta** (no la copia antigua de OneDrive).
+2. *Inicio → Actualizar* para comprobar que todo carga sin errores.
+3. *Inicio → Publicar* → elegir el área de trabajo de siempre → **Reemplazar** el modelo semántico `2026_dashboard_exp1`. Al conservar el nombre se mantienen el enlace, los permisos y la programación.
+4. En el servicio, *Configuración del modelo semántico → Credenciales del origen de datos*: el origen web `redmet.icc.org.gt` con autenticación **Anónima** y el nivel de privacidad que se usa en Desktop. Si el servicio pide revisar credenciales tras publicar, volver a guardarlas.
+5. Lanzar **Actualizar ahora**. Como el modelo se reemplazó, el servicio rehace las particiones y descarga todo el historial (ver tabla abajo); es la actualización más larga. Revisar el *Historial de actualizaciones* al terminar.
+6. Confirmar la **actualización programada**: después de la hora en que termina el control de calidad de datos.
+7. Si el tablero se comparte como **aplicación**, *Actualizar aplicación* para que los usuarios vean la versión nueva.
+
+
 | Tabla | Ventana | Refresca |
 |---|---|---|
 | `Fact_Diaria_met`, `Fact_Meteorologia` | 18 años | últimos 7 días |

@@ -24,6 +24,10 @@ Registrar aquí cada cambio relevante al modelo o al reporte: **qué** cambió, 
 
 ## Bitácora de cambios
 
+### 2026-11-03 · Preparación para el servicio
+- `Calendario`: la fecha final usa la hora de Guatemala (UTC−6) en lugar de la hora local de la máquina; en el servicio la hora es UTC.
+- Publicación: desde Desktop con el proyecto de este repositorio, reemplazando el modelo semántico `2026_dashboard_exp1` del área de trabajo. La carpeta de OneDrive queda solo como archivo.
+
 ### 2026-11-03 · Mapa de calor de variables y ejes por día
 - El mapa de calor tiene un selector **Ver** (tabla `Vistas_Mapa_Calor`): *Riesgos* (como antes) o una variable horaria: temperatura, humedad relativa, déficit de presión de vapor (calculado con T y HR horarias), sensación térmica, mojadura (% de horas-estación mojadas), lluvia (mm/h), viento (km/h) y radiación (W/m²).
 - Colores por rangos físicos fijos por variable (`Mapa_Calor_Color`, texto blanco en fondos oscuros); la leyenda va en el título (`Mapa_Calor_Titulo`). Formato dinámico de `Mapa_Calor_Valor` según la vista.
