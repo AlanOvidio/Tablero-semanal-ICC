@@ -24,6 +24,18 @@ Registrar aquí cada cambio relevante al modelo o al reporte: **qué** cambió, 
 
 ## Bitácora de cambios
 
+### 2026-11-03 · Fase 2: Resumen Semanal multicultivo
+- Segunda fila de segmentadores: **Cultivo** (selección única, Caña de azúcar por defecto) y **Estación** (desplegable, varias); tarjeta con título dinámico (`Titulo_Contexto`). El contenido existente bajó 80 px.
+- Bloque *Riesgos del cultivo* al final: conteo de riesgos en alerta/precaución, contexto productivo con `GDD_Cultivo_Acumulado`, matriz semáforo (riesgo, situación, umbrales, condición, aplicación, confianza) y matriz estrato/estación × riesgo coloreada con `Riesgo_Color`.
+- Mapa de calor horario con `Riesgo_Hora`; su segmentador usa `Riesgos_Cultivo[Riesgo]` (solo riesgos con condición horaria) y solo filtra el mapa. Si no hay riesgo elegido válido para el cultivo, se muestra el primero con condición horaria; el título (`Riesgo_Hora_Titulo`) indica cuál.
+- Gráfica de suma térmica con `GDD_Cultivo_Grafica` / `GDD_Cultivo_Anterior_Grafica` (base y tope del cultivo elegido).
+- Reporte: filtrado cruzado por defecto en lugar de resaltado.
+- Ajustes tras la primera prueba: el mapa de calor muestra 0 % (todas las horas con datos); `_Riesgo_En_Cultivo` garantiza que el semáforo, la matriz por estación y los conteos solo muestren riesgos del cultivo elegido; la rosa de vientos indica «Calma» cuando no hay viento ≥ 1.8 km/h.
+- Barrenador (caña) y pudrición del cogollo (palma) con versión horaria aproximada para el mapa de calor; coludo evaluado de noviembre a abril (fin de lluvias y transición).
+- La página *Resumen Semanal* deja de estar marcada como tooltip (estaba activada por error).
+- Descartado el relleno de días faltantes en acumulados: el tablero se actualiza después del control de calidad de datos.
+- Retirados: página *Resumen Semanal – Caña Azúcar*, tabla `Plagas` y medida `Condicion_Plaga_Hora` (copias en `_respaldo/fase2_2026-11-03/`). Las medidas `Dias_Riesgo_*` se conservan porque las usa *Validaciones 4*.
+
 ### 2026-11-03 · Fase 1b: motor de riesgos multicultivo
 - Nuevo generador `tools/generar_riesgos_modelo.py`: crea desde `config/riesgos_cultivo.csv` las tablas `Cultivos` (5 cultivos con base y tope de grados día) y `Riesgos_Cultivo` (42 riesgos a incluir con umbrales, unidad, aplicación, fuente y validación), y la tabla de medidas `_Riesgos`.
 - `_Riesgos`: una medida por riesgo (`R_<ID>`) y medidas genéricas para los visuales: `Riesgo_Valor`, `Riesgo_Semaforo` (umbrales desde la tabla; admite indicadores favorables invertidos), `Riesgo_Color`, `Riesgo_Etiqueta`, `Riesgos_En_Alerta`, `Riesgos_En_Precaucion`, `Riesgo_Hora` (mapa de calor horario), `GDD_Cultivo*` (grados día del cultivo seleccionado), `Cogollero_Generaciones`, `Salivosa_Lluvia_Temporada` y `Salivosa_Alerta_Emergencia`.
@@ -58,7 +70,5 @@ Registrar aquí cada cambio relevante al modelo o al reporte: **qué** cambió, 
 ## Pendientes / ideas
 
 - Validar los umbrales de riesgo con datos de campo.
-- Relleno de días faltantes en acumulados de radiación/ETo (Σ días con dato + media de la estación × días faltantes), si el diagnóstico de completitud lo justifica.
 - `Rad_Media_Diurna` (ventana fija) ya no se usa en visuales: evaluar su eliminación.
 - Página *Pronóstico Semanal* sin contenido.
-- La página *Resumen Semanal* está configurada como tipo *Tooltip*; revisar si es intencional.

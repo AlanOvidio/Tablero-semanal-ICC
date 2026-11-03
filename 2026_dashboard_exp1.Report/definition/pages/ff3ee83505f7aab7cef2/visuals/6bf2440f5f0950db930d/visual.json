@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
-  "name": "e92f27964b5e4dd40532",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "6bf2440f5f0950db930d",
   "position": {
-    "x": 21.666666666666668,
-    "y": 55,
-    "z": 0,
+    "x": 22,
+    "y": 135,
+    "z": 2100,
     "height": 70,
-    "width": 287.77777777777777,
-    "tabOrder": 0
+    "width": 560,
+    "tabOrder": 2100
   },
   "visual": {
     "visualType": "slicer",
@@ -20,14 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Calendario"
+                      "Entity": "Cultivos"
                     }
                   },
-                  "Property": "Año_Hidrologico"
+                  "Property": "Cultivo"
                 }
               },
-              "queryRef": "Calendario.Año_Hidrologico",
-              "nativeQueryRef": "Año_Hidrologico",
+              "queryRef": "Cultivos.Cultivo",
+              "nativeQueryRef": "Cultivo",
               "active": true
             }
           ]
@@ -41,7 +41,7 @@
             "mode": {
               "expr": {
                 "Literal": {
-                  "Value": "'Dropdown'"
+                  "Value": "'Basic'"
                 }
               }
             }
@@ -54,7 +54,7 @@
             "strictSingleSelect": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             }
@@ -64,13 +64,20 @@
       "general": [
         {
           "properties": {
+            "orientation": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            },
             "filter": {
               "filter": {
                 "Version": 2,
                 "From": [
                   {
                     "Name": "c",
-                    "Entity": "Calendario",
+                    "Entity": "Cultivos",
                     "Type": 0
                   }
                 ],
@@ -86,7 +93,7 @@
                                   "Source": "c"
                                 }
                               },
-                              "Property": "Año_Hidrologico"
+                              "Property": "Cultivo"
                             }
                           }
                         ],
@@ -94,7 +101,7 @@
                           [
                             {
                               "Literal": {
-                                "Value": "2026L"
+                                "Value": "'Caña de azúcar'"
                               }
                             }
                           ]
@@ -136,7 +143,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Año'"
+                  "Value": "'Cultivo'"
                 }
               }
             }

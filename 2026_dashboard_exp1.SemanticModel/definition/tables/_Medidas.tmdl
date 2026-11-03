@@ -1383,25 +1383,6 @@ table _Medidas
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure Condicion_Plaga_Hora =
-			
-			VAR EsRoya      = CALCULATE(HASONEVALUE(Plagas[id]), Plagas[id] = 1)
-			VAR EsCarbon    = CALCULATE(HASONEVALUE(Plagas[id]), Plagas[id] = 2)
-			VAR EsSalivosa  = CALCULATE(HASONEVALUE(Plagas[id]), Plagas[id] = 3)
-			VAR EsBarrenador = CALCULATE(HASONEVALUE(Plagas[id]), Plagas[id] = 4)
-			RETURN
-			SWITCH(
-			    TRUE(),
-			    EsRoya,       [Condicion_Roya_Hora],
-			    EsCarbon,     [Condicion_Carbon_Hora],
-			    EsSalivosa,   [Condicion_Salivosa_Hora],
-			    EsBarrenador, [Condicion_Barrenador_Hora],
-			    [Indice_Riesgo_Hora]
-			)
-		lineageTag: b7381dcd-4eec-47a7-afa7-8e6e9b1a55d2
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
 	measure Frec_Dir_Periodo =
 			// % de horas-estación en que el viento sopla desde el sector en contexto
 			// (usar con Direcciones_Viento[Direccion] en el eje)
@@ -1574,7 +1555,7 @@ table _Medidas
 			VAR Panel =
 			    "<text x='" & px & "' y='30' font-size='15' font-weight='bold' fill='rgb(40,40,40)'>Rosa de vientos · " & Periodo & "</text>"
 			    & "<text x='" & px & "' y='58' font-size='13' fill='rgb(60,60,60)'>Dirección predominante: <tspan font-weight='bold'>"
-			        & Dominante & "</tspan> (" & FORMAT(MaxPct, "0.0", "en-US") & "%)</text>"
+			        & IF(Dominante = "", "calma", Dominante) & "</tspan> (" & FORMAT(COALESCE(MaxPct, 0), "0.0", "en-US") & "%)</text>"
 			    & "<text x='" & px & "' y='78' font-size='13' fill='rgb(60,60,60)'>Velocidad media: <tspan font-weight='bold'>"
 			        & FORMAT(VelMedia, "0.0", "en-US") & " " & Unidad & "</tspan></text>"
 			    & "<text x='" & px & "' y='98' font-size='13' fill='rgb(60,60,60)'>Calmas (menos de " & FORMAT(U, "0.0", "en-US") & " " & Unidad
@@ -1604,7 +1585,11 @@ table _Medidas
 			    IF(
 			        COALESCE(Total, 0) = 0,
 			        "<text x='310' y='150' text-anchor='middle' font-size='14' fill='rgb(120,120,120)'>Sin datos de viento para la selección</text>",
-			        Anillos & Ejes & Petalos & Panel
+			        Anillos & Ejes & Petalos
+			            & IF(COALESCE(MaxPct, 0) = 0,
+			                "<circle cx='" & cx & "' cy='" & cy & "' r='34' fill='white' stroke='rgb(150,150,150)'/>"
+			                & "<text x='" & cx & "' y='" & cy + 6 & "' text-anchor='middle' font-size='17' font-weight='bold' fill='rgb(90,90,90)'>Calma</text>")
+			            & Panel
 			    )
 			VAR Svg =
 			    "<svg xmlns='http://www.w3.org/2000/svg' width='620' height='310' viewBox='0 0 620 300' font-family='Segoe UI, Arial, sans-serif'>"

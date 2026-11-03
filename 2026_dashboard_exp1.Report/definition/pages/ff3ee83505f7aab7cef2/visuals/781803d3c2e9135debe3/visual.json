@@ -3,7 +3,7 @@
   "name": "781803d3c2e9135debe3",
   "position": {
     "x": 671.25,
-    "y": 1936.25,
+    "y": 2016.25,
     "z": 23000,
     "height": 68.75,
     "width": 615,
@@ -20,18 +20,35 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Plagas"
+                      "Entity": "Riesgos_Cultivo"
                     }
                   },
-                  "Property": "Plaga"
+                  "Property": "Riesgo"
                 }
               },
-              "queryRef": "Plagas.Plaga",
-              "nativeQueryRef": "Plaga",
+              "queryRef": "Riesgos_Cultivo.Riesgo",
+              "nativeQueryRef": "Riesgo",
               "active": true
             }
           ]
         }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Riesgos_Cultivo"
+                  }
+                },
+                "Property": "Riesgo"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
       }
     },
     "objects": {
@@ -51,13 +68,20 @@
       "general": [
         {
           "properties": {
+            "orientation": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            },
             "filter": {
               "filter": {
                 "Version": 2,
                 "From": [
                   {
-                    "Name": "p",
-                    "Entity": "Plagas",
+                    "Name": "r",
+                    "Entity": "Riesgos_Cultivo",
                     "Type": 0
                   }
                 ],
@@ -70,10 +94,10 @@
                             "Column": {
                               "Expression": {
                                 "SourceRef": {
-                                  "Source": "p"
+                                  "Source": "r"
                                 }
                               },
-                              "Property": "Plaga"
+                              "Property": "Riesgo"
                             }
                           }
                         ],
@@ -81,7 +105,7 @@
                           [
                             {
                               "Literal": {
-                                "Value": "'Barrenador'"
+                                "Value": "'Sigatoka negra'"
                               }
                             }
                           ]
@@ -90,13 +114,6 @@
                     }
                   }
                 ]
-              }
-            },
-            "orientation": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
-                }
               }
             }
           }
@@ -134,7 +151,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Condiciones meteorológicas favorables a plagas/enfermedades'"
+                  "Value": "'Riesgo del mapa de calor horario'"
                 }
               }
             }
@@ -143,5 +160,62 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "13a7a1c9d9315d0daa59",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Riesgos_Cultivo"
+              }
+            },
+            "Property": "Tiene_Horaria"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "r",
+              "Entity": "Riesgos_Cultivo",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "r"
+                          }
+                        },
+                        "Property": "Tiene_Horaria"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "true"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
   }
 }

@@ -3,7 +3,7 @@
   "name": "ff3ee83505f7aab7cef2",
   "displayName": "Resumen Semanal",
   "displayOption": "ActualSize",
-  "height": 2628,
+  "height": 4143,
   "width": 1300,
   "objects": {
     "background": [
@@ -33,7 +33,6 @@
       }
     ]
   },
-  "type": "Tooltip",
   "visualInteractions": [
     {
       "source": "5856a37b6baf35358943",
@@ -59,6 +58,26 @@
       "source": "3afd62b4549002e5dbb9",
       "target": "781803d3c2e9135debe3",
       "type": "DataFilter"
+    },
+    {
+      "source": "781803d3c2e9135debe3",
+      "target": "cfd2779faa335b2ca9e8",
+      "type": "NoFilter"
+    },
+    {
+      "source": "781803d3c2e9135debe3",
+      "target": "aa96aece6f74557f8a63",
+      "type": "NoFilter"
+    },
+    {
+      "source": "781803d3c2e9135debe3",
+      "target": "0341091ce1e45edc81c0",
+      "type": "NoFilter"
+    },
+    {
+      "source": "781803d3c2e9135debe3",
+      "target": "10cd6c2a371b51d49a48",
+      "type": "NoFilter"
     }
   ]
 }

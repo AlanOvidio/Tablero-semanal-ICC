@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
-  "name": "5fa8aef026380561e44b",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "1919439763885edaa426",
   "position": {
-    "x": 774.28571428571433,
-    "y": 55.714285714285715,
-    "z": 2000,
+    "x": 595,
+    "y": 135,
+    "z": 2200,
     "height": 70,
-    "width": 398.88888888888886,
-    "tabOrder": 2000
+    "width": 300,
+    "tabOrder": 2200
   },
   "visual": {
     "visualType": "slicer",
@@ -23,11 +23,11 @@
                       "Entity": "Estaciones_met"
                     }
                   },
-                  "Property": "estrato.nombre"
+                  "Property": "finca"
                 }
               },
-              "queryRef": "Estaciones_met.estrato.nombre",
-              "nativeQueryRef": "estrato.nombre",
+              "queryRef": "Estaciones_met.finca",
+              "nativeQueryRef": "finca",
               "active": true
             }
           ]
@@ -43,7 +43,7 @@
                     "Entity": "Estaciones_met"
                   }
                 },
-                "Property": "estrato.nombre"
+                "Property": "finca"
               }
             },
             "direction": "Ascending"
@@ -58,7 +58,14 @@
             "mode": {
               "expr": {
                 "Literal": {
-                  "Value": "'Basic'"
+                  "Value": "'Dropdown'"
+                }
+              }
+            },
+            "isInvertedSelectionMode": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }
@@ -75,23 +82,10 @@
                 }
               }
             },
-            "singleSelect": {
+            "selectAllCheckboxEnabled": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "general": [
-        {
-          "properties": {
-            "orientation": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
+                  "Value": "true"
                 }
               }
             }
@@ -110,6 +104,11 @@
             }
           }
         }
+      ],
+      "general": [
+        {
+          "properties": {}
+        }
       ]
     },
     "visualContainerObjects": {
@@ -126,7 +125,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Estrato Altitudinal'"
+                  "Value": "'Estación'"
                 }
               }
             }

@@ -3,7 +3,7 @@
   "name": "5bd82a720d6a17146d96",
   "position": {
     "x": 674.40476190476193,
-    "y": 1751.25,
+    "y": 1831.25,
     "z": 18000,
     "height": 170,
     "width": 615,
@@ -39,13 +39,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "_Medidas"
+                      "Entity": "_Riesgos"
                     }
                   },
-                  "Property": "GDD_Cana_ST_Acumulado_Anterior_Grafica"
+                  "Property": "GDD_Cultivo_Anterior_Grafica"
                 }
               },
-              "queryRef": "_Medidas.GDD_Cana_ST_Acumulado_Anterior_Grafica",
+              "queryRef": "_Riesgos.GDD_Cultivo_Anterior_Grafica",
               "nativeQueryRef": "GDD Acumulado anterior",
               "displayName": "GDD Acumulado anterior"
             },
@@ -54,13 +54,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "_Medidas"
+                      "Entity": "_Riesgos"
                     }
                   },
-                  "Property": "GDD_Cana_ST_Acumulado_Grafica"
+                  "Property": "GDD_Cultivo_Grafica"
                 }
               },
-              "queryRef": "_Medidas.GDD_Cana_ST_Acumulado_Grafica",
+              "queryRef": "_Riesgos.GDD_Cultivo_Grafica",
               "nativeQueryRef": "GDD Acumulado actual",
               "displayName": "GDD Acumulado actual"
             }
@@ -74,10 +74,10 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "_Medidas"
+                    "Entity": "_Riesgos"
                   }
                 },
-                "Property": "GDD_Cana_ST_Acumulado_Anterior_Grafica"
+                "Property": "GDD_Cultivo_Anterior_Grafica"
               }
             },
             "direction": "Descending"
@@ -165,10 +165,17 @@
       "title": [
         {
           "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Suma Térmica Acumulada'"
+                  "Value": "'Grados día acumulados del cultivo (año actual vs. anterior)'"
                 }
               }
             }

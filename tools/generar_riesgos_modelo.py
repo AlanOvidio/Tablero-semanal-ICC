@@ -68,7 +68,8 @@ PL = {
  "CAN_ESCALDADURA": dict(tipo="dia", cond=lambda r: f"p > {f(r['lluvia_min_mm'])} && vmax > 30"),
  "CAN_SALIVOSA": dict(tipo="dia", cond=lambda r: f"p > {f(r['lluvia_min_mm'])} && hr > {f(r['hr_min'])} && {rng('tmed', r['t_min'], r['t_max'])}",
                        horaria=lambda r: f"{rng(T, r['t_min'], r['t_max'])} && {HR} > {f(r['hr_min'])} && {PP} > 0"),
- "CAN_BARRENADOR": dict(tipo="dia", cond=lambda r: f"tmed > {f(r['t_min'])} && hr >= {f(r['hr_min'])} && hr <= {f(r['hr_max'])} && p < {f(r['lluvia_max_mm'])}"),
+ "CAN_BARRENADOR": dict(tipo="dia", cond=lambda r: f"tmed > {f(r['t_min'])} && hr >= {f(r['hr_min'])} && hr <= {f(r['hr_max'])} && p < {f(r['lluvia_max_mm'])}",
+                        horaria=lambda r: f"{T} > {f(r['t_min'])} && {HR} >= {f(r['hr_min'])} && {HR} <= {f(r['hr_max'])} && {PP} = 0"),
  "CAN_CHINCHE_ENCAJE": dict(tipo="semana", expr=lambda r:
      "VAR _fuerte = CALCULATE(COUNTROWS(FILTER(Fact_Diaria_met, Fact_Diaria_met[Precip_Total] > 20)))" + CRLF +
      f"VAR _secos = CALCULATE(COUNTROWS(FILTER(Fact_Diaria_met, Fact_Diaria_met[Precip_Total] < {f(r['lluvia_max_mm'])})))" + CRLF +
@@ -97,7 +98,8 @@ PL = {
  "AGU_CALOR": dict(tipo="hora", hcond=lambda r: f"{T} > {f(r['t_min'])} && {RD} > 800", horaria=lambda r: f"{T} > {f(r['t_min'])} && {RD} > 800"),
  "AGU_VIENTO": dict(tipo="max", expr=lambda r: "CALCULATE(MAX(Fact_Subdiaria_met_aux[Viento_Max_Diurno]))"),
  "AGU_ACAROS": dict(tipo="dia", cond=lambda r: f"p < {f(r['lluvia_max_mm'])} && hr < {f(r['hr_max'])} && vmax > 20"),
- "PAL_PC": dict(tipo="dia", cond=lambda r: f"{rng('tmed', r['t_min'], r['t_max'])} && hr > {f(r['hr_min'])} && p > {f(r['lluvia_min_mm'])}"),
+ "PAL_PC": dict(tipo="dia", cond=lambda r: f"{rng('tmed', r['t_min'], r['t_max'])} && hr > {f(r['hr_min'])} && p > {f(r['lluvia_min_mm'])}",
+                horaria=lambda r: f"{rng(T, r['t_min'], r['t_max'])} && {HR} > {f(r['hr_min'])} && {PP} > 0"),
  "PAL_ESTRES": dict(tipo="hora", hcond=lambda r: f"{T} > {f(r['t_min'])} && {RD} > 800", horaria=lambda r: f"{T} > {f(r['t_min'])} && {RD} > 800"),
  "MAI_ASFALTO": dict(tipo="dia", cond=lambda r: f"{rng('tmed', r['t_min'], r['t_max'])} && hr > {f(r['hr_min'])} && mojn >= {f(r['mojadura_min_h'])}",
                      horaria=lambda r: f"{rng(T, r['t_min'], r['t_max'])} && {HR} > {f(r['hr_min'])} && {MJ} > 4"),
@@ -245,9 +247,13 @@ for r in INC:
     d = f"{r['riesgo']} ({r['cultivo']}). Unidad: {r['semaforo_unidad']}. {r['condicion']}".replace("\n", " ")
     M.append(medida(f"R_{r['id']}", dax_riesgo(r), "0.#", "Riesgos por ID", d[:400]))
 sw = lambda nombre_fn: (CRLF + "    ").join(f'"{r["id"]}", {nombre_fn(r)},' for r in INC)
+M.append(medida("_Riesgo_En_Cultivo",
+    "NOT ISEMPTY(" + CRLF + "    CALCULATETABLE(" + CRLF + "        VALUES(Riesgos_Cultivo[ID])," + CRLF +
+    "        TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])" + CRLF + "    )" + CRLF + ")", None, "Genéricas",
+    "TRUE si el riesgo en contexto pertenece al cultivo seleccionado (garantiza que no se muestren riesgos de otros cultivos)."))
 M.append(medida("Riesgo_Valor",
-    "VAR _id = SELECTEDVALUE(Riesgos_Cultivo[ID])" + CRLF + "RETURN" + CRLF + "SWITCH(" + CRLF + "    _id," + CRLF + "    " +
-    sw(lambda r: f"[R_{r['id']}]") + CRLF + "    BLANK()" + CRLF + ")", "0.#", "Genéricas",
+    "VAR _id = SELECTEDVALUE(Riesgos_Cultivo[ID])" + CRLF + "RETURN" + CRLF + "IF(" + CRLF + "    [_Riesgo_En_Cultivo]," + CRLF + "SWITCH(" + CRLF + "    _id," + CRLF + "    " +
+    sw(lambda r: f"[R_{r['id']}]") + CRLF + "    BLANK()" + CRLF + ")" + CRLF + ")", "0.#", "Genéricas",
     "Valor del riesgo seleccionado (días, horas o km/h según la unidad), promediado entre estaciones."))
 M.append(medida("Riesgo_Semaforo",
     "VAR _v = [Riesgo_Valor]" + CRLF + "VAR _am = SELECTEDVALUE(Riesgos_Cultivo[Umbral_Amarillo])" + CRLF +
@@ -259,19 +265,44 @@ M.append(medida("Riesgo_Semaforo",
 M.append(medida("Riesgo_Color", 'SWITCH([Riesgo_Semaforo], 1, "#D64550", 2, "#F2B134", 3, "#3BA272", "#B0B0B0")', None, "Genéricas",
     "Color hexadecimal del semáforo para formato condicional."))
 M.append(medida("Riesgo_Etiqueta",
-    'VAR _v = [Riesgo_Valor]' + CRLF + 'RETURN IF(ISBLANK(_v), "Sin datos", FORMAT(_v, "0.#") & " " & SELECTEDVALUE(Riesgos_Cultivo[Unidad]))',
+    'VAR _v = [Riesgo_Valor]' + CRLF + 'RETURN IF(NOT [_Riesgo_En_Cultivo], BLANK(), IF(ISBLANK(_v), "Sin datos", FORMAT(_v, "0.#") & " " & SELECTEDVALUE(Riesgos_Cultivo[Unidad])))',
     None, "Genéricas", "Valor con su unidad para tarjetas."))
 M.append(medida("Riesgos_En_Alerta",
     "COUNTROWS(FILTER(VALUES(Riesgos_Cultivo[ID]), [Riesgo_Semaforo] = 1))", "0", "Genéricas", "Número de riesgos del cultivo en alerta (rojo)."))
 M.append(medida("Riesgos_En_Precaucion",
     "COUNTROWS(FILTER(VALUES(Riesgos_Cultivo[ID]), [Riesgo_Semaforo] = 2))", "0", "Genéricas", "Número de riesgos del cultivo en precaución (amarillo)."))
 hor = [r for r in INC if "horaria" in PL[r["id"]]]
+# Riesgo horario: el elegido en el segmentador o, si no hay uno válido para el cultivo, el primero con condición horaria
+ID_HORA = ("VAR _sel = IF([_Riesgo_En_Cultivo], SELECTEDVALUE(Riesgos_Cultivo[ID]))" + CRLF +
+    "VAR _def =" + CRLF + "    MAXX(" + CRLF + "        TOPN(" + CRLF + "            1," + CRLF +
+    "            CALCULATETABLE(" + CRLF + "                FILTER(Riesgos_Cultivo, Riesgos_Cultivo[Tiene_Horaria])," + CRLF +
+    "                REMOVEFILTERS(Riesgos_Cultivo[Riesgo], Riesgos_Cultivo[ID], Riesgos_Cultivo[Orden_Nombre])," + CRLF +
+    "                TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])" + CRLF +
+    "            )," + CRLF + "            Riesgos_Cultivo[Orden], ASC" + CRLF + "        )," + CRLF + "        Riesgos_Cultivo[ID]" + CRLF + "    )" + CRLF +
+    "VAR _id = COALESCE(_sel, _def)" + CRLF)
 M.append(medida("Riesgo_Hora",
-    "VAR _id = SELECTEDVALUE(Riesgos_Cultivo[ID])" + CRLF + "VAR _n = COUNTROWS(Fact_Horaria_riesgo)" + CRLF + "RETURN" + CRLF +
+    ID_HORA + "VAR _n = COUNTROWS(Fact_Horaria_riesgo)" + CRLF + "RETURN" + CRLF +
     "DIVIDE(" + CRLF + "    SWITCH(" + CRLF + "        _id," + CRLF + "        " +
-    (CRLF + "        ").join(f'"{r["id"]}", COUNTROWS(FILTER(Fact_Horaria_riesgo, {PL[r["id"]]["horaria"](r)})),' for r in hor) + CRLF +
+    (CRLF + "        ").join(f'"{r["id"]}", COUNTROWS(FILTER(Fact_Horaria_riesgo, {PL[r["id"]]["horaria"](r)})) + 0,' for r in hor) + CRLF +
     "        BLANK()" + CRLF + "    )," + CRLF + "    _n" + CRLF + ")", "0%", "Genéricas",
     "Mapa de calor: fracción de horas-estación favorables al riesgo seleccionado (solo riesgos con condición horaria)."))
+M.append(medida("Riesgo_Hora_Titulo",
+    ID_HORA + "VAR _nom = CALCULATE(SELECTEDVALUE(Riesgos_Cultivo[Riesgo]), REMOVEFILTERS(Riesgos_Cultivo), Riesgos_Cultivo[ID] = _id)" + CRLF +
+    'RETURN IF(ISBLANK(_nom), "Sin riesgo horario para este cultivo", "Horas favorables a " & LOWER(_nom) & " (% de horas-estación)")',
+    None, "Genéricas", "Título del mapa de calor horario con el riesgo que se está mostrando."))
+M.append(medida("Titulo_Contexto",
+    "VAR _ini = MIN(Calendario[Fecha])" + CRLF + "VAR _fin = MAX(Calendario[Fecha])" + CRLF +
+    "VAR _est = FILTER(VALUES(Estaciones_met[estacionid]), NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met)))" + CRLF +
+    "VAR _n = COUNTROWS(_est)" + CRLF +
+    'VAR _txtEst =' + CRLF + '    SWITCH(' + CRLF + '        TRUE(),' + CRLF +
+    '        NOT ISFILTERED(Estaciones_met), "Todas las estaciones (" & _n & ")",' + CRLF +
+    '        _n = 1, "Estación " & CALCULATE(SELECTEDVALUE(Estaciones_met[finca]), _est),' + CRLF +
+    '        ISFILTERED(Estaciones_met[estrato.nombre]) && NOT ISFILTERED(Estaciones_met[finca]) && NOT ISFILTERED(Estaciones_met[estacionid]),' + CRLF +
+    '            "Estrato " & CONCATENATEX(VALUES(Estaciones_met[estrato.nombre]), Estaciones_met[estrato.nombre], ", ") & " (" & _n & " estaciones)",' + CRLF +
+    '        _n & " estaciones seleccionadas"' + CRLF + '    )' + CRLF +
+    'RETURN' + CRLF +
+    'SELECTEDVALUE(Cultivos[Cultivo], "Sin cultivo") & "  ·  " & _txtEst & "  ·  " & FORMAT(_ini, "dd-mmm") & " al " & FORMAT(_fin, "dd-mmm-yyyy")',
+    None, "Genéricas", "Título dinámico del Resumen Semanal: cultivo, estaciones o estrato y fechas del periodo."))
 # Grados día por cultivo
 gdd = ("VAR _b = SELECTEDVALUE(Cultivos[GDD_Base], 10)" + CRLF + "VAR _t = SELECTEDVALUE(Cultivos[GDD_Tope], 30)" + CRLF + "RETURN" + CRLF +
        "AVERAGEX(" + CRLF + "    VALUES(Estaciones_met[estacionid])," + CRLF + "    CALCULATE(" + CRLF + "        SUMX(" + CRLF +

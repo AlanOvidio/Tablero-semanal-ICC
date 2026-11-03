@@ -147,6 +147,16 @@ cultureInfo es-GT
 			          }
 			        },
 			        {
+			          "Estación": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
 			          "Estacion": {
 			            "State": "Suggested",
 			            "Source": {
@@ -455,6 +465,16 @@ cultureInfo es-GT
 			        {
 			          "estrato.nombre": {
 			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "Estrato": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
 			          }
 			        },
 			        {
@@ -2323,16 +2343,6 @@ cultureInfo es-GT
 			            "State": "Generated",
 			            "Weight": 0.99
 			          }
-			        },
-			        {
-			          "Amplitud térmica": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -2606,7 +2616,7 @@ cultureInfo es-GT
 			          }
 			        },
 			        {
-			          "Balance hídrico": {
+			          "Balance Hídrico": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -2646,16 +2656,6 @@ cultureInfo es-GT
 			            "Type": "Noun",
 			            "State": "Generated",
 			            "Weight": 0.99
-			          }
-			        },
-			        {
-			          "Balance hídrico diario": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -4406,16 +4406,6 @@ cultureInfo es-GT
 			            },
 			            "Weight": 0.9
 			          }
-			        },
-			        {
-			          "VPD máxima diurna": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -4564,7 +4554,7 @@ cultureInfo es-GT
 			          }
 			        },
 			        {
-			          "Temperatura nocturna Prom.": {
+			          "Temperatura media nocturna": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -4574,7 +4564,7 @@ cultureInfo es-GT
 			          }
 			        },
 			        {
-			          "Temperatura media nocturna": {
+			          "Temperatura nocturna Prom.": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -4631,16 +4621,6 @@ cultureInfo es-GT
 			        },
 			        {
 			          "Horas mojadura diurna": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        },
-			        {
-			          "Horas mojadura (>4) diurno": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -5003,26 +4983,6 @@ cultureInfo es-GT
 			            "State": "Generated",
 			            "Weight": 0.99
 			          }
-			        },
-			        {
-			          "Días riesgo Roya": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        },
-			        {
-			          "Días Riesgo de Roya": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -5115,26 +5075,6 @@ cultureInfo es-GT
 			            "State": "Generated",
 			            "Weight": 0.99
 			          }
-			        },
-			        {
-			          "Días riesgo chinche salivosa": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        },
-			        {
-			          "Dias riesgo Chinche salivosa": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -5180,16 +5120,6 @@ cultureInfo es-GT
 			            "Type": "Noun",
 			            "State": "Generated",
 			            "Weight": 0.99
-			          }
-			        },
-			        {
-			          "Días riesgo Barrendor": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -6539,16 +6469,6 @@ cultureInfo es-GT
 			            },
 			            "Weight": 0.9
 			          }
-			        },
-			        {
-			          "Horas mojadura (>4) noctuna": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -6772,16 +6692,6 @@ cultureInfo es-GT
 			            "Type": "Noun",
 			            "State": "Generated",
 			            "Weight": 0.99
-			          }
-			        },
-			        {
-			          "GDD Acumulado": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -7163,16 +7073,6 @@ cultureInfo es-GT
 			            "State": "Generated",
 			            "Weight": 0.99
 			          }
-			        },
-			        {
-			          "GDD Acumulado actual": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
 			        }
 			      ]
 			    },
@@ -7195,16 +7095,6 @@ cultureInfo es-GT
 			            "Type": "Noun",
 			            "State": "Generated",
 			            "Weight": 0.99
-			          }
-			        },
-			        {
-			          "GDD Acumulado anterior": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -8787,39 +8677,6 @@ cultureInfo es-GT
 			        }
 			      ]
 			    },
-			    "entity__medida.condicion_plaga_hora": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "_Medidas",
-			          "ConceptualProperty": "Condicion_Plaga_Hora"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "condicion plaga hora": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "Condicion_Plaga_Hora": {
-			            "Type": "Noun",
-			            "State": "Generated",
-			            "Weight": 0.99
-			          }
-			        },
-			        {
-			          "Condicion": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        }
-			      ]
-			    },
 			    "horas_dia": {
 			      "Definition": {
 			        "Binding": {
@@ -8913,90 +8770,6 @@ cultureInfo es-GT
 			          }
 			        }
 			      ]
-			    },
-			    "plaga": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Plagas"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "plaga": {
-			            "State": "Generated"
-			          }
-			        }
-			      ]
-			    },
-			    "plaga.id": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Plagas",
-			          "ConceptualProperty": "id"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "id": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "identification": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.736
-			          }
-			        },
-			        {
-			          "identity": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.736
-			          }
-			        },
-			        {
-			          "credential": {
-			            "Type": "Noun",
-			            "State": "Suggested",
-			            "Source": {
-			              "Agent": "Thesaurus"
-			            },
-			            "Weight": 0.714
-			          }
-			        }
-			      ],
-			      "NameType": "Identifier"
-			    },
-			    "plaga.plaga": {
-			      "Definition": {
-			        "Binding": {
-			          "ConceptualEntity": "Plagas",
-			          "ConceptualProperty": "Plaga"
-			        }
-			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "plaga": {
-			            "State": "Generated"
-			          }
-			        },
-			        {
-			          "plaga name": {
-			            "State": "Generated"
-			          }
-			        }
-			      ],
-			      "NameType": "Name"
 			    },
 			    "fact_horaria_riesgo": {
 			      "Definition": {
@@ -9599,6 +9372,300 @@ cultureInfo es-GT
 			      "Terms": [
 			        {
 			          "Irradiancia Med.": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "riesgos_cultivo.riesgo": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Riesgos_Cultivo",
+			          "ConceptualProperty": "Riesgo"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Riesgo": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "riesgos_cultivo.umbral_amarillo": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Riesgos_Cultivo",
+			          "ConceptualProperty": "Umbral_Amarillo"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Precaución desde": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "riesgos_cultivo.umbral_rojo": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Riesgos_Cultivo",
+			          "ConceptualProperty": "Umbral_Rojo"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Alerta desde": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "riesgos_cultivo.condicion": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Riesgos_Cultivo",
+			          "ConceptualProperty": "Condicion"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Condición evaluada": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "riesgos_cultivo.aplicacion": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Riesgos_Cultivo",
+			          "ConceptualProperty": "Aplicacion"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Aplica": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "riesgos_cultivo.confianza": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Riesgos_Cultivo",
+			          "ConceptualProperty": "Confianza"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Confianza": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "table_riesgos.riesgo_valor": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Riesgos",
+			          "ConceptualProperty": "Riesgo_Valor"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Valor": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "table_riesgos.gdd_cultivo_acumulado": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Riesgos",
+			          "ConceptualProperty": "GDD_Cultivo_Acumulado"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "GDD Acumulado": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "table_riesgos.riesgo_hora": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Riesgos",
+			          "ConceptualProperty": "Riesgo_Hora"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Condicion": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "table_riesgos.gdd_cultivo_anterior_grafica": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Riesgos",
+			          "ConceptualProperty": "GDD_Cultivo_Anterior_Grafica"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "GDD Acumulado anterior": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "table_riesgos.gdd_cultivo_grafica": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Riesgos",
+			          "ConceptualProperty": "GDD_Cultivo_Grafica"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "GDD Acumulado actual": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "table_riesgos.riesgo_etiqueta": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Riesgos",
+			          "ConceptualProperty": "Riesgo_Etiqueta"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Situación semanal": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "table_riesgos.riesgos_en_alerta": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Riesgos",
+			          "ConceptualProperty": "Riesgos_En_Alerta"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "En alerta": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "table_riesgos.riesgos_en_precaucion": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Riesgos",
+			          "ConceptualProperty": "Riesgos_En_Precaucion"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "En precaución": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -10956,98 +11023,6 @@ cultureInfo es-GT
 			        }
 			      ]
 			    },
-			    "plaga_has_plaga": {
-			      "Binding": {
-			        "ConceptualEntity": "Plagas"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "plaga": {
-			          "Target": {
-			            "Entity": "plaga"
-			          }
-			        },
-			        "plaga.plaga": {
-			          "Target": {
-			            "Entity": "plaga.plaga"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "plaga"
-			            },
-			            "Object": {
-			              "Role": "plaga.plaga"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "plagas_have_plagas"
-			        },
-			        {
-			          "Name": {
-			            "Subject": {
-			              "Role": "plaga"
-			            },
-			            "Name": {
-			              "Role": "plaga.plaga"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "plagas_are_names_IDs_of_plagas"
-			        }
-			      ]
-			    },
-			    "plaga_has_id": {
-			      "Binding": {
-			        "ConceptualEntity": "Plagas"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "plaga": {
-			          "Target": {
-			            "Entity": "plaga"
-			          }
-			        },
-			        "plaga.id": {
-			          "Target": {
-			            "Entity": "plaga.id"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "plaga"
-			            },
-			            "Object": {
-			              "Role": "plaga.id"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "plagas_have_ids"
-			        },
-			        {
-			          "Name": {
-			            "Subject": {
-			              "Role": "plaga"
-			            },
-			            "Name": {
-			              "Role": "plaga.id"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "ids_are_names_IDs_of_plagas"
-			        }
-			      ]
-			    },
 			    "horas_dia_has_periodo": {
 			      "Binding": {
 			        "ConceptualEntity": "Horas_Dia"
@@ -11144,72 +11119,6 @@ cultureInfo es-GT
 			          "State": "Generated",
 			          "Weight": 0.99,
 			          "ID": "horas_dias_have_horas"
-			        }
-			      ]
-			    },
-			    "plaga_has_entity__medida_condicion_plaga_hora": {
-			      "Binding": {
-			        "ConceptualEntity": "Plagas"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "plaga": {
-			          "Target": {
-			            "Entity": "plaga"
-			          }
-			        },
-			        "entity__medida.condicion_plaga_hora": {
-			          "Target": {
-			            "Entity": "entity__medida.condicion_plaga_hora"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "plaga"
-			            },
-			            "Object": {
-			              "Role": "entity__medida.condicion_plaga_hora"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "plagas_have_condicion_plaga_hora"
-			        }
-			      ]
-			    },
-			    "fact_horaria_riesgo_has_entity__medida_condicion_plaga_hora": {
-			      "Binding": {
-			        "ConceptualEntity": "Fact_Horaria_riesgo"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "fact_horaria_riesgo": {
-			          "Target": {
-			            "Entity": "fact_horaria_riesgo"
-			          }
-			        },
-			        "entity__medida.condicion_plaga_hora": {
-			          "Target": {
-			            "Entity": "entity__medida.condicion_plaga_hora"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "fact_horaria_riesgo"
-			            },
-			            "Object": {
-			              "Role": "entity__medida.condicion_plaga_hora"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "fact_horaria_riesgos_have_condicion_plaga_hora"
 			        }
 			      ]
 			    },

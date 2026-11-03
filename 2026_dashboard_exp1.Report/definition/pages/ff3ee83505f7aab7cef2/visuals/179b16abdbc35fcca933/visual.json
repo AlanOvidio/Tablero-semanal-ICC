@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
-  "name": "fa355907b49082cc04d4",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "179b16abdbc35fcca933",
   "position": {
-    "x": 0,
-    "y": 312,
-    "z": 7000,
-    "height": 132,
-    "width": 1258,
-    "tabOrder": 7000
+    "x": 298.33333333333337,
+    "y": 2778.3333333333335,
+    "z": 30200,
+    "height": 125,
+    "width": 991.66666666666674,
+    "tabOrder": 30200
   },
   "visual": {
     "visualType": "cardVisual",
@@ -50,13 +50,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "_Medidas"
+                      "Entity": "_Riesgos"
                     }
                   },
-                  "Property": "GDD_Cana_ST_Acumulado"
+                  "Property": "GDD_Cultivo_Acumulado"
                 }
               },
-              "queryRef": "_Medidas.GDD_Cana_ST_Acumulado",
+              "queryRef": "_Riesgos.GDD_Cultivo_Acumulado",
               "nativeQueryRef": "GDD Acumulado",
               "displayName": "GDD Acumulado"
             },
@@ -113,14 +113,14 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "_Medidas"
+                      "Entity": "_Riesgos"
                     }
                   },
-                  "Property": "GDD_Cana_ST_Acumulado_Anterior"
+                  "Property": "GDD_Cultivo_Acumulado_Anterior"
                 }
               },
-              "queryRef": "_Medidas.GDD_Cana_ST_Acumulado_Anterior",
-              "nativeQueryRef": "GDD_Cana_ST_Acumulado_Anterior"
+              "queryRef": "_Riesgos.GDD_Cultivo_Acumulado_Anterior",
+              "nativeQueryRef": "GDD_Cultivo_Acumulado_Anterior"
             }
           ]
         }
@@ -227,7 +227,7 @@
             }
           },
           "selector": {
-            "metadata": "_Medidas.GDD_Cana_ST_Acumulado"
+            "metadata": "_Riesgos.GDD_Cultivo_Acumulado"
           }
         },
         {

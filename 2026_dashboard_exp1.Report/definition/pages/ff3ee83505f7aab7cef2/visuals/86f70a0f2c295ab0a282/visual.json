@@ -1,13 +1,13 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
-  "name": "d41f13540ac04888318b",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "86f70a0f2c295ab0a282",
   "position": {
-    "x": 344,
-    "y": 0,
-    "z": 3000,
-    "height": 56,
-    "width": 616,
-    "tabOrder": 3000
+    "x": 10,
+    "y": 2728,
+    "z": 30000,
+    "height": 45,
+    "width": 700,
+    "tabOrder": 30000
   },
   "visual": {
     "visualType": "textbox",
@@ -19,10 +19,10 @@
               {
                 "textRuns": [
                   {
-                    "value": "Resumen Semanal - pruebas",
+                    "value": "Riesgos del cultivo",
                     "textStyle": {
                       "fontWeight": "bold",
-                      "fontSize": "24pt"
+                      "fontSize": "18pt"
                     }
                   }
                 ]

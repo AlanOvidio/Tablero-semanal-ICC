@@ -3,7 +3,7 @@
   "name": "3afd62b4549002e5dbb9",
   "position": {
     "x": 671.25,
-    "y": 2005,
+    "y": 2085,
     "z": 22000,
     "height": 622.5,
     "width": 606.25,
@@ -60,13 +60,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "_Medidas"
+                      "Entity": "_Riesgos"
                     }
                   },
-                  "Property": "Condicion_Plaga_Hora"
+                  "Property": "Riesgo_Hora"
                 }
               },
-              "queryRef": "_Medidas.Condicion_Plaga_Hora",
+              "queryRef": "_Riesgos.Riesgo_Hora",
               "nativeQueryRef": "Condicion",
               "displayName": "Condicion"
             }
@@ -270,45 +270,21 @@
                       "Cases": [
                         {
                           "Condition": {
-                            "And": {
+                            "Comparison": {
+                              "ComparisonKind": 2,
                               "Left": {
-                                "Comparison": {
-                                  "ComparisonKind": 2,
-                                  "Left": {
-                                    "Measure": {
-                                      "Expression": {
-                                        "SourceRef": {
-                                          "Entity": "_Medidas"
-                                        }
-                                      },
-                                      "Property": "Condicion_Plaga_Hora"
+                                "Measure": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "_Riesgos"
                                     }
                                   },
-                                  "Right": {
-                                    "Literal": {
-                                      "Value": "1D"
-                                    }
-                                  }
+                                  "Property": "Riesgo_Hora"
                                 }
                               },
                               "Right": {
-                                "Comparison": {
-                                  "ComparisonKind": 3,
-                                  "Left": {
-                                    "Measure": {
-                                      "Expression": {
-                                        "SourceRef": {
-                                          "Entity": "_Medidas"
-                                        }
-                                      },
-                                      "Property": "Condicion_Plaga_Hora"
-                                    }
-                                  },
-                                  "Right": {
-                                    "Literal": {
-                                      "Value": "2D"
-                                    }
-                                  }
+                                "Literal": {
+                                  "Value": "0.5D"
                                 }
                               }
                             }
@@ -329,15 +305,15 @@
                                     "Measure": {
                                       "Expression": {
                                         "SourceRef": {
-                                          "Entity": "_Medidas"
+                                          "Entity": "_Riesgos"
                                         }
                                       },
-                                      "Property": "Condicion_Plaga_Hora"
+                                      "Property": "Riesgo_Hora"
                                     }
                                   },
                                   "Right": {
                                     "Literal": {
-                                      "Value": "0.5D"
+                                      "Value": "0.25D"
                                     }
                                   }
                                 }
@@ -349,15 +325,15 @@
                                     "Measure": {
                                       "Expression": {
                                         "SourceRef": {
-                                          "Entity": "_Medidas"
+                                          "Entity": "_Riesgos"
                                         }
                                       },
-                                      "Property": "Condicion_Plaga_Hora"
+                                      "Property": "Riesgo_Hora"
                                     }
                                   },
                                   "Right": {
                                     "Literal": {
-                                      "Value": "0.99D"
+                                      "Value": "0.5D"
                                     }
                                   }
                                 }
@@ -375,40 +351,40 @@
                             "And": {
                               "Left": {
                                 "Comparison": {
-                                  "ComparisonKind": 2,
+                                  "ComparisonKind": 1,
                                   "Left": {
                                     "Measure": {
                                       "Expression": {
                                         "SourceRef": {
-                                          "Entity": "_Medidas"
+                                          "Entity": "_Riesgos"
                                         }
                                       },
-                                      "Property": "Condicion_Plaga_Hora"
+                                      "Property": "Riesgo_Hora"
                                     }
                                   },
                                   "Right": {
                                     "Literal": {
-                                      "Value": "0.01D"
+                                      "Value": "0D"
                                     }
                                   }
                                 }
                               },
                               "Right": {
                                 "Comparison": {
-                                  "ComparisonKind": 4,
+                                  "ComparisonKind": 3,
                                   "Left": {
                                     "Measure": {
                                       "Expression": {
                                         "SourceRef": {
-                                          "Entity": "_Medidas"
+                                          "Entity": "_Riesgos"
                                         }
                                       },
-                                      "Property": "Condicion_Plaga_Hora"
+                                      "Property": "Riesgo_Hora"
                                     }
                                   },
                                   "Right": {
                                     "Literal": {
-                                      "Value": "0.49D"
+                                      "Value": "0.25D"
                                     }
                                   }
                                 }
@@ -429,10 +405,10 @@
                                 "Measure": {
                                   "Expression": {
                                     "SourceRef": {
-                                      "Entity": "_Medidas"
+                                      "Entity": "_Riesgos"
                                     }
                                   },
-                                  "Property": "Condicion_Plaga_Hora"
+                                  "Property": "Riesgo_Hora"
                                 }
                               },
                               "Right": {
@@ -463,7 +439,7 @@
                 }
               }
             ],
-            "metadata": "_Medidas.Condicion_Plaga_Hora"
+            "metadata": "_Riesgos.Riesgo_Hora"
           }
         },
         {
@@ -482,7 +458,7 @@
         {
           "properties": {},
           "selector": {
-            "metadata": "_Medidas.Condicion_Plaga_Hora"
+            "metadata": "_Riesgos.Riesgo_Hora"
           }
         }
       ],
@@ -561,6 +537,33 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Riesgos"
+                    }
+                  },
+                  "Property": "Riesgo_Hora_Titulo"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
   }
 }

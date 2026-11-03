@@ -1,16 +1,16 @@
 # Catálogo de medidas DAX
 
-> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-03 (207 medidas). No editar a mano.
+> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-03 (209 medidas). No editar a mano.
 
 Convenciones: las medidas con prefijo `_` son auxiliares; `Semaforo_*` devuelve 1 = rojo, 2 = amarillo, 3 = verde. Las medidas de suma (lluvia, ETo, balance, horas, GDD, radiación acumulada) **suman por estación y promedian entre estaciones**; los máximos y mínimos devuelven **el extremo** de las estaciones seleccionadas. Ver `04_guia_usuario.md` y `06_decisiones_y_cambios.md`.
 
 ## Índice
 
-- [Motor de riesgos por cultivo (generado desde config/riesgos_cultivo.csv)](#motor-de-riesgos-por-cultivo-generado-desde-configriesgos_cultivocsv) (57)
+- [Motor de riesgos por cultivo (generado desde config/riesgos_cultivo.csv)](#motor-de-riesgos-por-cultivo-generado-desde-configriesgos_cultivocsv) (60)
 - [Viento](#viento) (19)
 - [Radiación y luz](#radiación-y-luz) (16)
 - [Semáforos](#semáforos) (16)
-- [Días y condiciones de riesgo (plagas, enfermedades, clima)](#días-y-condiciones-de-riesgo-plagas-enfermedades-clima) (17)
+- [Días y condiciones de riesgo (plagas, enfermedades, clima)](#días-y-condiciones-de-riesgo-plagas-enfermedades-clima) (16)
 - [Grados día / suma térmica (GDD)](#grados-día--suma-térmica-gdd) (17)
 - [Históricos y comparaciones interanuales](#históricos-y-comparaciones-interanuales) (14)
 - [Precipitación, ETo y balance hídrico](#precipitación-eto-y-balance-hídrico) (16)
@@ -26,9 +26,9 @@ Convenciones: las medidas con prefijo `_` son auxiliares; `Semaforo_*` devuelve 
 | `R_CAN_ROYA_NARANJA` | 0.# | Roya naranja (Caña de azúcar). Unidad: días/semana. Día favorable: Tmed 20–25 °C (cualquier mojadura) o Tmed > 25 °C con mojadura > 8 h. Desfavorable: Tmed < 20 °C, o > 25 °C con mojadura < 8 h. Germinación óptima con HR > 98 % y 21 °C. Esporula hasta la madurez y aun en época seca. |
 | `R_CAN_ESCALDADURA` | 0.# | Escaldadura foliar (Caña de azúcar). Unidad: días/semana. Importante en Guatemala: la alternancia de periodos lluviosos severos y secos severos favorece su expresión; se dispersa con la combinación de lluvia y viento fuertes. Día de dispersión: lluvia > 20 mm y viento máx > 30 km/h. |
 | `R_CAN_SALIVOSA` | 0.# | Salivosa (Aeneolamia) (Caña de azúcar). Unidad: días/semana. Aparece en abril con las primeras lluvias: 50–100 mm de lluvia inicial acumulan humedad suficiente para la eclosión de la mayoría de los huevos. La población se relaciona con la lluvia de 4 semanas antes; presenta 3–4 picos en la época lluviosa y desaparece en noviembre por el fotoperiodo, aunque siga lloviendo. Día favorable: lluvia > 5 |
-| `R_CAN_BARRENADOR` | 0.# | Barrenador (Diatraea) (Caña de azúcar). Unidad: días/semana. La infestación aumenta con el establecimiento de la época seca y en la maduración. Día favorable: Tmed > 24 °C, HR media 60–80 %, día seco. 4–5 generaciones/año en El Salvador (oct–jun). |
+| `R_CAN_BARRENADOR` | 0.# | Barrenador (Diatraea) (Caña de azúcar). Unidad: días/semana. La infestación aumenta con el establecimiento de la época seca y en la maduración. Día favorable: Tmed > 24 °C, HR media 60–80 %, día seco. 4–5 generaciones/año en El Salvador (oct–jun). Hora favorable (aproximación para el mapa de calor): T > 24 °C, HR 60–80 % y sin lluvia. |
 | `R_CAN_CHINCHE_ENCAJE` | 0.# | Chinche de encaje (Caña de azúcar). Unidad: días secos/semana. Plaga en aumento en la zona cañera. Las lluvias intensas de julio a septiembre la reducen (derriban las colonias de ninfas); el estrés por exceso de humedad o por sequía la favorece. Semana favorable: sin días con lluvia > 20 mm y ≥ 4 días secos. |
-| `R_CAN_COLUDO` | 0.# | Coludo (saltahojas antillano) (Caña de azúcar). Unidad: días/semana. Plaga exótica favorecida por la época seca (enero–abril): baja precipitación, alta evapotranspiración y baja humedad relativa. Día favorable: día seco y HR media < 70 %. |
+| `R_CAN_COLUDO` | 0.# | Coludo (saltahojas antillano) (Caña de azúcar). Unidad: días/semana. Plaga exótica favorecida por la época seca (noviembre–abril, incluida la transición): baja precipitación, alta evapotranspiración y baja humedad relativa. Día favorable: día seco y HR media < 70 %. |
 | `R_CAN_ESTRES` | 0.# | Estrés térmico (Caña de azúcar). Unidad: horas/semana. Hora con T > 36 °C (umbral máximo de estrés para caña de azúcar; rango óptimo 20–33 °C) y radiación > 800 W/m². |
 | `R_CAN_SUELO_SATURADO` | 0.# | Suelo saturado: limitación de cosecha y tránsito (Caña de azúcar). Unidad: días/semana. Día con lluvia > 10 mm durante la zafra: anegamiento del suelo que limita el corte, el alce y el tránsito de maquinaria. |
 | `R_CAN_APLICACION` | 0.# | Ventana para aplicación aérea (Caña de azúcar). Unidad: horas aptas/día. Hora apta para aplicar (madurantes y otros productos): T < 30 °C, HR > 60 % y viento < 10 km/h, de día. Evitar la inversión térmica (diciembre–febrero, noches despejadas y sin viento). Indicador positivo: horas aptas por día. |
@@ -43,7 +43,7 @@ Convenciones: las medidas con prefijo `_` son auxiliares; `Semaforo_*` devuelve 
 | `R_AGU_FRIO` | 0.# | Frío (Aguacate). Unidad: días/semana. Tmín < 12 °C (umbral mínimo de estrés para aguacate). |
 | `R_AGU_CALOR` | 0.# | Golpe de calor / quemadura de fruto (Aguacate). Unidad: horas/semana. Hora con T > 36 °C (umbral máximo de estrés para aguacate; rango óptimo 15–30 °C) y radiación > 800 W/m². |
 | `R_AGU_VIENTO` | 0.# | Caída de flor y fruto por viento (Aguacate). Unidad: km/h. Vientos fuertes causan caída de flor y fruto. Viento máximo diurno > 30 / 45 km/h. |
-| `R_PAL_PC` | 0.# | Pudrición del cogollo (P. palmivora) (Palma de aceite). Unidad: días/semana. Severidad mayor con HR alta, lluvias frecuentes y encharcamiento; los periodos secos la reducen; el patógeno tolera 11–35 °C. Día favorable: lluvia > 5 mm y HR media > 90 %. Índice: días favorables en 14 días. |
+| `R_PAL_PC` | 0.# | Pudrición del cogollo (P. palmivora) (Palma de aceite). Unidad: días/semana. Severidad mayor con HR alta, lluvias frecuentes y encharcamiento; los periodos secos la reducen; el patógeno tolera 11–35 °C. Día favorable: lluvia > 5 mm y HR media > 90 %. Índice: días favorables en 14 días. Hora favorable (aproximación para el mapa de calor): T 11–35 °C, HR > 90 % y lluvia > 0. |
 | `R_PAL_ESTRES` | 0.# | Estrés térmico (Palma de aceite). Unidad: horas/semana. Hora con T > 34 °C (umbral máximo de estrés para palma de aceite; rango óptimo 22–32 °C) y radiación > 800 W/m². |
 | `R_MAI_ASFALTO` | 0.# | Maíz – Mancha de asfalto (Granos básicos). Unidad: días/semana. Favorecida por temperaturas frescas (16–22 °C) y HR alta: HR media > 75 % y 7 h de mojadura nocturna. Aparece unas 2 semanas antes de la floración y alcanza su máximo ~6 semanas después. Presente en el altiplano de Guatemala. |
 | `R_MAI_ROYA` | 0.# | Maíz – Roya común (Granos básicos). Unidad: días/semana. Noches de 18–21 °C, temperatura diurna moderada, HR alta y ≥ 6 h de mojadura. |
@@ -79,6 +79,9 @@ Convenciones: las medidas con prefijo `_` son auxiliares; `Semaforo_*` devuelve 
 | `Cogollero_Generaciones` | 0.0 | Generaciones potenciales de gusano cogollero en el año hidrológico (base 10.9 °C, 559 grados día por generación). |
 | `Salivosa_Lluvia_Temporada` | 0 | Lluvia acumulada desde el 1 de abril (inicio de la temporada de salivosa). |
 | `Salivosa_Alerta_Emergencia` | 0 | 1 cuando la lluvia acumulada de la temporada alcanza 50 mm (eclosión de la mayoría de los huevos). |
+| `Riesgo_Hora_Titulo` |  | Título del mapa de calor horario con el riesgo que se está mostrando. |
+| `Titulo_Contexto` |  | Título dinámico del Resumen Semanal: cultivo, estaciones o estrato y fechas del periodo. |
+| `_Riesgo_En_Cultivo` |  | TRUE si el riesgo en contexto pertenece al cultivo seleccionado (garantiza que no se muestren riesgos de otros cultivos). |
 
 <details><summary><code>R_CAN_ROYA_CAFE</code></summary>
 
@@ -220,7 +223,7 @@ RETURN
 AVERAGEX(
     _Est,
     SUMX(
-        FILTER(VALUES(Calendario[Fecha]), MONTH(Calendario[Fecha]) IN { 1, 2, 3, 4 }),
+        FILTER(VALUES(Calendario[Fecha]), MONTH(Calendario[Fecha]) IN { 11, 12, 1, 2, 3, 4 }),
             VAR hr = CALCULATE(AVERAGE(Fact_Diaria_met[HR_Media]))
             VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
             RETURN IF(NOT ISBLANK(hr) && NOT ISBLANK(p) && ( p < 1 && hr < 70 ), 1, 0)
@@ -910,6 +913,8 @@ AVERAGEX(
 ```dax
 VAR _id = SELECTEDVALUE(Riesgos_Cultivo[ID])
 RETURN
+IF(
+    [_Riesgo_En_Cultivo],
 SWITCH(
     _id,
     "CAN_ROYA_CAFE", [R_CAN_ROYA_CAFE],
@@ -956,6 +961,7 @@ SWITCH(
     "MAI_PUDRICION_MAZORCA", [R_MAI_PUDRICION_MAZORCA],
     BLANK()
 )
+)
 ```
 </details>
 
@@ -988,7 +994,7 @@ SWITCH([Riesgo_Semaforo], 1, "#D64550", 2, "#F2B134", 3, "#3BA272", "#B0B0B0")
 
 ```dax
 VAR _v = [Riesgo_Valor]
-RETURN IF(ISBLANK(_v), "Sin datos", FORMAT(_v, "0.#") & " " & SELECTEDVALUE(Riesgos_Cultivo[Unidad]))
+RETURN IF(NOT [_Riesgo_En_Cultivo], BLANK(), IF(ISBLANK(_v), "Sin datos", FORMAT(_v, "0.#") & " " & SELECTEDVALUE(Riesgos_Cultivo[Unidad])))
 ```
 </details>
 
@@ -1009,27 +1015,43 @@ COUNTROWS(FILTER(VALUES(Riesgos_Cultivo[ID]), [Riesgo_Semaforo] = 2))
 <details><summary><code>Riesgo_Hora</code></summary>
 
 ```dax
-VAR _id = SELECTEDVALUE(Riesgos_Cultivo[ID])
+VAR _sel = IF([_Riesgo_En_Cultivo], SELECTEDVALUE(Riesgos_Cultivo[ID]))
+VAR _def =
+    MAXX(
+        TOPN(
+            1,
+            CALCULATETABLE(
+                FILTER(Riesgos_Cultivo, Riesgos_Cultivo[Tiene_Horaria]),
+                REMOVEFILTERS(Riesgos_Cultivo[Riesgo], Riesgos_Cultivo[ID], Riesgos_Cultivo[Orden_Nombre]),
+                TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])
+            ),
+            Riesgos_Cultivo[Orden], ASC
+        ),
+        Riesgos_Cultivo[ID]
+    )
+VAR _id = COALESCE(_sel, _def)
 VAR _n = COUNTROWS(Fact_Horaria_riesgo)
 RETURN
 DIVIDE(
     SWITCH(
         _id,
-        "CAN_ROYA_CAFE", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 15 && Fact_Horaria_riesgo[Temp_Media] <= 25 && Fact_Horaria_riesgo[HR_Media] > 80 && Fact_Horaria_riesgo[Mojadura_Max] > 4)),
-        "CAN_ROYA_NARANJA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 18 && Fact_Horaria_riesgo[Temp_Media] <= 28 && ( Fact_Horaria_riesgo[HR_Media] >= 98 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ))),
-        "CAN_SALIVOSA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 22 && Fact_Horaria_riesgo[Temp_Media] <= 30 && Fact_Horaria_riesgo[HR_Media] > 80 && Fact_Horaria_riesgo[Precip_Total] > 0)),
-        "CAN_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800)),
-        "CAN_APLICACION", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] < 30 && Fact_Horaria_riesgo[HR_Media] > 60 && Fact_Horaria_riesgo[Viento_Media] < 10 && Fact_Horaria_riesgo[Rad_Media] > 40)),
-        "BAN_SIG_NEGRA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 21.5 && Fact_Horaria_riesgo[Temp_Media] <= 28 && ( Fact_Horaria_riesgo[HR_Media] > 90 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ))),
-        "BAN_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 38 && Fact_Horaria_riesgo[Rad_Media] > 800)),
-        "AGU_ANTRACNOSIS", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 20 && Fact_Horaria_riesgo[Temp_Media] <= 30 && Fact_Horaria_riesgo[HR_Media] > 80 && ( Fact_Horaria_riesgo[Mojadura_Max] > 4 || Fact_Horaria_riesgo[Precip_Total] > 0 ))),
-        "AGU_CALOR", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800)),
-        "PAL_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 34 && Fact_Horaria_riesgo[Rad_Media] > 800)),
-        "MAI_ASFALTO", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 16 && Fact_Horaria_riesgo[Temp_Media] <= 22 && Fact_Horaria_riesgo[HR_Media] > 75 && Fact_Horaria_riesgo[Mojadura_Max] > 4)),
-        "MAI_ROYA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 16 && Fact_Horaria_riesgo[Temp_Media] <= 23 && Fact_Horaria_riesgo[Mojadura_Max] > 4)),
-        "MAI_TIZON", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 18 && Fact_Horaria_riesgo[Temp_Media] <= 28 && Fact_Horaria_riesgo[Mojadura_Max] > 4)),
-        "MAI_MANCHA_GRIS", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 27 && Fact_Horaria_riesgo[Temp_Media] <= 32 && Fact_Horaria_riesgo[HR_Media] > 90)),
-        "FRI_ROYA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 17 && Fact_Horaria_riesgo[Temp_Media] <= 27 && ( Fact_Horaria_riesgo[HR_Media] > 95 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ))),
+        "CAN_ROYA_CAFE", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 15 && Fact_Horaria_riesgo[Temp_Media] <= 25 && Fact_Horaria_riesgo[HR_Media] > 80 && Fact_Horaria_riesgo[Mojadura_Max] > 4)) + 0,
+        "CAN_ROYA_NARANJA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 18 && Fact_Horaria_riesgo[Temp_Media] <= 28 && ( Fact_Horaria_riesgo[HR_Media] >= 98 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ))) + 0,
+        "CAN_SALIVOSA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 22 && Fact_Horaria_riesgo[Temp_Media] <= 30 && Fact_Horaria_riesgo[HR_Media] > 80 && Fact_Horaria_riesgo[Precip_Total] > 0)) + 0,
+        "CAN_BARRENADOR", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 24 && Fact_Horaria_riesgo[HR_Media] >= 60 && Fact_Horaria_riesgo[HR_Media] <= 80 && Fact_Horaria_riesgo[Precip_Total] = 0)) + 0,
+        "CAN_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800)) + 0,
+        "CAN_APLICACION", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] < 30 && Fact_Horaria_riesgo[HR_Media] > 60 && Fact_Horaria_riesgo[Viento_Media] < 10 && Fact_Horaria_riesgo[Rad_Media] > 40)) + 0,
+        "BAN_SIG_NEGRA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 21.5 && Fact_Horaria_riesgo[Temp_Media] <= 28 && ( Fact_Horaria_riesgo[HR_Media] > 90 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ))) + 0,
+        "BAN_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 38 && Fact_Horaria_riesgo[Rad_Media] > 800)) + 0,
+        "AGU_ANTRACNOSIS", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 20 && Fact_Horaria_riesgo[Temp_Media] <= 30 && Fact_Horaria_riesgo[HR_Media] > 80 && ( Fact_Horaria_riesgo[Mojadura_Max] > 4 || Fact_Horaria_riesgo[Precip_Total] > 0 ))) + 0,
+        "AGU_CALOR", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800)) + 0,
+        "PAL_PC", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 11 && Fact_Horaria_riesgo[Temp_Media] <= 35 && Fact_Horaria_riesgo[HR_Media] > 90 && Fact_Horaria_riesgo[Precip_Total] > 0)) + 0,
+        "PAL_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 34 && Fact_Horaria_riesgo[Rad_Media] > 800)) + 0,
+        "MAI_ASFALTO", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 16 && Fact_Horaria_riesgo[Temp_Media] <= 22 && Fact_Horaria_riesgo[HR_Media] > 75 && Fact_Horaria_riesgo[Mojadura_Max] > 4)) + 0,
+        "MAI_ROYA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 16 && Fact_Horaria_riesgo[Temp_Media] <= 23 && Fact_Horaria_riesgo[Mojadura_Max] > 4)) + 0,
+        "MAI_TIZON", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 18 && Fact_Horaria_riesgo[Temp_Media] <= 28 && Fact_Horaria_riesgo[Mojadura_Max] > 4)) + 0,
+        "MAI_MANCHA_GRIS", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 27 && Fact_Horaria_riesgo[Temp_Media] <= 32 && Fact_Horaria_riesgo[HR_Media] > 90)) + 0,
+        "FRI_ROYA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 17 && Fact_Horaria_riesgo[Temp_Media] <= 27 && ( Fact_Horaria_riesgo[HR_Media] > 95 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ))) + 0,
         BLANK()
     ),
     _n
@@ -1138,6 +1160,62 @@ IF(_fin >= _ini,
 
 ```dax
 IF([Salivosa_Lluvia_Temporada] >= 50, 1, 0)
+```
+</details>
+
+<details><summary><code>Riesgo_Hora_Titulo</code></summary>
+
+```dax
+VAR _sel = IF([_Riesgo_En_Cultivo], SELECTEDVALUE(Riesgos_Cultivo[ID]))
+VAR _def =
+    MAXX(
+        TOPN(
+            1,
+            CALCULATETABLE(
+                FILTER(Riesgos_Cultivo, Riesgos_Cultivo[Tiene_Horaria]),
+                REMOVEFILTERS(Riesgos_Cultivo[Riesgo], Riesgos_Cultivo[ID], Riesgos_Cultivo[Orden_Nombre]),
+                TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])
+            ),
+            Riesgos_Cultivo[Orden], ASC
+        ),
+        Riesgos_Cultivo[ID]
+    )
+VAR _id = COALESCE(_sel, _def)
+VAR _nom = CALCULATE(SELECTEDVALUE(Riesgos_Cultivo[Riesgo]), REMOVEFILTERS(Riesgos_Cultivo), Riesgos_Cultivo[ID] = _id)
+RETURN IF(ISBLANK(_nom), "Sin riesgo horario para este cultivo", "Horas favorables a " & LOWER(_nom) & " (% de horas-estación)")
+```
+</details>
+
+<details><summary><code>Titulo_Contexto</code></summary>
+
+```dax
+VAR _ini = MIN(Calendario[Fecha])
+VAR _fin = MAX(Calendario[Fecha])
+VAR _est = FILTER(VALUES(Estaciones_met[estacionid]), NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met)))
+VAR _n = COUNTROWS(_est)
+VAR _txtEst =
+    SWITCH(
+        TRUE(),
+        NOT ISFILTERED(Estaciones_met), "Todas las estaciones (" & _n & ")",
+        _n = 1, "Estación " & CALCULATE(SELECTEDVALUE(Estaciones_met[finca]), _est),
+        ISFILTERED(Estaciones_met[estrato.nombre]) && NOT ISFILTERED(Estaciones_met[finca]) && NOT ISFILTERED(Estaciones_met[estacionid]),
+            "Estrato " & CONCATENATEX(VALUES(Estaciones_met[estrato.nombre]), Estaciones_met[estrato.nombre], ", ") & " (" & _n & " estaciones)",
+        _n & " estaciones seleccionadas"
+    )
+RETURN
+SELECTEDVALUE(Cultivos[Cultivo], "Sin cultivo") & "  ·  " & _txtEst & "  ·  " & FORMAT(_ini, "dd-mmm") & " al " & FORMAT(_fin, "dd-mmm-yyyy")
+```
+</details>
+
+<details><summary><code>_Riesgo_En_Cultivo</code></summary>
+
+```dax
+NOT ISEMPTY(
+    CALCULATETABLE(
+        VALUES(Riesgos_Cultivo[ID]),
+        TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])
+    )
+)
 ```
 </details>
 
@@ -1462,7 +1540,7 @@ VAR Petalos =
 VAR Panel =
     "<text x='" & px & "' y='30' font-size='15' font-weight='bold' fill='rgb(40,40,40)'>Rosa de vientos · " & Periodo & "</text>"
     & "<text x='" & px & "' y='58' font-size='13' fill='rgb(60,60,60)'>Dirección predominante: <tspan font-weight='bold'>"
-        & Dominante & "</tspan> (" & FORMAT(MaxPct, "0.0", "en-US") & "%)</text>"
+        & IF(Dominante = "", "calma", Dominante) & "</tspan> (" & FORMAT(COALESCE(MaxPct, 0), "0.0", "en-US") & "%)</text>"
     & "<text x='" & px & "' y='78' font-size='13' fill='rgb(60,60,60)'>Velocidad media: <tspan font-weight='bold'>"
         & FORMAT(VelMedia, "0.0", "en-US") & " " & Unidad & "</tspan></text>"
     & "<text x='" & px & "' y='98' font-size='13' fill='rgb(60,60,60)'>Calmas (menos de " & FORMAT(U, "0.0", "en-US") & " " & Unidad
@@ -1492,7 +1570,11 @@ VAR Contenido =
     IF(
         COALESCE(Total, 0) = 0,
         "<text x='310' y='150' text-anchor='middle' font-size='14' fill='rgb(120,120,120)'>Sin datos de viento para la selección</text>",
-        Anillos & Ejes & Petalos & Panel
+        Anillos & Ejes & Petalos
+            & IF(COALESCE(MaxPct, 0) = 0,
+                "<circle cx='" & cx & "' cy='" & cy & "' r='34' fill='white' stroke='rgb(150,150,150)'/>"
+                & "<text x='" & cx & "' y='" & cy + 6 & "' text-anchor='middle' font-size='17' font-weight='bold' fill='rgb(90,90,90)'>Calma</text>")
+            & Panel
     )
 VAR Svg =
     "<svg xmlns='http://www.w3.org/2000/svg' width='620' height='310' viewBox='0 0 620 300' font-family='Segoe UI, Arial, sans-serif'>"
@@ -1991,7 +2073,6 @@ RETURN
 | `Condicion_Barrenador_Hora` |  | Fracción de horas-estación favorables a barrenador (bandera horaria). |
 | `Condicion_Salivosa_Hora` |  | Fracción de horas-estación favorables a salivosa (bandera horaria). |
 | `Condicion_Carbon_Hora` |  | Fracción de horas-estación favorables a carbon (bandera horaria). |
-| `Condicion_Plaga_Hora` |  | Fracción de horas-estación favorables a la plaga elegida en el segmentador Plagas. |
 
 <details><summary><code>Dias_Riesgo_Roya</code></summary>
 
@@ -2295,25 +2376,6 @@ AVERAGE(Fact_Horaria_riesgo[Flag_Salivosa])
 
 ```dax
 AVERAGE(Fact_Horaria_riesgo[Flag_Carbon])
-```
-</details>
-
-<details><summary><code>Condicion_Plaga_Hora</code></summary>
-
-```dax
-VAR EsRoya      = CALCULATE(HASONEVALUE(Plagas[id]), Plagas[id] = 1)
-VAR EsCarbon    = CALCULATE(HASONEVALUE(Plagas[id]), Plagas[id] = 2)
-VAR EsSalivosa  = CALCULATE(HASONEVALUE(Plagas[id]), Plagas[id] = 3)
-VAR EsBarrenador = CALCULATE(HASONEVALUE(Plagas[id]), Plagas[id] = 4)
-RETURN
-SWITCH(
-    TRUE(),
-    EsRoya,       [Condicion_Roya_Hora],
-    EsCarbon,     [Condicion_Carbon_Hora],
-    EsSalivosa,   [Condicion_Salivosa_Hora],
-    EsBarrenador, [Condicion_Barrenador_Hora],
-    [Indice_Riesgo_Hora]
-)
 ```
 </details>
 

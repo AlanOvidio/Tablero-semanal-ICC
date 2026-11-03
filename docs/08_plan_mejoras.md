@@ -46,12 +46,12 @@
 ### Fase 2 · Resumen Semanal multicultivo
 Diseño acordado (2026-11-03): clima arriba (secciones actuales) y debajo un bloque *Riesgos del cultivo*; riesgos en **matriz semáforo** (fila por riesgo: valor, unidad, umbrales, color); **matriz finca × riesgo** agrupada por estrato con celdas coloreadas; segmentador de **Estación** desplegable en la fila de segmentadores.
 
-- [ ] Selector de **Cultivo** junto a Año, Semana y Estrato; segmentador de **Estación**.
-- [ ] Secciones comunes: mapa, lluvia/ETo/balance, temperaturas, VPD, viento, radiación, rosa de vientos.
-- [ ] Secciones por cultivo (desde la página de Caña): tarjetas de alerta (una por riesgo), contexto productivo (GDD vs. año anterior, horas de luz, mojadura), tabla estaciones × riesgos, mapa con riesgos, mapa de calor horario.
-- [ ] Configuración de reporte: **filtrado cruzado por defecto**; revisión de interacciones de la página.
-- [ ] Título dinámico con el contexto (estación/estrato y fechas).
-- [ ] Eliminar la página *Resumen Semanal – Caña Azúcar*.
+- [x] Selector de **Cultivo** junto a Año, Semana y Estrato; segmentador de **Estación**.
+- [x] Secciones comunes: mapa, lluvia/ETo/balance, temperaturas, VPD, viento, radiación, rosa de vientos.
+- [x] Secciones por cultivo (desde la página de Caña): matriz semáforo y conteo de alertas, contexto productivo (GDD vs. año anterior, horas de luz, mojadura), tabla estaciones × riesgos, mapa con riesgos, mapa de calor horario.
+- [x] Configuración de reporte: **filtrado cruzado por defecto**; revisión de interacciones de la página.
+- [x] Título dinámico con el contexto (estación/estrato y fechas).
+- [x] Eliminar la página *Resumen Semanal – Caña Azúcar*.
 
 ### Fase 3 · Pronóstico Semanal (Open-Meteo)
 - [ ] Ingesta: una llamada con las coordenadas de todas las estaciones; datos horarios, zona horaria de Guatemala; parámetro de horizonte (7 días por defecto); actualización completa diaria.

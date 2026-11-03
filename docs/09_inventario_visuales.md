@@ -40,13 +40,16 @@ Tamaño 1280×720 · 2 visuales · carpeta `2b3a32e95e82cae45213`
 
 ## Resumen Semanal
 
-Tamaño 1300×2628 · 26 visuales · carpeta `ff3ee83505f7aab7cef2`
+Tamaño 1300×4143 · 34 visuales · carpeta `ff3ee83505f7aab7cef2`
 
 | Visual | Título | Campos | ID |
 |---|---|---|---|
 | slicer | Semana | Semana_Etiqueta | `e58943` |
 | slicer | Año Hidrológico | Año_Hidrologico | `988805` |
 | slicer | Estrato Altitudinal | estrato.nombre | `4b856a` |
+| slicer | Cultivo | Cultivo | `6bf244` |
+| slicer | Estación | finca | `191943` |
+| cardVisual | Contexto | Titulo_Contexto | `10cd6c` |
 | azureMap | Estaciones Meteorologicas | longitud, latitud, estacionid, estrato.nombre, Precip_Semanal, ETO_Semanal, Balance_Semanal, finca), Temp_Max | `5b2aaf` |
 | cardVisual | Estaciones en déficit crítico | Estaciones_Deficit_Critico | `aec676` |
 | tableEx | Listado estaciones en deficit | finca, Balance_Semanal | `36102a` |
@@ -62,12 +65,16 @@ Tamaño 1300×2628 · 26 visuales · carpeta `ff3ee83505f7aab7cef2`
 | lineChart | Condiciones de estrés vegetal | Jerarquía hidrológica.Fecha, Mojadura_Horas_Semanal, Mojadura_Horas_Nocturna_Semanal, Horas_Luz, Horas_Estres_Termico_Semanal, Rad_Max_Diurna, Rad_Media_Luz | `0b6a1f` |
 | lineChart | Radiación Solar Acumulada | Semana_Num, Rad_Acumulada_Anual_Anterior_Grafica, Rad_Acumulada_Anual_Grafica | `687d3b` |
 | lineChart | VPD y Temperatura Nocturna | Jerarquía hidrológica.Fecha, VPD_Max_Diurna, VPD_Media_Nocturna, VPD_Media_Diurna, Temp_Nocturna_Media, Temp_Min_Nocturna | `2c0af4` |
-| lineChart | Suma Térmica Acumulada | Semana_Num, GDD_Cana_ST_Acumulado_Anterior_Grafica, GDD_Cana_ST_Acumulado_Grafica | `5bd82a` |
+| lineChart | Grados día acumulados del cultivo (año actual vs. anterior) | Semana_Num, GDD_Cultivo_Anterior_Grafica, GDD_Cultivo_Grafica | `5bd82a` |
 | lineChart | Comportamiento del viento | Fecha, Viento_Max_Diurno, Viento_Max_Nocturno, Viento_Media_Diurna, Viento_Media_Nocturna | `9189ab` |
-| slicer | Condiciones meteorológicas favorables a plagas/enfermedades | Plaga | `781803` |
-| pivotTable |  | Fecha_Corta, Hora_Etiqueta, Condicion_Plaga_Hora | `3afd62` |
+| slicer | Riesgo del mapa de calor horario | Riesgo | `781803` |
+| pivotTable |  | Fecha_Corta, Hora_Etiqueta, Riesgo_Hora | `3afd62` |
 | slicer | Período del día (rosa de vientos) | Periodo | `b16e5e` |
 | tableEx |  | Rosa_Vientos_SVG | `411b72` |
+| cardVisual | Riesgos del cultivo en la semana | Riesgos_En_Alerta, Riesgos_En_Precaucion | `cfd277` |
+| cardVisual | Contexto Productivo | Balance_Semanal, Temp_Nocturna_Media, GDD_Cultivo_Acumulado, Horas_Luz, Mojadura_Horas_Total_Semanal, Mojadura_Horas_Semanal, GDD_Cultivo_Acumulado_Anterior | `179b16` |
+| tableEx | Semáforo de riesgos (verde normal · amarillo precaución · rojo alerta · gris sin datos) | Riesgo, Riesgo_Etiqueta, Umbral_Amarillo, Umbral_Rojo, Condicion, Aplicacion, Confianza | `aa96ae` |
+| pivotTable | Riesgos por estrato y estación (expandir el estrato para ver las estaciones) | Riesgo, estrato.nombre, finca, Riesgo_Valor | `034109` |
 
 ## Pronostico Semanal
 
@@ -75,25 +82,4 @@ Tamaño 1280×720 · 0 visuales · carpeta `762f91035868e502547c`
 
 | Visual | Título | Campos | ID |
 |---|---|---|---|
-
-## Resumen Semanal - Caña Azucar
-
-Tamaño 1300×1600 · 16 visuales · carpeta `15bd5bab2724642cb802`
-
-| Visual | Título | Campos | ID |
-|---|---|---|---|
-| slicer | Año | Año_Hidrologico | `e92f27` |
-| slicer | Semana | Semana_Etiqueta | `815987` |
-| slicer | Estrato Altitudinal | estrato.nombre | `5fa8ae` |
-| cardVisual | Alertas de Riesgo | Dias_Riesgo_Roya, Dias_Riesgo_Carbon, Dias_Riesgo_Salivosa, Dias_Riesgo_Barrenador, Horas_Estres_Termico_Semanal, VPD_Max_Diurna | `5ffa81` |
-| cardVisual | Contexto Productivo | Balance_Semanal, Temp_Nocturna_Media, GDD_Cana_ST_Acumulado, Horas_Luz, Mojadura_Horas_Total_Semanal, Mojadura_Horas_Semanal, GDD_Cana_ST_Acumulado_Anterior | `fa3559` |
-| cardVisual | Temperaturas semanales | Temp_Max, Temp_Media, Temp_Min, Amplitud_Termica | `a0a855` |
-| tableEx |  | finca, estrato.nombre, Balance_Semanal, Dias_Riesgo_Roya, Dias_Riesgo_Carbon, Dias_Riesgo_Salivosa, Dias_Riesgo_Barrenador | `1a1f02` |
-| azureMap | Estaciones Meteorologicas | longitud, latitud, estacionid, Balance_Semanal, finca), Dias_Riesgo_Roya, Dias_Riesgo_Salivosa, GDD_Cana_ST_Acumulado | `9e5cc3` |
-| lineChart | VPD y Temperatura Nocturna | Jerarquía hidrológica.Año hidrológico, Jerarquía hidrológica.Semana, Jerarquía hidrológica.Fecha, VPD_Max_Diurna, VPD_Media_Nocturna, VPD_Media_Diurna, Temp_Nocturna_Media | `5899e7` |
-| lineStackedColumnComboChart | balance hídrico y mojadura | Fecha, Balance_Diario, Mojadura_Horas_Semanal, Mojadura_Horas_Nocturna_Semanal | `a757f3` |
-| cardVisual | Temperaturas semanales | Temp_Max, Temp_Media, Temp_Min, Amplitud_Termica | `3ab654` |
-| lineChart | Radiación Solar Acumulada | Semana_Num, Rad_Acumulada_Anual_Anterior_Grafica, Rad_Acumulada_Anual_Grafica | `aa9c4f` |
-| lineChart | Comportamiento del viento | Jerarquía hidrológica.Año hidrológico, Jerarquía hidrológica.Semana, Jerarquía hidrológica.Fecha, Viento_Max_Diurno, Viento_Max_Nocturno, Viento_Media_Diurna, Viento_Media_Nocturna | `cfbb18` |
-| lineChart | Suma Térmica Acumulada | Semana_Num, GDD_Cana_ST_Acumulado_Anterior_Grafica, GDD_Cana_ST_Acumulado_Grafica | `e43f9f` |
 
