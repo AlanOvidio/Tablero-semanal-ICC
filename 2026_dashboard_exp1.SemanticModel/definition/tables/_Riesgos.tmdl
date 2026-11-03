@@ -1158,6 +1158,77 @@ table _Riesgos
 		displayFolder: Genéricas
 		lineageTag: c8594e72-45f5-503a-850d-7ab34a228a72
 
+	/// Valor de cada casilla día × hora según la vista elegida (riesgos o una variable; promedio de las estaciones).
+	measure Mapa_Calor_Valor =
+			VAR _v = SELECTEDVALUE(Vistas_Mapa_Calor[Vista], "Riesgos")
+			RETURN
+			SWITCH(
+			    _v,
+			    "Riesgos", [Riesgo_Hora],
+			    "Temperatura", AVERAGE(Fact_Horaria_riesgo[Temp_Media]),
+			    "Humedad relativa", AVERAGE(Fact_Horaria_riesgo[HR_Media]),
+			    "Déficit de presión de vapor", AVERAGEX(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media])), 0.6108 * EXP(17.27 * Fact_Horaria_riesgo[Temp_Media] / (Fact_Horaria_riesgo[Temp_Media] + 237.3)) * (1 - Fact_Horaria_riesgo[HR_Media] / 100)),
+			    "Sensación térmica", AVERAGE(Fact_Horaria_riesgo[IC_Media]),
+			    "Mojadura", DIVIDE(COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && Fact_Horaria_riesgo[Mojadura_Max] > 4)) + 0, COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max])))),
+			    "Lluvia", AVERAGE(Fact_Horaria_riesgo[Precip_Total]),
+			    "Viento", AVERAGE(Fact_Horaria_riesgo[Viento_Media]),
+			    "Radiación", AVERAGE(Fact_Horaria_riesgo[Rad_Media])
+			)
+		displayFolder: Mapa de calor
+		lineageTag: d149224d-dc81-50bd-bbb4-ee173b5f298d
+
+		formatStringDefinition = SWITCH(SELECTEDVALUE(Vistas_Mapa_Calor[Vista], "Riesgos"), "Riesgos", "0%", "Temperatura", "0.0", "Humedad relativa", "0", "Déficit de presión de vapor", "0.00", "Sensación térmica", "0.0", "Mojadura", "0%", "Lluvia", "0.0", "Viento", "0.0", "Radiación", "0", "0.0")
+
+	/// Color de fondo de la casilla según los rangos fijos de cada vista (ver Vistas_Mapa_Calor[Leyenda]).
+	measure Mapa_Calor_Color =
+			VAR _v = SELECTEDVALUE(Vistas_Mapa_Calor[Vista], "Riesgos")
+			VAR _x = [Mapa_Calor_Valor]
+			RETURN
+			IF(
+			    ISBLANK(_x), BLANK(),
+			    SWITCH(
+			        _v,
+			        "Riesgos", SWITCH(TRUE(), _x < 0.0000001, "#FFFFFF", _x < 0.25, "#F9E79F", _x < 0.5, "#F39C12", "#C0392B"),
+			        "Temperatura", SWITCH(TRUE(), _x < 18, "#4575B4", _x < 24, "#91BFDB", _x < 30, "#FFFFBF", _x < 34, "#FC8D59", "#D73027"),
+			        "Humedad relativa", SWITCH(TRUE(), _x < 60, "#F7FBFF", _x < 80, "#C6DBEF", _x < 90, "#6BAED6", "#2171B5"),
+			        "Déficit de presión de vapor", SWITCH(TRUE(), _x < 0.4, "#6BAED6", _x < 1.2, "#A1D99B", _x < 1.6, "#FED976", "#F03B20"),
+			        "Sensación térmica", SWITCH(TRUE(), _x < 27, "#FFFFFF", _x < 32, "#FFFFB2", _x < 41, "#FECC5C", _x < 54, "#FD8D3C", "#E31A1C"),
+			        "Mojadura", SWITCH(TRUE(), _x < 0.0000001, "#FFFFFF", _x < 0.5, "#9ECAE1", "#3182BD"),
+			        "Lluvia", SWITCH(TRUE(), _x < 0.0000001, "#FFFFFF", _x < 1, "#DEEBF7", _x < 5, "#9ECAE1", _x < 10, "#4292C6", "#08519C"),
+			        "Viento", SWITCH(TRUE(), _x < 1.8, "#FFFFFF", _x < 10, "#E5F5E0", _x < 20, "#A1D99B", _x < 30, "#41AB5D", "#006D2C"),
+			        "Radiación", SWITCH(TRUE(), _x < 40.0000001, "#F0F0F0", _x < 300, "#FFF7BC", _x < 600, "#FEC44F", _x < 800, "#FE9929", "#D95F0E")
+			    )
+			)
+		displayFolder: Mapa de calor
+		lineageTag: e6882ad8-9226-507e-b543-0b01534df7f2
+
+	/// Color del texto: blanco sobre fondos oscuros.
+	measure Mapa_Calor_Fuente =
+			VAR _c = [Mapa_Calor_Color]
+			RETURN IF(_c IN { "#4575B4", "#D73027", "#2171B5", "#F03B20", "#E31A1C", "#3182BD", "#4292C6", "#08519C", "#41AB5D", "#006D2C", "#D95F0E", "#C0392B" }, "#FFFFFF", "#252525")
+		displayFolder: Mapa de calor
+		lineageTag: 04708e60-a757-5027-9f54-4b4ece9ef3be
+
+	/// Tooltip: riesgos favorables en promedio (solo en la vista Riesgos).
+	measure Mapa_Calor_N =
+			VAR _v = SELECTEDVALUE(Vistas_Mapa_Calor[Vista], "Riesgos")
+			RETURN IF(_v = "Riesgos", [Riesgo_Hora_N])
+		formatString: 0.0
+		displayFolder: Mapa de calor
+		lineageTag: d333a6b9-3b63-51bd-883a-93986b860660
+
+	/// Título del mapa de calor con la vista, la unidad y la leyenda de colores.
+	measure Mapa_Calor_Titulo =
+			VAR _v = SELECTEDVALUE(Vistas_Mapa_Calor[Vista], "Riesgos")
+			RETURN
+			IF(
+			    _v = "Riesgos",
+			    [Riesgo_Hora_Titulo],
+			    _v & " (" & SELECTEDVALUE(Vistas_Mapa_Calor[Unidad]) & "), promedio horario de las estaciones · " & SELECTEDVALUE(Vistas_Mapa_Calor[Leyenda])
+			)
+		displayFolder: Mapa de calor
+		lineageTag: ffdbfba2-e633-5e4b-b825-8d997b48423e
+
 	column Column
 		isHidden
 		formatString: 0

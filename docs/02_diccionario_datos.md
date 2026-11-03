@@ -582,6 +582,7 @@ in
 | `Dir_Viento` | double | 0 |  |  |
 | `Sector_Viento` | int64 | 0 |  |  |
 | `Rad_Media` | double | 0 |  |  |
+| `IC_Media` | double | 0.0 |  |  |
 
 <details><summary>Consulta de Power Query (M)</summary>
 
@@ -604,7 +605,7 @@ let
         {
             "fecha", "temperatura", "humedad_relativa",
             "mojadura", "precipitacion",
-            "velocidad_viento", "direccion_viento", "radiacion"
+            "velocidad_viento", "direccion_viento", "radiacion", "indice_calor"
         }
     ),
 
@@ -619,7 +620,8 @@ let
             {"precipitacion",    type number},
             {"velocidad_viento", type number},
             {"direccion_viento", type number},
-            {"radiacion",        type number}
+            {"radiacion",        type number},
+            {"indice_calor",     type number}
         }
     ),
 
@@ -669,6 +671,7 @@ let
             {"Mojadura_Max",  each List.Max([mojadura]),             type number},
             {"Precip_Total",  each List.Sum([precipitacion]),        type number},
             {"Rad_Media",     each List.Average([radiacion]),          type number},
+            {"IC_Media",      each List.Average([indice_calor]),       type number},
             {"Viento_Media",  each List.Average([velocidad_viento]),  type number},
             {"Viento_U",      each List.Sum([Viento_U]),               type number},
             {"Viento_V",      each List.Sum([Viento_V]),               type number}
@@ -1709,6 +1712,37 @@ let
 
     
     Tabla = Table.FromList(Estaciones, Splitter.SplitByNothing(), {"estacionid"})
+in
+    Tabla
+```
+</details>
+
+
+### `Vistas_Mapa_Calor`
+
+| Columna | Tipo | Formato | Ordenar por | Notas |
+|---|---|---|---|---|
+| `Vista` | string |  | `Orden` |  |
+| `Orden` | int64 | 0 |  | oculta |
+| `Unidad` | string |  |  |  |
+| `Leyenda` | string |  |  |  |
+
+<details><summary>Consulta de Power Query (M)</summary>
+
+```powerquery
+let
+    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+    Tabla = #table(type table [Vista = text, Orden = Int64.Type, Unidad = text, Leyenda = text], {
+	{"Riesgos", 1, "% de horas-estación", "blanco 0 · amarillo < 25 % · naranja 25–50 % · rojo ≥ 50 %"},
+	{"Temperatura", 2, "°C", "azul < 18 · celeste 18–24 · amarillo 24–30 · naranja 30–34 · rojo ≥ 34"},
+	{"Humedad relativa", 3, "%", "blanco < 60 · celeste 60–80 · azul 80–90 · azul oscuro ≥ 90"},
+	{"Déficit de presión de vapor", 4, "kPa", "azul < 0.4 (muy húmedo) · verde 0.4–1.2 · amarillo 1.2–1.6 · rojo ≥ 1.6 (estrés)"},
+	{"Sensación térmica", 5, "°C", "blanco < 27 · amarillo 27–32 (precaución) · naranja claro 32–41 (precaución extrema) · naranja 41–54 (peligro) · rojo ≥ 54"},
+	{"Mojadura", 6, "% de horas-estación mojadas", "blanco 0 · celeste < 50 % · azul ≥ 50 %"},
+	{"Lluvia", 7, "mm/h", "blanco 0 · celeste < 1 · azul claro 1–5 · azul 5–10 · azul oscuro ≥ 10"},
+	{"Viento", 8, "km/h", "blanco calma < 1.8 · verde claro 1.8–10 · verde 10–20 · verde medio 20–30 · verde oscuro ≥ 30"},
+	{"Radiación", 9, "W/m²", "gris ≤ 40 (sin luz) · amarillo claro 40–300 · amarillo 300–600 · naranja 600–800 · naranja oscuro ≥ 800"}
+    })
 in
     Tabla
 ```

@@ -214,7 +214,7 @@ def tabla_m(nombre, columnas, filas, sort=None, ocultas=()):
           "\t\t\t\tin", "\t\t\t\t    Tabla", "", "\tannotation PBI_ResultType = Table", ""]
     return CRLF.join(L)
 
-def medida(nombre, expr, fmt=None, carpeta=None, desc=None, cat=None):
+def medida(nombre, expr, fmt=None, carpeta=None, desc=None, cat=None, fmtdef=None):
     L = []
     if desc: L.append(f"\t/// {desc}")
     L.append(f"\tmeasure {nombre} = ```")
@@ -223,7 +223,10 @@ def medida(nombre, expr, fmt=None, carpeta=None, desc=None, cat=None):
     if fmt: L.append(f"\t\tformatString: {fmt}")
     if cat: L.append(f"\t\tdataCategory: {cat}")
     if carpeta: L.append(f"\t\tdisplayFolder: {carpeta}")
-    L += [f"\t\tlineageTag: {tag('_Riesgos', nombre)}", ""]
+    L.append(f"\t\tlineageTag: {tag('_Riesgos', nombre)}")
+    # formatStringDefinition es un objeto hijo en TMDL: debe ir al final de la medida
+    if fmtdef: L += ["", f"\t\tformatStringDefinition = {fmtdef}"]
+    L.append("")
     return CRLF.join(L)
 
 # ───────────────────────── Cultivos ─────────────────────────
@@ -258,6 +261,33 @@ rc_cols = [("ID", "text", "string", None), ("Cultivo", "text", "string", None), 
            ("Orden_Nombre", "Int64.Type", "int64", "0"), ("Categoria", "text", "string", None), ("Orden_Categoria", "Int64.Type", "int64", "0")]
 open(os.path.join(DEF, "tables", "Riesgos_Cultivo.tmdl"), "w", encoding="utf-8", newline="").write(
     tabla_m("Riesgos_Cultivo", rc_cols, filas, sort={"Riesgo": "Orden_Nombre", "Categoria": "Orden_Categoria"}, ocultas=("Orden", "Orden_Nombre", "Orden_Categoria")))
+
+# ───────────────────────── Vistas_Mapa_Calor ─────────────────────────
+# Vista, orden, unidad, formato, leyenda, cortes [(límite superior, color)...] y color final
+VISTAS = [
+    ("Riesgos", "% de horas-estación", "0%", "blanco 0 · amarillo < 25 % · naranja 25–50 % · rojo ≥ 50 %",
+     [(0.0000001, "#FFFFFF"), (0.25, "#F9E79F"), (0.5, "#F39C12")], "#C0392B"),
+    ("Temperatura", "°C", "0.0", "azul < 18 · celeste 18–24 · amarillo 24–30 · naranja 30–34 · rojo ≥ 34",
+     [(18, "#4575B4"), (24, "#91BFDB"), (30, "#FFFFBF"), (34, "#FC8D59")], "#D73027"),
+    ("Humedad relativa", "%", "0", "blanco < 60 · celeste 60–80 · azul 80–90 · azul oscuro ≥ 90",
+     [(60, "#F7FBFF"), (80, "#C6DBEF"), (90, "#6BAED6")], "#2171B5"),
+    ("Déficit de presión de vapor", "kPa", "0.00", "azul < 0.4 (muy húmedo) · verde 0.4–1.2 · amarillo 1.2–1.6 · rojo ≥ 1.6 (estrés)",
+     [(0.4, "#6BAED6"), (1.2, "#A1D99B"), (1.6, "#FED976")], "#F03B20"),
+    ("Sensación térmica", "°C", "0.0", "blanco < 27 · amarillo 27–32 (precaución) · naranja claro 32–41 (precaución extrema) · naranja 41–54 (peligro) · rojo ≥ 54",
+     [(27, "#FFFFFF"), (32, "#FFFFB2"), (41, "#FECC5C"), (54, "#FD8D3C")], "#E31A1C"),
+    ("Mojadura", "% de horas-estación mojadas", "0%", "blanco 0 · celeste < 50 % · azul ≥ 50 %",
+     [(0.0000001, "#FFFFFF"), (0.5, "#9ECAE1")], "#3182BD"),
+    ("Lluvia", "mm/h", "0.0", "blanco 0 · celeste < 1 · azul claro 1–5 · azul 5–10 · azul oscuro ≥ 10",
+     [(0.0000001, "#FFFFFF"), (1, "#DEEBF7"), (5, "#9ECAE1"), (10, "#4292C6")], "#08519C"),
+    ("Viento", "km/h", "0.0", "blanco calma < 1.8 · verde claro 1.8–10 · verde 10–20 · verde medio 20–30 · verde oscuro ≥ 30",
+     [(1.8, "#FFFFFF"), (10, "#E5F5E0"), (20, "#A1D99B"), (30, "#41AB5D")], "#006D2C"),
+    ("Radiación", "W/m²", "0", "gris ≤ 40 (sin luz) · amarillo claro 40–300 · amarillo 300–600 · naranja 600–800 · naranja oscuro ≥ 800",
+     [(40.0000001, "#F0F0F0"), (300, "#FFF7BC"), (600, "#FEC44F"), (800, "#FE9929")], "#D95F0E"),
+]
+OSCUROS = ["#4575B4", "#D73027", "#2171B5", "#F03B20", "#E31A1C", "#3182BD", "#4292C6", "#08519C", "#41AB5D", "#006D2C", "#D95F0E", "#C0392B"]
+vis_cols = [("Vista", "text", "string", None), ("Orden", "Int64.Type", "int64", "0"), ("Unidad", "text", "string", None), ("Leyenda", "text", "string", None)]
+open(os.path.join(DEF, "tables", "Vistas_Mapa_Calor.tmdl"), "w", encoding="utf-8", newline="").write(
+    tabla_m("Vistas_Mapa_Calor", vis_cols, [[v[0], i, v[1], v[3]] for i, v in enumerate(VISTAS, 1)], sort={"Vista": "Orden"}, ocultas=("Orden",)))
 
 # ───────────────────────── _Riesgos (medidas) ─────────────────────────
 M = ["table _Riesgos", f"\tlineageTag: {tag('_Riesgos')}", ""]
@@ -321,6 +351,37 @@ M.append(medida("Riesgo_Hora_Titulo",
     '    _k = 1, "Horas favorables a " & LOWER(_nom) & " (% de horas-estación)",' + CRLF +
     '    _grupo & ": % de horas-estación con al menos uno de " & _k & " riesgos favorable"' + CRLF + ")",
     None, "Genéricas", "Título del mapa de calor horario según lo que se está mostrando."))
+VSEL = 'VAR _v = SELECTEDVALUE(Vistas_Mapa_Calor[Vista], "Riesgos")' + CRLF
+FH = lambda c: f"Fact_Horaria_riesgo[{c}]"
+M.append(medida("Mapa_Calor_Valor",
+    VSEL + "RETURN" + CRLF + "SWITCH(" + CRLF + "    _v," + CRLF +
+    '    "Riesgos", [Riesgo_Hora],' + CRLF +
+    f'    "Temperatura", AVERAGE({FH("Temp_Media")}),' + CRLF +
+    f'    "Humedad relativa", AVERAGE({FH("HR_Media")}),' + CRLF +
+    f'    "Déficit de presión de vapor", AVERAGEX(FILTER(Fact_Horaria_riesgo, NOT ISBLANK({FH("Temp_Media")}) && NOT ISBLANK({FH("HR_Media")})), 0.6108 * EXP(17.27 * {FH("Temp_Media")} / ({FH("Temp_Media")} + 237.3)) * (1 - {FH("HR_Media")} / 100)),' + CRLF +
+    f'    "Sensación térmica", AVERAGE({FH("IC_Media")}),' + CRLF +
+    f'    "Mojadura", DIVIDE(COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK({FH("Mojadura_Max")}) && {FH("Mojadura_Max")} > 4)) + 0, COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK({FH("Mojadura_Max")})))),' + CRLF +
+    f'    "Lluvia", AVERAGE({FH("Precip_Total")}),' + CRLF +
+    f'    "Viento", AVERAGE({FH("Viento_Media")}),' + CRLF +
+    f'    "Radiación", AVERAGE({FH("Rad_Media")})' + CRLF + ")",
+    None, "Mapa de calor", "Valor de cada casilla día × hora según la vista elegida (riesgos o una variable; promedio de las estaciones).",
+    fmtdef='SWITCH(SELECTEDVALUE(Vistas_Mapa_Calor[Vista], "Riesgos"), ' + ", ".join(f'"{v[0]}", "{v[2]}"' for v in VISTAS) + ', "0.0")'))
+def color_vista(v):
+    casos = ", ".join(f'_x < {("%.10f" % lim).rstrip("0").rstrip(".")}, "{col}"' for lim, col in v[4])
+    return f'"{v[0]}", SWITCH(TRUE(), {casos}, "{v[5]}")'
+M.append(medida("Mapa_Calor_Color",
+    VSEL + "VAR _x = [Mapa_Calor_Valor]" + CRLF + "RETURN" + CRLF + "IF(" + CRLF + "    ISBLANK(_x), BLANK()," + CRLF +
+    "    SWITCH(" + CRLF + "        _v," + CRLF + "        " + ("," + CRLF + "        ").join(color_vista(v) for v in VISTAS) + CRLF + "    )" + CRLF + ")",
+    None, "Mapa de calor", "Color de fondo de la casilla según los rangos fijos de cada vista (ver Vistas_Mapa_Calor[Leyenda])."))
+M.append(medida("Mapa_Calor_Fuente",
+    "VAR _c = [Mapa_Calor_Color]" + CRLF + 'RETURN IF(_c IN { ' + ", ".join(f'"{c}"' for c in OSCUROS) + ' }, "#FFFFFF", "#252525")',
+    None, "Mapa de calor", "Color del texto: blanco sobre fondos oscuros."))
+M.append(medida("Mapa_Calor_N", VSEL + 'RETURN IF(_v = "Riesgos", [Riesgo_Hora_N])', "0.0", "Mapa de calor",
+    "Tooltip: riesgos favorables en promedio (solo en la vista Riesgos)."))
+M.append(medida("Mapa_Calor_Titulo",
+    VSEL + 'RETURN' + CRLF + 'IF(' + CRLF + '    _v = "Riesgos",' + CRLF + '    [Riesgo_Hora_Titulo],' + CRLF +
+    '    _v & " (" & SELECTEDVALUE(Vistas_Mapa_Calor[Unidad]) & "), promedio horario de las estaciones · " & SELECTEDVALUE(Vistas_Mapa_Calor[Leyenda])' + CRLF + ')',
+    None, "Mapa de calor", "Título del mapa de calor con la vista, la unidad y la leyenda de colores."))
 M.append(medida("Titulo_Contexto",
     "VAR _ini = MIN(Calendario[Fecha])" + CRLF + "VAR _fin = MAX(Calendario[Fecha])" + CRLF +
     "VAR _est = FILTER(VALUES(Estaciones_met[estacionid]), NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met)))" + CRLF +
@@ -372,7 +433,7 @@ open(os.path.join(DEF, "tables", "_Riesgos.tmdl"), "w", encoding="utf-8", newlin
 
 # ───────────────────────── model.tmdl y relaciones ─────────────────────────
 mp = os.path.join(DEF, "model.tmdl"); s = open(mp, encoding="utf-8", newline="").read()
-for t in ("Cultivos", "Riesgos_Cultivo", "_Riesgos"):
+for t in ("Cultivos", "Riesgos_Cultivo", "Vistas_Mapa_Calor", "_Riesgos"):
     if f"ref table {t}\r\n" not in s and f"ref table {t}\n" not in s:
         i = s.index("ref cultureInfo") if "ref cultureInfo" in s else len(s)
         s = s[:i].rstrip("\r\n") + CRLF + f"ref table {t}" + CRLF + CRLF + s[i:]

@@ -24,6 +24,14 @@ Registrar aquí cada cambio relevante al modelo o al reporte: **qué** cambió, 
 
 ## Bitácora de cambios
 
+### 2026-11-03 · Mapa de calor de variables y ejes por día
+- El mapa de calor tiene un selector **Ver** (tabla `Vistas_Mapa_Calor`): *Riesgos* (como antes) o una variable horaria: temperatura, humedad relativa, déficit de presión de vapor (calculado con T y HR horarias), sensación térmica, mojadura (% de horas-estación mojadas), lluvia (mm/h), viento (km/h) y radiación (W/m²).
+- Colores por rangos físicos fijos por variable (`Mapa_Calor_Color`, texto blanco en fondos oscuros); la leyenda va en el título (`Mapa_Calor_Titulo`). Formato dinámico de `Mapa_Calor_Valor` según la vista.
+- `Fact_Horaria_riesgo` agrega `IC_Media` (índice de calor horario de la API).
+- Al final del Resumen Semanal, enlace a la documentación en GitHub (github.com/AlanOvidio/Tablero-semanal-ICC).
+- Gráficas diarias con eje categórico (una etiqueta por día): sin horas en semanas cortas y con los cortes alineados de lunes a domingo.
+- Revisión del calendario: las semanas van de lunes a domingo; el año hidrológico empieza el lunes de la semana que contiene el 2 de noviembre (2026: 27-oct-2025, 53 semanas; 2027: 02-nov-2026).
+
 ### 2026-11-03 · Mapa de calor por categoría
 - `Riesgos_Cultivo` agrega `Categoria` (Enfermedades, Plagas, Clima (abióticos), Manejo y producción), derivada de `tipo`.
 - El segmentador del mapa de calor es jerárquico (categoría → riesgo) y admite varias selecciones. Con un riesgo, el mapa muestra el % de horas-estación favorables; con una categoría o varios riesgos, el % de horas-estación con al menos uno favorable; sin selección, todos los riesgos horarios del cultivo excepto los indicadores favorables (ventana de aplicación).

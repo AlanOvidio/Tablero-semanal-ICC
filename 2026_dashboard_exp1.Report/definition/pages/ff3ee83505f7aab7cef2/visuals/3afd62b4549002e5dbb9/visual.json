@@ -63,10 +63,10 @@
                       "Entity": "_Riesgos"
                     }
                   },
-                  "Property": "Riesgo_Hora_N"
+                  "Property": "Mapa_Calor_N"
                 }
               },
-              "queryRef": "_Riesgos.Riesgo_Hora_N",
+              "queryRef": "_Riesgos.Mapa_Calor_N",
               "nativeQueryRef": "Riesgos favorables (promedio)",
               "displayName": "Riesgos favorables (promedio)"
             }
@@ -82,12 +82,12 @@
                       "Entity": "_Riesgos"
                     }
                   },
-                  "Property": "Riesgo_Hora"
+                  "Property": "Mapa_Calor_Valor"
                 }
               },
-              "queryRef": "_Riesgos.Riesgo_Hora",
-              "nativeQueryRef": "Condicion",
-              "displayName": "Condicion"
+              "queryRef": "_Riesgos.Mapa_Calor_Valor",
+              "nativeQueryRef": "Valor",
+              "displayName": "Valor"
             }
           ]
         }
@@ -281,169 +281,44 @@
       "values": [
         {
           "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
             "backColor": {
               "solid": {
                 "color": {
                   "expr": {
-                    "Conditional": {
-                      "Cases": [
-                        {
-                          "Condition": {
-                            "Comparison": {
-                              "ComparisonKind": 2,
-                              "Left": {
-                                "Measure": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "_Riesgos"
-                                    }
-                                  },
-                                  "Property": "Riesgo_Hora"
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "0.5D"
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#C0392B'"
-                            }
-                          }
-                        },
-                        {
-                          "Condition": {
-                            "And": {
-                              "Left": {
-                                "Comparison": {
-                                  "ComparisonKind": 2,
-                                  "Left": {
-                                    "Measure": {
-                                      "Expression": {
-                                        "SourceRef": {
-                                          "Entity": "_Riesgos"
-                                        }
-                                      },
-                                      "Property": "Riesgo_Hora"
-                                    }
-                                  },
-                                  "Right": {
-                                    "Literal": {
-                                      "Value": "0.25D"
-                                    }
-                                  }
-                                }
-                              },
-                              "Right": {
-                                "Comparison": {
-                                  "ComparisonKind": 3,
-                                  "Left": {
-                                    "Measure": {
-                                      "Expression": {
-                                        "SourceRef": {
-                                          "Entity": "_Riesgos"
-                                        }
-                                      },
-                                      "Property": "Riesgo_Hora"
-                                    }
-                                  },
-                                  "Right": {
-                                    "Literal": {
-                                      "Value": "0.5D"
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#F39C12'"
-                            }
-                          }
-                        },
-                        {
-                          "Condition": {
-                            "And": {
-                              "Left": {
-                                "Comparison": {
-                                  "ComparisonKind": 1,
-                                  "Left": {
-                                    "Measure": {
-                                      "Expression": {
-                                        "SourceRef": {
-                                          "Entity": "_Riesgos"
-                                        }
-                                      },
-                                      "Property": "Riesgo_Hora"
-                                    }
-                                  },
-                                  "Right": {
-                                    "Literal": {
-                                      "Value": "0D"
-                                    }
-                                  }
-                                }
-                              },
-                              "Right": {
-                                "Comparison": {
-                                  "ComparisonKind": 3,
-                                  "Left": {
-                                    "Measure": {
-                                      "Expression": {
-                                        "SourceRef": {
-                                          "Entity": "_Riesgos"
-                                        }
-                                      },
-                                      "Property": "Riesgo_Hora"
-                                    }
-                                  },
-                                  "Right": {
-                                    "Literal": {
-                                      "Value": "0.25D"
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#F9E79F'"
-                            }
-                          }
-                        },
-                        {
-                          "Condition": {
-                            "Comparison": {
-                              "ComparisonKind": 0,
-                              "Left": {
-                                "Measure": {
-                                  "Expression": {
-                                    "SourceRef": {
-                                      "Entity": "_Riesgos"
-                                    }
-                                  },
-                                  "Property": "Riesgo_Hora"
-                                }
-                              },
-                              "Right": {
-                                "Literal": {
-                                  "Value": "0D"
-                                }
-                              }
-                            }
-                          },
-                          "Value": {
-                            "Literal": {
-                              "Value": "'#FFFFFF'"
-                            }
-                          }
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Riesgos"
                         }
-                      ]
+                      },
+                      "Property": "Mapa_Calor_Color"
+                    }
+                  }
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Riesgos"
+                        }
+                      },
+                      "Property": "Mapa_Calor_Fuente"
                     }
                   }
                 }
@@ -458,18 +333,7 @@
                 }
               }
             ],
-            "metadata": "_Riesgos.Riesgo_Hora"
-          }
-        },
-        {
-          "properties": {
-            "fontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "10D"
-                }
-              }
-            }
+            "metadata": "_Riesgos.Mapa_Calor_Valor"
           }
         }
       ],
@@ -477,7 +341,7 @@
         {
           "properties": {},
           "selector": {
-            "metadata": "_Riesgos.Riesgo_Hora"
+            "metadata": "_Riesgos.Mapa_Calor_Valor"
           }
         }
       ],
@@ -575,7 +439,7 @@
                       "Entity": "_Riesgos"
                     }
                   },
-                  "Property": "Riesgo_Hora_Titulo"
+                  "Property": "Mapa_Calor_Titulo"
                 }
               }
             }

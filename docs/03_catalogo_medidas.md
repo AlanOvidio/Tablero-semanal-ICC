@@ -1,6 +1,6 @@
 # Catálogo de medidas DAX
 
-> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-03 (210 medidas). No editar a mano.
+> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-03 (215 medidas). No editar a mano.
 
 Convenciones: las medidas con prefijo `_` son auxiliares; `Semaforo_*` devuelve 1 = rojo, 2 = amarillo, 3 = verde. Las medidas de suma (lluvia, ETo, balance, horas, GDD, radiación acumulada) **suman por estación y promedian entre estaciones**; los máximos y mínimos devuelven **el extremo** de las estaciones seleccionadas. Ver `04_guia_usuario.md` y `06_decisiones_y_cambios.md`.
 
@@ -16,7 +16,7 @@ Convenciones: las medidas con prefijo `_` son auxiliares; `Semaforo_*` devuelve 
 - [Precipitación, ETo y balance hídrico](#precipitación-eto-y-balance-hídrico) (16)
 - [Temperatura y sensación térmica](#temperatura-y-sensación-térmica) (13)
 - [Humedad, VPD, mojadura y estrés](#humedad-vpd-mojadura-y-estrés) (16)
-- [Auxiliares, calidad de datos y validación](#auxiliares-calidad-de-datos-y-validación) (6)
+- [Auxiliares, calidad de datos y validación](#auxiliares-calidad-de-datos-y-validación) (11)
 
 ## Motor de riesgos por cultivo (generado desde config/riesgos_cultivo.csv)
 
@@ -3374,6 +3374,11 @@ IF(
 | `_Conteo_Estaciones_Met` | 0 | Validación: estaciones con datos diarios. |
 | `N_Lecturas_Promedio` |  | Calidad: lecturas de 15 min promedio por día-estación (96 = completo). |
 | `Dia_Completo_Pct` |  | Calidad: % de días-estación con ≥ 80 lecturas. |
+| `Mapa_Calor_Valor` |  | Valor de cada casilla día × hora según la vista elegida (riesgos o una variable; promedio de las estaciones). |
+| `Mapa_Calor_Color` |  | Color de fondo de la casilla según los rangos fijos de cada vista (ver Vistas_Mapa_Calor[Leyenda]). |
+| `Mapa_Calor_Fuente` |  | Color del texto: blanco sobre fondos oscuros. |
+| `Mapa_Calor_N` | 0.0 | Tooltip: riesgos favorables en promedio (solo en la vista Riesgos). |
+| `Mapa_Calor_Titulo` |  | Título del mapa de calor con la vista, la unidad y la leyenda de colores. |
 
 <details><summary><code>_Semana_Hidro_Actual</code></summary>
 
@@ -3421,5 +3426,78 @@ DIVIDE(
     COUNTROWS(Fact_Subdiaria_met_aux),
     0
 ) * 100
+```
+</details>
+
+<details><summary><code>Mapa_Calor_Valor</code></summary>
+
+```dax
+VAR _v = SELECTEDVALUE(Vistas_Mapa_Calor[Vista], "Riesgos")
+RETURN
+SWITCH(
+    _v,
+    "Riesgos", [Riesgo_Hora],
+    "Temperatura", AVERAGE(Fact_Horaria_riesgo[Temp_Media]),
+    "Humedad relativa", AVERAGE(Fact_Horaria_riesgo[HR_Media]),
+    "Déficit de presión de vapor", AVERAGEX(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media])), 0.6108 * EXP(17.27 * Fact_Horaria_riesgo[Temp_Media] / (Fact_Horaria_riesgo[Temp_Media] + 237.3)) * (1 - Fact_Horaria_riesgo[HR_Media] / 100)),
+    "Sensación térmica", AVERAGE(Fact_Horaria_riesgo[IC_Media]),
+    "Mojadura", DIVIDE(COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && Fact_Horaria_riesgo[Mojadura_Max] > 4)) + 0, COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max])))),
+    "Lluvia", AVERAGE(Fact_Horaria_riesgo[Precip_Total]),
+    "Viento", AVERAGE(Fact_Horaria_riesgo[Viento_Media]),
+    "Radiación", AVERAGE(Fact_Horaria_riesgo[Rad_Media])
+)
+```
+</details>
+
+<details><summary><code>Mapa_Calor_Color</code></summary>
+
+```dax
+VAR _v = SELECTEDVALUE(Vistas_Mapa_Calor[Vista], "Riesgos")
+VAR _x = [Mapa_Calor_Valor]
+RETURN
+IF(
+    ISBLANK(_x), BLANK(),
+    SWITCH(
+        _v,
+        "Riesgos", SWITCH(TRUE(), _x < 0.0000001, "#FFFFFF", _x < 0.25, "#F9E79F", _x < 0.5, "#F39C12", "#C0392B"),
+        "Temperatura", SWITCH(TRUE(), _x < 18, "#4575B4", _x < 24, "#91BFDB", _x < 30, "#FFFFBF", _x < 34, "#FC8D59", "#D73027"),
+        "Humedad relativa", SWITCH(TRUE(), _x < 60, "#F7FBFF", _x < 80, "#C6DBEF", _x < 90, "#6BAED6", "#2171B5"),
+        "Déficit de presión de vapor", SWITCH(TRUE(), _x < 0.4, "#6BAED6", _x < 1.2, "#A1D99B", _x < 1.6, "#FED976", "#F03B20"),
+        "Sensación térmica", SWITCH(TRUE(), _x < 27, "#FFFFFF", _x < 32, "#FFFFB2", _x < 41, "#FECC5C", _x < 54, "#FD8D3C", "#E31A1C"),
+        "Mojadura", SWITCH(TRUE(), _x < 0.0000001, "#FFFFFF", _x < 0.5, "#9ECAE1", "#3182BD"),
+        "Lluvia", SWITCH(TRUE(), _x < 0.0000001, "#FFFFFF", _x < 1, "#DEEBF7", _x < 5, "#9ECAE1", _x < 10, "#4292C6", "#08519C"),
+        "Viento", SWITCH(TRUE(), _x < 1.8, "#FFFFFF", _x < 10, "#E5F5E0", _x < 20, "#A1D99B", _x < 30, "#41AB5D", "#006D2C"),
+        "Radiación", SWITCH(TRUE(), _x < 40.0000001, "#F0F0F0", _x < 300, "#FFF7BC", _x < 600, "#FEC44F", _x < 800, "#FE9929", "#D95F0E")
+    )
+)
+```
+</details>
+
+<details><summary><code>Mapa_Calor_Fuente</code></summary>
+
+```dax
+VAR _c = [Mapa_Calor_Color]
+RETURN IF(_c IN { "#4575B4", "#D73027", "#2171B5", "#F03B20", "#E31A1C", "#3182BD", "#4292C6", "#08519C", "#41AB5D", "#006D2C", "#D95F0E", "#C0392B" }, "#FFFFFF", "#252525")
+```
+</details>
+
+<details><summary><code>Mapa_Calor_N</code></summary>
+
+```dax
+VAR _v = SELECTEDVALUE(Vistas_Mapa_Calor[Vista], "Riesgos")
+RETURN IF(_v = "Riesgos", [Riesgo_Hora_N])
+```
+</details>
+
+<details><summary><code>Mapa_Calor_Titulo</code></summary>
+
+```dax
+VAR _v = SELECTEDVALUE(Vistas_Mapa_Calor[Vista], "Riesgos")
+RETURN
+IF(
+    _v = "Riesgos",
+    [Riesgo_Hora_Titulo],
+    _v & " (" & SELECTEDVALUE(Vistas_Mapa_Calor[Unidad]) & "), promedio horario de las estaciones · " & SELECTEDVALUE(Vistas_Mapa_Calor[Leyenda])
+)
 ```
 </details>

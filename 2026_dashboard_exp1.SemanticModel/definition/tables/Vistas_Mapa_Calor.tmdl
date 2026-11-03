@@ -1,0 +1,59 @@
+table Vistas_Mapa_Calor
+	lineageTag: 7d1572f2-7250-5029-a2cd-774d4f946525
+
+	column Vista
+		dataType: string
+		lineageTag: 328aaf4d-c7b6-5495-a42e-02ba42c93861
+		summarizeBy: none
+		sourceColumn: Vista
+		sortByColumn: Orden
+
+		annotation SummarizationSetBy = User
+
+	column Orden
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 9f2dd6a0-9202-53aa-a10b-bfdfde10edbd
+		summarizeBy: none
+		sourceColumn: Orden
+
+		annotation SummarizationSetBy = User
+
+	column Unidad
+		dataType: string
+		lineageTag: ef7837dc-a81c-5f5c-ad7c-99662be5b1f8
+		summarizeBy: none
+		sourceColumn: Unidad
+
+		annotation SummarizationSetBy = User
+
+	column Leyenda
+		dataType: string
+		lineageTag: 7837ca44-99c7-50fc-a667-1f29f3497bda
+		summarizeBy: none
+		sourceColumn: Leyenda
+
+		annotation SummarizationSetBy = User
+
+	partition Vistas_Mapa_Calor = m
+		mode: import
+		source =
+				let
+				    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+				    Tabla = #table(type table [Vista = text, Orden = Int64.Type, Unidad = text, Leyenda = text], {
+					{"Riesgos", 1, "% de horas-estación", "blanco 0 · amarillo < 25 % · naranja 25–50 % · rojo ≥ 50 %"},
+					{"Temperatura", 2, "°C", "azul < 18 · celeste 18–24 · amarillo 24–30 · naranja 30–34 · rojo ≥ 34"},
+					{"Humedad relativa", 3, "%", "blanco < 60 · celeste 60–80 · azul 80–90 · azul oscuro ≥ 90"},
+					{"Déficit de presión de vapor", 4, "kPa", "azul < 0.4 (muy húmedo) · verde 0.4–1.2 · amarillo 1.2–1.6 · rojo ≥ 1.6 (estrés)"},
+					{"Sensación térmica", 5, "°C", "blanco < 27 · amarillo 27–32 (precaución) · naranja claro 32–41 (precaución extrema) · naranja 41–54 (peligro) · rojo ≥ 54"},
+					{"Mojadura", 6, "% de horas-estación mojadas", "blanco 0 · celeste < 50 % · azul ≥ 50 %"},
+					{"Lluvia", 7, "mm/h", "blanco 0 · celeste < 1 · azul claro 1–5 · azul 5–10 · azul oscuro ≥ 10"},
+					{"Viento", 8, "km/h", "blanco calma < 1.8 · verde claro 1.8–10 · verde 10–20 · verde medio 20–30 · verde oscuro ≥ 30"},
+					{"Radiación", 9, "W/m²", "gris ≤ 40 (sin luz) · amarillo claro 40–300 · amarillo 300–600 · naranja 600–800 · naranja oscuro ≥ 800"}
+				    })
+				in
+				    Tabla
+
+	annotation PBI_ResultType = Table
+

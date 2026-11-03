@@ -1,0 +1,45 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "c1ef7cc4a4e55438baa6",
+  "position": {
+    "x": 10,
+    "y": 4148,
+    "z": 31000,
+    "height": 45,
+    "width": 1280,
+    "tabOrder": 31000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Documentación técnica y metodológica (variables, medidas, umbrales de riesgo y fuentes): ",
+                    "textStyle": {
+                      "fontSize": "11pt"
+                    }
+                  },
+                  {
+                    "value": "github.com/AlanOvidio/Tablero-semanal-ICC",
+                    "url": "https://github.com/AlanOvidio/Tablero-semanal-ICC",
+                    "textStyle": {
+                      "fontSize": "11pt",
+                      "fontWeight": "bold"
+                    }
+                  }
+                ],
+                "horizontalTextAlignment": "center"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

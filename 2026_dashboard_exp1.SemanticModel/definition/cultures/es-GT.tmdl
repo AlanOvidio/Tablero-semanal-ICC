@@ -9557,19 +9557,7 @@ cultureInfo es-GT
 			          "ConceptualProperty": "Riesgo_Hora"
 			        }
 			      },
-			      "State": "Generated",
-			      "Terms": [
-			        {
-			          "Condicion": {
-			            "State": "Suggested",
-			            "Source": {
-			              "Type": "External",
-			              "Agent": "PowerBI.VisualColumnRename"
-			            },
-			            "Weight": 0.9
-			          }
-			        }
-			      ]
+			      "State": "Generated"
 			    },
 			    "table_riesgos.gdd_cultivo_anterior_grafica": {
 			      "Definition": {
@@ -9683,10 +9671,40 @@ cultureInfo es-GT
 			          "ConceptualProperty": "Riesgo_Hora_N"
 			        }
 			      },
+			      "State": "Generated"
+			    },
+			    "table_riesgos.mapa_calor_n": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Riesgos",
+			          "ConceptualProperty": "Mapa_Calor_N"
+			        }
+			      },
 			      "State": "Generated",
 			      "Terms": [
 			        {
 			          "Riesgos favorables (promedio)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "table_riesgos.mapa_calor_valor": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Riesgos",
+			          "ConceptualProperty": "Mapa_Calor_Valor"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Valor": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",

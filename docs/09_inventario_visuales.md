@@ -40,7 +40,7 @@ Tamaño 1280×720 · 2 visuales · carpeta `2b3a32e95e82cae45213`
 
 ## Resumen Semanal
 
-Tamaño 1300×4143 · 34 visuales · carpeta `ff3ee83505f7aab7cef2`
+Tamaño 1300×4203 · 36 visuales · carpeta `ff3ee83505f7aab7cef2`
 
 | Visual | Título | Campos | ID |
 |---|---|---|---|
@@ -67,8 +67,9 @@ Tamaño 1300×4143 · 34 visuales · carpeta `ff3ee83505f7aab7cef2`
 | lineChart | Radiación Solar Acumulada | Semana_Num, Rad_Acumulada_Anual_Anterior_Grafica, Rad_Acumulada_Anual_Grafica | `687d3b` |
 | lineChart | Grados día acumulados del cultivo (año actual vs. anterior) | Semana_Num, GDD_Cultivo_Anterior_Grafica, GDD_Cultivo_Grafica | `5bd82a` |
 | lineChart | Comportamiento del viento | Fecha, Viento_Max_Diurno, Viento_Max_Nocturno, Viento_Media_Diurna, Viento_Media_Nocturna | `9189ab` |
+| slicer | Mapa de calor: ver | Vista | `4da3cb` |
 | slicer | Mapa de calor: categoría o riesgo (sin selección = todos) | Categoria, Riesgo | `781803` |
-| pivotTable |  | Fecha_Corta, Hora_Etiqueta, Riesgo_Hora_N, Riesgo_Hora | `3afd62` |
+| pivotTable |  | Fecha_Corta, Hora_Etiqueta, Mapa_Calor_N, Mapa_Calor_Valor | `3afd62` |
 | slicer | Período del día (rosa de vientos) | Periodo | `b16e5e` |
 | tableEx |  | Rosa_Vientos_SVG | `411b72` |
 | cardVisual | Riesgos del cultivo en la semana | Riesgos_En_Alerta, Riesgos_En_Precaucion | `cfd277` |
