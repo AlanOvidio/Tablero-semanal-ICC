@@ -1,4 +1,4 @@
-expression RangeEnd = #datetime(2026, 10, 26, 12, 0, 0) meta [IsParameterQuery=true, Type="DateTime", IsParameterQueryRequired=true]
+expression RangeEnd = #datetime(2026, 11, 2, 0, 0, 0) meta [IsParameterQuery=true, Type="DateTime", IsParameterQueryRequired=true]
 	lineageTag: 749353b3-1663-4601-8b3b-a09bd0ad06d9
 
 	annotation PBI_NavigationStepName = Navegación

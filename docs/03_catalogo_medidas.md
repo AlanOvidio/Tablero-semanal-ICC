@@ -1,11 +1,12 @@
 # Catálogo de medidas DAX
 
-> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-02 (150 medidas). No editar a mano.
+> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-03 (207 medidas). No editar a mano.
 
 Convenciones: las medidas con prefijo `_` son auxiliares; `Semaforo_*` devuelve 1 = rojo, 2 = amarillo, 3 = verde. Las medidas de suma (lluvia, ETo, balance, horas, GDD, radiación acumulada) **suman por estación y promedian entre estaciones**; los máximos y mínimos devuelven **el extremo** de las estaciones seleccionadas. Ver `04_guia_usuario.md` y `06_decisiones_y_cambios.md`.
 
 ## Índice
 
+- [Motor de riesgos por cultivo (generado desde config/riesgos_cultivo.csv)](#motor-de-riesgos-por-cultivo-generado-desde-configriesgos_cultivocsv) (57)
 - [Viento](#viento) (19)
 - [Radiación y luz](#radiación-y-luz) (16)
 - [Semáforos](#semáforos) (16)
@@ -16,6 +17,1129 @@ Convenciones: las medidas con prefijo `_` son auxiliares; `Semaforo_*` devuelve 
 - [Temperatura y sensación térmica](#temperatura-y-sensación-térmica) (13)
 - [Humedad, VPD, mojadura y estrés](#humedad-vpd-mojadura-y-estrés) (16)
 - [Auxiliares, calidad de datos y validación](#auxiliares-calidad-de-datos-y-validación) (6)
+
+## Motor de riesgos por cultivo (generado desde config/riesgos_cultivo.csv)
+
+| Medida | Formato | Descripción |
+|---|---|---|
+| `R_CAN_ROYA_CAFE` | 0.# | Roya café (Caña de azúcar). Unidad: días/semana. Las esporas requieren una película de agua ≥ 6 h para germinar; temperatura óptima de germinación 21 °C. Día favorable: Tmed 15–25 °C, HR media > 80 % y ≥ 6 h de mojadura. Hora favorable: T 15–25 °C, HR > 80 %, mojadura > 4. |
+| `R_CAN_ROYA_NARANJA` | 0.# | Roya naranja (Caña de azúcar). Unidad: días/semana. Día favorable: Tmed 20–25 °C (cualquier mojadura) o Tmed > 25 °C con mojadura > 8 h. Desfavorable: Tmed < 20 °C, o > 25 °C con mojadura < 8 h. Germinación óptima con HR > 98 % y 21 °C. Esporula hasta la madurez y aun en época seca. |
+| `R_CAN_ESCALDADURA` | 0.# | Escaldadura foliar (Caña de azúcar). Unidad: días/semana. Importante en Guatemala: la alternancia de periodos lluviosos severos y secos severos favorece su expresión; se dispersa con la combinación de lluvia y viento fuertes. Día de dispersión: lluvia > 20 mm y viento máx > 30 km/h. |
+| `R_CAN_SALIVOSA` | 0.# | Salivosa (Aeneolamia) (Caña de azúcar). Unidad: días/semana. Aparece en abril con las primeras lluvias: 50–100 mm de lluvia inicial acumulan humedad suficiente para la eclosión de la mayoría de los huevos. La población se relaciona con la lluvia de 4 semanas antes; presenta 3–4 picos en la época lluviosa y desaparece en noviembre por el fotoperiodo, aunque siga lloviendo. Día favorable: lluvia > 5 |
+| `R_CAN_BARRENADOR` | 0.# | Barrenador (Diatraea) (Caña de azúcar). Unidad: días/semana. La infestación aumenta con el establecimiento de la época seca y en la maduración. Día favorable: Tmed > 24 °C, HR media 60–80 %, día seco. 4–5 generaciones/año en El Salvador (oct–jun). |
+| `R_CAN_CHINCHE_ENCAJE` | 0.# | Chinche de encaje (Caña de azúcar). Unidad: días secos/semana. Plaga en aumento en la zona cañera. Las lluvias intensas de julio a septiembre la reducen (derriban las colonias de ninfas); el estrés por exceso de humedad o por sequía la favorece. Semana favorable: sin días con lluvia > 20 mm y ≥ 4 días secos. |
+| `R_CAN_COLUDO` | 0.# | Coludo (saltahojas antillano) (Caña de azúcar). Unidad: días/semana. Plaga exótica favorecida por la época seca (enero–abril): baja precipitación, alta evapotranspiración y baja humedad relativa. Día favorable: día seco y HR media < 70 %. |
+| `R_CAN_ESTRES` | 0.# | Estrés térmico (Caña de azúcar). Unidad: horas/semana. Hora con T > 36 °C (umbral máximo de estrés para caña de azúcar; rango óptimo 20–33 °C) y radiación > 800 W/m². |
+| `R_CAN_SUELO_SATURADO` | 0.# | Suelo saturado: limitación de cosecha y tránsito (Caña de azúcar). Unidad: días/semana. Día con lluvia > 10 mm durante la zafra: anegamiento del suelo que limita el corte, el alce y el tránsito de maquinaria. |
+| `R_CAN_APLICACION` | 0.# | Ventana para aplicación aérea (Caña de azúcar). Unidad: horas aptas/día. Hora apta para aplicar (madurantes y otros productos): T < 30 °C, HR > 60 % y viento < 10 km/h, de día. Evitar la inversión térmica (diciembre–febrero, noches despejadas y sin viento). Indicador positivo: horas aptas por día. |
+| `R_CAN_QUEMA` | 0.# | Riesgo de quema / incendio (Caña de azúcar). Unidad: días/semana. Día con HR mínima < 40 %, viento máximo > 20 km/h y ≥ 3 días secos consecutivos. |
+| `R_CAN_MADURACION` | 0.# | Condiciones de maduración (Caña de azúcar). Unidad: días/semana. Condiciones favorables a la acumulación de sacarosa, de 4 a 6 semanas antes del corte: oscilación térmica día-noche ≈ 15 °C, lluvia de 30–100 mm/mes y 11.5–12.5 h de luz. El exceso de humedad en suelo y planta (inicio de zafra) la frena. Día favorable: amplitud térmica ≥ 15 °C; mes favorable: lluvia 30–100 mm. Semáforo invertido. |
+| `R_BAN_SIG_NEGRA` | 0.# | Sigatoka negra (Banano). Unidad: días/semana. Óptimo 26–28 °C; la infección cae bajo ~20 °C (requiere ~21.5–28 °C). HR > 80 % favorable y > 90 % fuertemente asociada; lluvia frecuente y mojadura persistente. Radiación alta la reduce. Día favorable: Tmed 21.5–28 °C, HR media > 90 % y > 4 h de mojadura nocturna. Índice acumulado: días favorables en 14 días. |
+| `R_BAN_MOKO` | 0.# | Moko (dispersión) (Banano). Unidad: semana. Semana con lluvia > 100 mm y balance positivo (dispersión por agua). |
+| `R_BAN_VOLCAMIENTO` | 0.# | Volcamiento por viento (Banano). Unidad: km/h. Viento máximo diurno > 40 km/h (precaución) / > 60 km/h (alerta). |
+| `R_BAN_ESTRES` | 0.# | Estrés térmico (Banano). Unidad: horas/semana. Hora con T > 38 °C (umbral máximo de estrés para banano; rango óptimo 20–30 °C) y radiación > 800 W/m². |
+| `R_AGU_PHYTO` | 0.# | Phytophthora (pudrición de raíz) (Aguacate). Unidad: días/semana. Humedad alta, temperaturas altas y exceso de agua (mal drenaje). Día favorable: Tmed 20–30 °C y balance diario > 0. |
+| `R_AGU_ANTRACNOSIS` | 0.# | Antracnosis (Aguacate). Unidad: días/semana. Favorecida por temperaturas altas y humedad; la lluvia la dispersa. Día favorable: Tmed 20–30 °C, HR media > 80 % y lluvia > 1 mm o > 6 h de mojadura. |
+| `R_AGU_FRIO` | 0.# | Frío (Aguacate). Unidad: días/semana. Tmín < 12 °C (umbral mínimo de estrés para aguacate). |
+| `R_AGU_CALOR` | 0.# | Golpe de calor / quemadura de fruto (Aguacate). Unidad: horas/semana. Hora con T > 36 °C (umbral máximo de estrés para aguacate; rango óptimo 15–30 °C) y radiación > 800 W/m². |
+| `R_AGU_VIENTO` | 0.# | Caída de flor y fruto por viento (Aguacate). Unidad: km/h. Vientos fuertes causan caída de flor y fruto. Viento máximo diurno > 30 / 45 km/h. |
+| `R_PAL_PC` | 0.# | Pudrición del cogollo (P. palmivora) (Palma de aceite). Unidad: días/semana. Severidad mayor con HR alta, lluvias frecuentes y encharcamiento; los periodos secos la reducen; el patógeno tolera 11–35 °C. Día favorable: lluvia > 5 mm y HR media > 90 %. Índice: días favorables en 14 días. |
+| `R_PAL_ESTRES` | 0.# | Estrés térmico (Palma de aceite). Unidad: horas/semana. Hora con T > 34 °C (umbral máximo de estrés para palma de aceite; rango óptimo 22–32 °C) y radiación > 800 W/m². |
+| `R_MAI_ASFALTO` | 0.# | Maíz – Mancha de asfalto (Granos básicos). Unidad: días/semana. Favorecida por temperaturas frescas (16–22 °C) y HR alta: HR media > 75 % y 7 h de mojadura nocturna. Aparece unas 2 semanas antes de la floración y alcanza su máximo ~6 semanas después. Presente en el altiplano de Guatemala. |
+| `R_MAI_ROYA` | 0.# | Maíz – Roya común (Granos básicos). Unidad: días/semana. Noches de 18–21 °C, temperatura diurna moderada, HR alta y ≥ 6 h de mojadura. |
+| `R_MAI_TIZON` | 0.# | Maíz – Tizón foliar (Exserohilum) (Granos básicos). Unidad: días/semana. 18–28 °C con mojadura prolongada (lluvia o rocío). |
+| `R_MAI_MANCHA_GRIS` | 0.# | Maíz – Mancha gris (Cercospora) (Granos básicos). Unidad: días/semana. Cálido (~27–32 °C) con HR > 90 % durante > 12 h. |
+| `R_MAI_COGOLLERO` | 0.# | Maíz – Gusano cogollero (generaciones) (Granos básicos). Unidad: días/semana (severidad). Generaciones por grados día: temperatura base 10.9 °C y 559 grados día por generación (indicador acumulado). Severidad: daño mayor con T > 30 °C y poca lluvia; día favorable: Tmáx > 30 °C y día seco. |
+| `R_MAI_CALOR_FLOR` | 0.# | Maíz – Estrés térmico en floración (Granos básicos). Unidad: días/semana. Tmáx > 38 °C (umbral máximo de estrés para maíz; rango óptimo 10–35 °C). |
+| `R_FRI_MUSTIA` | 0.# | Frijol – Mustia hilachosa (Granos básicos). Unidad: días/semana. 25–32 °C con lluvia frecuente (salpique). Día favorable: Tmed 25–32 °C y lluvia > 5 mm. |
+| `R_FRI_ROYA` | 0.# | Frijol – Roya (Granos básicos). Unidad: días/semana. 17–27 °C con lluvia frecuente o noches frescas con rocío prolongado (prefloración y floración). Día favorable: Tmed 17–27 °C y (lluvia > 1 mm o > 8 h de mojadura nocturna). |
+| `R_FRI_ANTRACNOSIS` | 0.# | Frijol – Antracnosis (Granos básicos). Unidad: días/semana. HR alta (~92 %), lluvias frecuentes y 13–26 °C (óptimo 17 °C); zonas > 1000 msnm. |
+| `R_FRI_MANCHA_ANGULAR` | 0.# | Frijol – Mancha angular (Granos básicos). Unidad: días/semana. 18–28 °C con alternancia de periodos lluviosos y días secos. Semana favorable: ≥ 2 días con lluvia y ≥ 2 días secos con Tmed 18–28 °C. |
+| `R_FRI_BACTERIOSIS` | 0.# | Frijol – Bacteriosis común (Granos básicos). Unidad: días/semana. 20–32 °C con lluvia frecuente (salpique); zonas < 1200 msnm. |
+| `R_FRI_MOSAICO` | 0.# | Frijol – Mosaico dorado (mosca blanca) (Granos básicos). Unidad: días/semana. 25–30 °C, zonas < 1200 msnm; poblaciones de mosca blanca aumentan en periodos secos. Día favorable: Tmed 25–30 °C y día seco. |
+| `R_FRI_CALOR_FLOR` | 0.# | Frijol – Estrés por calor en floración (Granos básicos). Unidad: días/semana. Tmáx > 34 °C (umbral máximo de estrés para frijol; rango óptimo 15–27 °C). Noches > 20 °C también reducen el cuajado. |
+| `R_GRA_SEQUIA` | 0.# | Sequía (Granos básicos). Unidad: días/semana. Días secos (lluvia < 1 mm). |
+| `R_CAN_FLORACION` | 0.# | Condiciones de inducción floral (Caña de azúcar). Unidad: días en la ventana (16 días). Ventana de inducción en Guatemala: segunda quincena de agosto (fotoperiodo de 12 h 30 min hacia el 23–25 ago). Noche inductiva: Tmín 21–24 °C, con Tmáx ≤ 32 °C y suelo húmedo (sin déficit). Tmín < 18 °C reduce la floración; Tmáx > 32 °C la inhibe; más horas de brillo solar en agosto la reducen. |
+| `R_CAN_ACAME` | 0.# | Acame (volcamiento) (Caña de azúcar). Unidad: días/semana. Viento máximo fuerte combinado con lluvia (suelo húmedo y tallos pesados). Día con viento máx > 40 km/h y lluvia > 10 mm. |
+| `R_AGU_ACAROS` | 0.# | Ácaros (arañita) (Aguacate). Unidad: días/semana. Más comunes en época seca y favorecidos por el viento. Día favorable: día seco, HR media < 65 % y viento máx > 20 km/h. |
+| `R_MAI_ACHAPARRAMIENTO` | 0.# | Maíz – Chicharrita y achaparramiento (Granos básicos). Unidad: días/semana. El vector (Dalbulus maidis) se favorece con escasez de lluvia, altas temperaturas y baja humedad relativa; mayor incidencia cuando la siembra coincide con lluvias irregulares. Día favorable: día seco, Tmed > 26 °C y HR media < 70 %. |
+| `R_MAI_PUDRICION_MAZORCA` | 0.# | Maíz – Pudrición de mazorca (Granos básicos). Unidad: días con lluvia/semana. Los años más lluviosos producen epifitias (Stenocarpella y Fusarium). Semana favorable: ≥ 4 días con lluvia > 1 mm. |
+| `Riesgo_Valor` | 0.# | Valor del riesgo seleccionado (días, horas o km/h según la unidad), promediado entre estaciones. |
+| `Riesgo_Semaforo` | 0 | 1 = alerta, 2 = precaución, 3 = normal. En indicadores favorables (invertidos) menos valor es peor. |
+| `Riesgo_Color` |  | Color hexadecimal del semáforo para formato condicional. |
+| `Riesgo_Etiqueta` |  | Valor con su unidad para tarjetas. |
+| `Riesgos_En_Alerta` | 0 | Número de riesgos del cultivo en alerta (rojo). |
+| `Riesgos_En_Precaucion` | 0 | Número de riesgos del cultivo en precaución (amarillo). |
+| `Riesgo_Hora` | 0% | Mapa de calor: fracción de horas-estación favorables al riesgo seleccionado (solo riesgos con condición horaria). |
+| `GDD_Cultivo` | 0 | Grados día con tope del cultivo seleccionado en el periodo (por estación, promedio entre estaciones). |
+| `GDD_Cultivo_Acumulado` | 0 | Grados día acumulados del año hidrológico hasta la semana en contexto. |
+| `GDD_Cultivo_Acumulado_Anterior` | 0 | Ídem, año hidrológico anterior. |
+| `GDD_Cultivo_Grafica` | 0 | Para la gráfica de acumulados por semana (eje Semanas_Anio), año actual. |
+| `GDD_Cultivo_Anterior_Grafica` | 0 | Para la gráfica de acumulados por semana, año anterior. |
+| `Cogollero_Generaciones` | 0.0 | Generaciones potenciales de gusano cogollero en el año hidrológico (base 10.9 °C, 559 grados día por generación). |
+| `Salivosa_Lluvia_Temporada` | 0 | Lluvia acumulada desde el 1 de abril (inicio de la temporada de salivosa). |
+| `Salivosa_Alerta_Emergencia` | 0 | 1 cuando la lluvia acumulada de la temporada alcanza 50 mm (eclosión de la mayoría de los huevos). |
+
+<details><summary><code>R_CAN_ROYA_CAFE</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmed = CALCULATE(AVERAGE(Fact_Diaria_met[Temp_Media]))
+            VAR hr = CALCULATE(AVERAGE(Fact_Diaria_met[HR_Media]))
+            VAR mojt = CALCULATE(MAX(Fact_Subdiaria_met_aux[Mojadura_Horas_Total]))
+            RETURN IF(NOT ISBLANK(tmed) && NOT ISBLANK(hr) && NOT ISBLANK(mojt) && ( tmed >= 15 && tmed <= 25 && hr > 80 && mojt >= 6 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_CAN_ROYA_NARANJA</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmed = CALCULATE(AVERAGE(Fact_Diaria_met[Temp_Media]))
+            VAR mojt = CALCULATE(MAX(Fact_Subdiaria_met_aux[Mojadura_Horas_Total]))
+            RETURN IF(NOT ISBLANK(tmed) && NOT ISBLANK(mojt) && ( ( tmed >= 20 && tmed <= 25 ) || ( tmed > 25 && mojt > 8 ) ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_CAN_ESCALDADURA</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+            VAR vmax = CALCULATE(MAX(Fact_Subdiaria_met_aux[Viento_Max]))
+            RETURN IF(NOT ISBLANK(p) && NOT ISBLANK(vmax) && ( p > 20 && vmax > 30 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_CAN_SALIVOSA</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        FILTER(VALUES(Calendario[Fecha]), MONTH(Calendario[Fecha]) IN { 4, 5, 6, 7, 8, 9, 10, 11 }),
+            VAR tmed = CALCULATE(AVERAGE(Fact_Diaria_met[Temp_Media]))
+            VAR hr = CALCULATE(AVERAGE(Fact_Diaria_met[HR_Media]))
+            VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+            RETURN IF(NOT ISBLANK(tmed) && NOT ISBLANK(hr) && NOT ISBLANK(p) && ( p > 5 && hr > 80 && tmed >= 22 && tmed <= 30 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_CAN_BARRENADOR</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmed = CALCULATE(AVERAGE(Fact_Diaria_met[Temp_Media]))
+            VAR hr = CALCULATE(AVERAGE(Fact_Diaria_met[HR_Media]))
+            VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+            RETURN IF(NOT ISBLANK(tmed) && NOT ISBLANK(hr) && NOT ISBLANK(p) && ( tmed > 24 && hr >= 60 && hr <= 80 && p < 1 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_CAN_CHINCHE_ENCAJE</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    CALCULATE(
+        VAR _fuerte = CALCULATE(COUNTROWS(FILTER(Fact_Diaria_met, Fact_Diaria_met[Precip_Total] > 20)))
+        VAR _secos = CALCULATE(COUNTROWS(FILTER(Fact_Diaria_met, Fact_Diaria_met[Precip_Total] < 1)))
+        RETURN IF(COALESCE(_fuerte, 0) > 0, 0, COALESCE(_secos, 0))
+    )
+)
+```
+</details>
+
+<details><summary><code>R_CAN_COLUDO</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        FILTER(VALUES(Calendario[Fecha]), MONTH(Calendario[Fecha]) IN { 1, 2, 3, 4 }),
+            VAR hr = CALCULATE(AVERAGE(Fact_Diaria_met[HR_Media]))
+            VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+            RETURN IF(NOT ISBLANK(hr) && NOT ISBLANK(p) && ( p < 1 && hr < 70 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_CAN_ESTRES</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Horaria_riesgo))
+    )
+RETURN
+AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800))), 0))
+```
+</details>
+
+<details><summary><code>R_CAN_SUELO_SATURADO</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        FILTER(VALUES(Calendario[Fecha]), MONTH(Calendario[Fecha]) IN { 11, 12, 1, 2, 3, 4, 5 }),
+            VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+            RETURN IF(NOT ISBLANK(p) && ( p > 10 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_CAN_APLICACION</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Horaria_riesgo))
+    )
+RETURN
+AVERAGEX(_Est, DIVIDE(COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] < 30 && Fact_Horaria_riesgo[HR_Media] > 60 && Fact_Horaria_riesgo[Viento_Media] < 10 && Fact_Horaria_riesgo[Rad_Media] > 40))), 0), CALCULATE(DISTINCTCOUNT(Fact_Horaria_riesgo[Fecha]))))
+```
+</details>
+
+<details><summary><code>R_CAN_QUEMA</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR _d = Calendario[Fecha]
+            VAR hrmin = CALCULATE(MIN(Fact_Diaria_met[HR_Min]))
+            VAR vmax = CALCULATE(MAX(Fact_Subdiaria_met_aux[Viento_Max]))
+            VAR seco3 = CALCULATE(COUNTROWS(FILTER(Fact_Diaria_met, Fact_Diaria_met[Precip_Total] < 1)), DATESBETWEEN(Calendario[Fecha], _d - 2, _d))
+            RETURN IF(NOT ISBLANK(hrmin) && NOT ISBLANK(vmax) && ( hrmin < 40 && vmax > 20 && seco3 = 3 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_CAN_MADURACION</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        FILTER(VALUES(Calendario[Fecha]), MONTH(Calendario[Fecha]) IN { 11, 12, 1, 2, 3, 4 }),
+            VAR _d = Calendario[Fecha]
+            VAR tmin = CALCULATE(MIN(Fact_Diaria_met[Temp_Min]))
+            VAR tmax = CALCULATE(MAX(Fact_Diaria_met[Temp_Max]))
+            VAR p30 = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]), DATESBETWEEN(Calendario[Fecha], _d - 29, _d))
+            RETURN IF(NOT ISBLANK(tmin) && NOT ISBLANK(tmax) && ( (tmax - tmin) >= 15 && p30 >= 30 && p30 <= 100 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_BAN_SIG_NEGRA</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmed = CALCULATE(AVERAGE(Fact_Diaria_met[Temp_Media]))
+            VAR hr = CALCULATE(AVERAGE(Fact_Diaria_met[HR_Media]))
+            VAR mojn = CALCULATE(MAX(Fact_Subdiaria_met_aux[Mojadura_Horas_Nocturna]))
+            RETURN IF(NOT ISBLANK(tmed) && NOT ISBLANK(hr) && NOT ISBLANK(mojn) && ( tmed >= 21.5 && tmed <= 28 && hr > 90 && mojn > 4 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_BAN_MOKO</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    CALCULATE(
+        VAR _p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+        VAR _b = CALCULATE(SUM(Fact_Diaria_met[Balance_Hidrico]))
+        RETURN IF(_p > 100 && _b > 0, 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_BAN_VOLCAMIENTO</code></summary>
+
+```dax
+CALCULATE(MAX(Fact_Subdiaria_met_aux[Viento_Max_Diurno]))
+```
+</details>
+
+<details><summary><code>R_BAN_ESTRES</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Horaria_riesgo))
+    )
+RETURN
+AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 38 && Fact_Horaria_riesgo[Rad_Media] > 800))), 0))
+```
+</details>
+
+<details><summary><code>R_AGU_PHYTO</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmed = CALCULATE(AVERAGE(Fact_Diaria_met[Temp_Media]))
+            VAR bal = CALCULATE(SUM(Fact_Diaria_met[Balance_Hidrico]))
+            RETURN IF(NOT ISBLANK(tmed) && NOT ISBLANK(bal) && ( tmed >= 20 && tmed <= 30 && bal > 0 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_AGU_ANTRACNOSIS</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmed = CALCULATE(AVERAGE(Fact_Diaria_met[Temp_Media]))
+            VAR hr = CALCULATE(AVERAGE(Fact_Diaria_met[HR_Media]))
+            VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+            VAR mojt = CALCULATE(MAX(Fact_Subdiaria_met_aux[Mojadura_Horas_Total]))
+            RETURN IF(NOT ISBLANK(tmed) && NOT ISBLANK(hr) && NOT ISBLANK(p) && NOT ISBLANK(mojt) && ( tmed >= 20 && tmed <= 30 && hr > 80 && ( p > 1 || mojt > 6 ) ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_AGU_FRIO</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmin = CALCULATE(MIN(Fact_Diaria_met[Temp_Min]))
+            RETURN IF(NOT ISBLANK(tmin) && ( tmin < 12 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_AGU_CALOR</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Horaria_riesgo))
+    )
+RETURN
+AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800))), 0))
+```
+</details>
+
+<details><summary><code>R_AGU_VIENTO</code></summary>
+
+```dax
+CALCULATE(MAX(Fact_Subdiaria_met_aux[Viento_Max_Diurno]))
+```
+</details>
+
+<details><summary><code>R_PAL_PC</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmed = CALCULATE(AVERAGE(Fact_Diaria_met[Temp_Media]))
+            VAR hr = CALCULATE(AVERAGE(Fact_Diaria_met[HR_Media]))
+            VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+            RETURN IF(NOT ISBLANK(tmed) && NOT ISBLANK(hr) && NOT ISBLANK(p) && ( tmed >= 11 && tmed <= 35 && hr > 90 && p > 5 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_PAL_ESTRES</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Horaria_riesgo))
+    )
+RETURN
+AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 34 && Fact_Horaria_riesgo[Rad_Media] > 800))), 0))
+```
+</details>
+
+<details><summary><code>R_MAI_ASFALTO</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmed = CALCULATE(AVERAGE(Fact_Diaria_met[Temp_Media]))
+            VAR hr = CALCULATE(AVERAGE(Fact_Diaria_met[HR_Media]))
+            VAR mojn = CALCULATE(MAX(Fact_Subdiaria_met_aux[Mojadura_Horas_Nocturna]))
+            RETURN IF(NOT ISBLANK(tmed) && NOT ISBLANK(hr) && NOT ISBLANK(mojn) && ( tmed >= 16 && tmed <= 22 && hr > 75 && mojn >= 7 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_MAI_ROYA</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmin = CALCULATE(MIN(Fact_Diaria_met[Temp_Min]))
+            VAR mojt = CALCULATE(MAX(Fact_Subdiaria_met_aux[Mojadura_Horas_Total]))
+            RETURN IF(NOT ISBLANK(tmin) && NOT ISBLANK(mojt) && ( tmin >= 18 && tmin <= 21 && mojt >= 6 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_MAI_TIZON</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmed = CALCULATE(AVERAGE(Fact_Diaria_met[Temp_Media]))
+            VAR mojt = CALCULATE(MAX(Fact_Subdiaria_met_aux[Mojadura_Horas_Total]))
+            RETURN IF(NOT ISBLANK(tmed) && NOT ISBLANK(mojt) && ( tmed >= 18 && tmed <= 28 && mojt >= 6 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_MAI_MANCHA_GRIS</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmed = CALCULATE(AVERAGE(Fact_Diaria_met[Temp_Media]))
+            VAR h90 = CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[HR_Media] > 90)))
+            RETURN IF(NOT ISBLANK(tmed) && ( tmed >= 27 && tmed <= 32 && h90 >= 12 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_MAI_COGOLLERO</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmax = CALCULATE(MAX(Fact_Diaria_met[Temp_Max]))
+            VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+            RETURN IF(NOT ISBLANK(tmax) && NOT ISBLANK(p) && ( tmax > 30 && p < 1 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_MAI_CALOR_FLOR</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmax = CALCULATE(MAX(Fact_Diaria_met[Temp_Max]))
+            RETURN IF(NOT ISBLANK(tmax) && ( tmax > 38 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_FRI_MUSTIA</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmed = CALCULATE(AVERAGE(Fact_Diaria_met[Temp_Media]))
+            VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+            RETURN IF(NOT ISBLANK(tmed) && NOT ISBLANK(p) && ( tmed >= 25 && tmed <= 32 && p > 5 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_FRI_ROYA</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmed = CALCULATE(AVERAGE(Fact_Diaria_met[Temp_Media]))
+            VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+            VAR mojn = CALCULATE(MAX(Fact_Subdiaria_met_aux[Mojadura_Horas_Nocturna]))
+            RETURN IF(NOT ISBLANK(tmed) && NOT ISBLANK(p) && NOT ISBLANK(mojn) && ( tmed >= 17 && tmed <= 27 && ( p > 1 || mojn >= 8 ) ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_FRI_ANTRACNOSIS</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+            && CALCULATE(MAX(Estaciones_met[altitud])) >= 1000
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmed = CALCULATE(AVERAGE(Fact_Diaria_met[Temp_Media]))
+            VAR hr = CALCULATE(AVERAGE(Fact_Diaria_met[HR_Media]))
+            VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+            RETURN IF(NOT ISBLANK(tmed) && NOT ISBLANK(hr) && NOT ISBLANK(p) && ( tmed >= 13 && tmed <= 26 && hr > 90 && p >= 1 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_FRI_MANCHA_ANGULAR</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    CALCULATE(
+        VAR _lluv = CALCULATE(COUNTROWS(FILTER(Fact_Diaria_met, Fact_Diaria_met[Precip_Total] >= 1)))
+        VAR _sec = CALCULATE(COUNTROWS(FILTER(Fact_Diaria_met, Fact_Diaria_met[Precip_Total] < 1)))
+        VAR _t = CALCULATE(COUNTROWS(FILTER(Fact_Diaria_met, Fact_Diaria_met[Temp_Media] >= 18 && Fact_Diaria_met[Temp_Media] <= 28)))
+        RETURN IF(COALESCE(_lluv, 0) >= 2 && COALESCE(_sec, 0) >= 2, COALESCE(_t, 0), 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_FRI_BACTERIOSIS</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+            && CALCULATE(MAX(Estaciones_met[altitud])) < 1200
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmed = CALCULATE(AVERAGE(Fact_Diaria_met[Temp_Media]))
+            VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+            RETURN IF(NOT ISBLANK(tmed) && NOT ISBLANK(p) && ( tmed >= 20 && tmed <= 32 && p > 5 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_FRI_MOSAICO</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+            && CALCULATE(MAX(Estaciones_met[altitud])) < 1200
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmed = CALCULATE(AVERAGE(Fact_Diaria_met[Temp_Media]))
+            VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+            RETURN IF(NOT ISBLANK(tmed) && NOT ISBLANK(p) && ( tmed >= 25 && tmed <= 30 && p < 1 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_FRI_CALOR_FLOR</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmax = CALCULATE(MAX(Fact_Diaria_met[Temp_Max]))
+            RETURN IF(NOT ISBLANK(tmax) && ( tmax > 34 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_GRA_SEQUIA</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+            RETURN IF(NOT ISBLANK(p) && ( p < 1 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_CAN_FLORACION</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        FILTER(VALUES(Calendario[Fecha]), MONTH(Calendario[Fecha]) = 8 && DAY(Calendario[Fecha]) >= 16),
+            VAR tmin = CALCULATE(MIN(Fact_Diaria_met[Temp_Min]))
+            VAR tmax = CALCULATE(MAX(Fact_Diaria_met[Temp_Max]))
+            RETURN IF(NOT ISBLANK(tmin) && NOT ISBLANK(tmax) && ( tmin >= 21 && tmin <= 24 && tmax <= 32 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_CAN_ACAME</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+            VAR vmax = CALCULATE(MAX(Fact_Subdiaria_met_aux[Viento_Max]))
+            RETURN IF(NOT ISBLANK(p) && NOT ISBLANK(vmax) && ( vmax > 40 && p > 10 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_AGU_ACAROS</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR hr = CALCULATE(AVERAGE(Fact_Diaria_met[HR_Media]))
+            VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+            VAR vmax = CALCULATE(MAX(Fact_Subdiaria_met_aux[Viento_Max]))
+            RETURN IF(NOT ISBLANK(hr) && NOT ISBLANK(p) && NOT ISBLANK(vmax) && ( p < 1 && hr < 65 && vmax > 20 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_MAI_ACHAPARRAMIENTO</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR tmed = CALCULATE(AVERAGE(Fact_Diaria_met[Temp_Media]))
+            VAR hr = CALCULATE(AVERAGE(Fact_Diaria_met[HR_Media]))
+            VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+            RETURN IF(NOT ISBLANK(tmed) && NOT ISBLANK(hr) && NOT ISBLANK(p) && ( p < 1 && tmed > 26 && hr < 70 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>R_MAI_PUDRICION_MAZORCA</code></summary>
+
+```dax
+VAR _Est =
+    FILTER(
+        VALUES(Estaciones_met[estacionid]),
+        NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))
+    )
+RETURN
+AVERAGEX(
+    _Est,
+    SUMX(
+        VALUES(Calendario[Fecha]),
+            VAR p = CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))
+            RETURN IF(NOT ISBLANK(p) && ( p > 1 ), 1, 0)
+    )
+)
+```
+</details>
+
+<details><summary><code>Riesgo_Valor</code></summary>
+
+```dax
+VAR _id = SELECTEDVALUE(Riesgos_Cultivo[ID])
+RETURN
+SWITCH(
+    _id,
+    "CAN_ROYA_CAFE", [R_CAN_ROYA_CAFE],
+    "CAN_ROYA_NARANJA", [R_CAN_ROYA_NARANJA],
+    "CAN_ESCALDADURA", [R_CAN_ESCALDADURA],
+    "CAN_SALIVOSA", [R_CAN_SALIVOSA],
+    "CAN_BARRENADOR", [R_CAN_BARRENADOR],
+    "CAN_CHINCHE_ENCAJE", [R_CAN_CHINCHE_ENCAJE],
+    "CAN_COLUDO", [R_CAN_COLUDO],
+    "CAN_ESTRES", [R_CAN_ESTRES],
+    "CAN_SUELO_SATURADO", [R_CAN_SUELO_SATURADO],
+    "CAN_APLICACION", [R_CAN_APLICACION],
+    "CAN_QUEMA", [R_CAN_QUEMA],
+    "CAN_MADURACION", [R_CAN_MADURACION],
+    "BAN_SIG_NEGRA", [R_BAN_SIG_NEGRA],
+    "BAN_MOKO", [R_BAN_MOKO],
+    "BAN_VOLCAMIENTO", [R_BAN_VOLCAMIENTO],
+    "BAN_ESTRES", [R_BAN_ESTRES],
+    "AGU_PHYTO", [R_AGU_PHYTO],
+    "AGU_ANTRACNOSIS", [R_AGU_ANTRACNOSIS],
+    "AGU_FRIO", [R_AGU_FRIO],
+    "AGU_CALOR", [R_AGU_CALOR],
+    "AGU_VIENTO", [R_AGU_VIENTO],
+    "PAL_PC", [R_PAL_PC],
+    "PAL_ESTRES", [R_PAL_ESTRES],
+    "MAI_ASFALTO", [R_MAI_ASFALTO],
+    "MAI_ROYA", [R_MAI_ROYA],
+    "MAI_TIZON", [R_MAI_TIZON],
+    "MAI_MANCHA_GRIS", [R_MAI_MANCHA_GRIS],
+    "MAI_COGOLLERO", [R_MAI_COGOLLERO],
+    "MAI_CALOR_FLOR", [R_MAI_CALOR_FLOR],
+    "FRI_MUSTIA", [R_FRI_MUSTIA],
+    "FRI_ROYA", [R_FRI_ROYA],
+    "FRI_ANTRACNOSIS", [R_FRI_ANTRACNOSIS],
+    "FRI_MANCHA_ANGULAR", [R_FRI_MANCHA_ANGULAR],
+    "FRI_BACTERIOSIS", [R_FRI_BACTERIOSIS],
+    "FRI_MOSAICO", [R_FRI_MOSAICO],
+    "FRI_CALOR_FLOR", [R_FRI_CALOR_FLOR],
+    "GRA_SEQUIA", [R_GRA_SEQUIA],
+    "CAN_FLORACION", [R_CAN_FLORACION],
+    "CAN_ACAME", [R_CAN_ACAME],
+    "AGU_ACAROS", [R_AGU_ACAROS],
+    "MAI_ACHAPARRAMIENTO", [R_MAI_ACHAPARRAMIENTO],
+    "MAI_PUDRICION_MAZORCA", [R_MAI_PUDRICION_MAZORCA],
+    BLANK()
+)
+```
+</details>
+
+<details><summary><code>Riesgo_Semaforo</code></summary>
+
+```dax
+VAR _v = [Riesgo_Valor]
+VAR _am = SELECTEDVALUE(Riesgos_Cultivo[Umbral_Amarillo])
+VAR _ro = SELECTEDVALUE(Riesgos_Cultivo[Umbral_Rojo])
+VAR _inv = SELECTEDVALUE(Riesgos_Cultivo[Invertido])
+RETURN
+IF(
+    ISBLANK(_v) || ISBLANK(_am), BLANK(),
+    IF(_inv,
+        SWITCH(TRUE(), _v <= _ro, 1, _v <= _am, 2, 3),
+        SWITCH(TRUE(), _v >= _ro, 1, _v >= _am, 2, 3)
+    )
+)
+```
+</details>
+
+<details><summary><code>Riesgo_Color</code></summary>
+
+```dax
+SWITCH([Riesgo_Semaforo], 1, "#D64550", 2, "#F2B134", 3, "#3BA272", "#B0B0B0")
+```
+</details>
+
+<details><summary><code>Riesgo_Etiqueta</code></summary>
+
+```dax
+VAR _v = [Riesgo_Valor]
+RETURN IF(ISBLANK(_v), "Sin datos", FORMAT(_v, "0.#") & " " & SELECTEDVALUE(Riesgos_Cultivo[Unidad]))
+```
+</details>
+
+<details><summary><code>Riesgos_En_Alerta</code></summary>
+
+```dax
+COUNTROWS(FILTER(VALUES(Riesgos_Cultivo[ID]), [Riesgo_Semaforo] = 1))
+```
+</details>
+
+<details><summary><code>Riesgos_En_Precaucion</code></summary>
+
+```dax
+COUNTROWS(FILTER(VALUES(Riesgos_Cultivo[ID]), [Riesgo_Semaforo] = 2))
+```
+</details>
+
+<details><summary><code>Riesgo_Hora</code></summary>
+
+```dax
+VAR _id = SELECTEDVALUE(Riesgos_Cultivo[ID])
+VAR _n = COUNTROWS(Fact_Horaria_riesgo)
+RETURN
+DIVIDE(
+    SWITCH(
+        _id,
+        "CAN_ROYA_CAFE", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 15 && Fact_Horaria_riesgo[Temp_Media] <= 25 && Fact_Horaria_riesgo[HR_Media] > 80 && Fact_Horaria_riesgo[Mojadura_Max] > 4)),
+        "CAN_ROYA_NARANJA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 18 && Fact_Horaria_riesgo[Temp_Media] <= 28 && ( Fact_Horaria_riesgo[HR_Media] >= 98 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ))),
+        "CAN_SALIVOSA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 22 && Fact_Horaria_riesgo[Temp_Media] <= 30 && Fact_Horaria_riesgo[HR_Media] > 80 && Fact_Horaria_riesgo[Precip_Total] > 0)),
+        "CAN_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800)),
+        "CAN_APLICACION", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] < 30 && Fact_Horaria_riesgo[HR_Media] > 60 && Fact_Horaria_riesgo[Viento_Media] < 10 && Fact_Horaria_riesgo[Rad_Media] > 40)),
+        "BAN_SIG_NEGRA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 21.5 && Fact_Horaria_riesgo[Temp_Media] <= 28 && ( Fact_Horaria_riesgo[HR_Media] > 90 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ))),
+        "BAN_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 38 && Fact_Horaria_riesgo[Rad_Media] > 800)),
+        "AGU_ANTRACNOSIS", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 20 && Fact_Horaria_riesgo[Temp_Media] <= 30 && Fact_Horaria_riesgo[HR_Media] > 80 && ( Fact_Horaria_riesgo[Mojadura_Max] > 4 || Fact_Horaria_riesgo[Precip_Total] > 0 ))),
+        "AGU_CALOR", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800)),
+        "PAL_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 34 && Fact_Horaria_riesgo[Rad_Media] > 800)),
+        "MAI_ASFALTO", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 16 && Fact_Horaria_riesgo[Temp_Media] <= 22 && Fact_Horaria_riesgo[HR_Media] > 75 && Fact_Horaria_riesgo[Mojadura_Max] > 4)),
+        "MAI_ROYA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 16 && Fact_Horaria_riesgo[Temp_Media] <= 23 && Fact_Horaria_riesgo[Mojadura_Max] > 4)),
+        "MAI_TIZON", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 18 && Fact_Horaria_riesgo[Temp_Media] <= 28 && Fact_Horaria_riesgo[Mojadura_Max] > 4)),
+        "MAI_MANCHA_GRIS", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 27 && Fact_Horaria_riesgo[Temp_Media] <= 32 && Fact_Horaria_riesgo[HR_Media] > 90)),
+        "FRI_ROYA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 17 && Fact_Horaria_riesgo[Temp_Media] <= 27 && ( Fact_Horaria_riesgo[HR_Media] > 95 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ))),
+        BLANK()
+    ),
+    _n
+)
+```
+</details>
+
+<details><summary><code>GDD_Cultivo</code></summary>
+
+```dax
+VAR _b = SELECTEDVALUE(Cultivos[GDD_Base], 10)
+VAR _t = SELECTEDVALUE(Cultivos[GDD_Tope], 30)
+RETURN
+AVERAGEX(
+    VALUES(Estaciones_met[estacionid]),
+    CALCULATE(
+        SUMX(
+            Fact_Diaria_met,
+            VAR _x = Fact_Diaria_met[Temp_Media]
+            RETURN IF(ISBLANK(_x), BLANK(), MIN(MAX(_x - _b, 0), _t - _b))
+        )
+    )
+)
+```
+</details>
+
+<details><summary><code>GDD_Cultivo_Acumulado</code></summary>
+
+```dax
+CALCULATE(
+    [GDD_Cultivo],
+    FILTER(
+        ALL(Calendario),
+        Calendario[Año_Hidrologico] = MAX(Calendario[Año_Hidrologico]) &&
+        Calendario[Semana_Hidrologica] <= MAX(Calendario[Semana_Hidrologica])
+    )
+)
+```
+</details>
+
+<details><summary><code>GDD_Cultivo_Acumulado_Anterior</code></summary>
+
+```dax
+CALCULATE(
+    [GDD_Cultivo],
+    FILTER(
+        ALL(Calendario),
+        Calendario[Año_Hidrologico] = MAX(Calendario[Año_Hidrologico]) - 1 &&
+        Calendario[Semana_Hidrologica] <= MAX(Calendario[Semana_Hidrologica])
+    )
+)
+```
+</details>
+
+<details><summary><code>GDD_Cultivo_Grafica</code></summary>
+
+```dax
+VAR _Anio = CALCULATE(MAX(Calendario[Año_Hidrologico]), ALLSELECTED(Calendario))
+VAR _SemMax = CALCULATE(MAX(Calendario[Semana_Hidrologica]), ALLSELECTED(Calendario))
+VAR _SemEje = MAX(Semanas_Anio[Semana_Num])
+RETURN
+IF(_SemEje <= _SemMax, CALCULATE([GDD_Cultivo], ALL(Calendario), Calendario[Año_Hidrologico] = _Anio, Calendario[Semana_Hidrologica] <= _SemEje))
+```
+</details>
+
+<details><summary><code>GDD_Cultivo_Anterior_Grafica</code></summary>
+
+```dax
+VAR _Anio = CALCULATE(MAX(Calendario[Año_Hidrologico]), ALLSELECTED(Calendario))
+VAR _SemMax = CALCULATE(MAX(Calendario[Semana_Hidrologica]), ALLSELECTED(Calendario))
+VAR _SemEje = MAX(Semanas_Anio[Semana_Num])
+RETURN
+CALCULATE([GDD_Cultivo], ALL(Calendario), Calendario[Año_Hidrologico] = _Anio - 1, Calendario[Semana_Hidrologica] <= _SemEje)
+```
+</details>
+
+<details><summary><code>Cogollero_Generaciones</code></summary>
+
+```dax
+CALCULATE(
+    AVERAGEX(
+        VALUES(Estaciones_met[estacionid]),
+        CALCULATE(SUMX(Fact_Diaria_met, MAX(Fact_Diaria_met[Temp_Media] - 10.9, 0)))
+    ),
+    FILTER(ALL(Calendario), Calendario[Año_Hidrologico] = MAX(Calendario[Año_Hidrologico]) && Calendario[Semana_Hidrologica] <= MAX(Calendario[Semana_Hidrologica]))
+) / 559
+```
+</details>
+
+<details><summary><code>Salivosa_Lluvia_Temporada</code></summary>
+
+```dax
+VAR _fin = MAX(Calendario[Fecha])
+VAR _ini = DATE(YEAR(_fin), 4, 1)
+RETURN
+IF(_fin >= _ini,
+    CALCULATE(
+        AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Precip_Total]))),
+        DATESBETWEEN(Calendario[Fecha], _ini, _fin)
+    )
+)
+```
+</details>
+
+<details><summary><code>Salivosa_Alerta_Emergencia</code></summary>
+
+```dax
+IF([Salivosa_Lluvia_Temporada] >= 50, 1, 0)
+```
+</details>
 
 ## Viento
 

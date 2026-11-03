@@ -18,7 +18,9 @@ Tablero/
 │       └── expressions.tmdl            ← parámetros (RangeStart, RangeEnd…) y funciones de la API
 ├── 2026_dashboard_exp1.Report/         ← reporte: páginas y visuales (JSON)
 ├── docs/                               ← documentación
-├── tools/generar_docs_modelo.py        ← regenera la documentación automática
+├── config/                             ← catálogo de riesgos y fuentes (CSV editables en Excel)
+├── referencias/                        ← PDFs de las fuentes (no se suben al repositorio)
+├── tools/                              ← generadores de documentación
 ├── .gitignore
 └── README.md
 ```
@@ -34,7 +36,9 @@ Tablero/
 | [05 · Operación](docs/05_operacion.md) | Mantenimiento | Actualizar, publicar, agregar estaciones, solución de problemas |
 | [06 · Decisiones y cambios](docs/06_decisiones_y_cambios.md) | Mantenimiento | Por qué el modelo funciona como funciona, y bitácora de cambios |
 | [07 · Repositorio Git/GitHub](docs/07_repositorio_git.md) | Mantenimiento | Cómo versionar el proyecto paso a paso |
+| [08 · Plan de mejoras](docs/08_plan_mejoras.md) | Mantenimiento | Tablero multicultivo, pronóstico semanal, catálogo de riesgos y decisiones |
 | [09 · Inventario de visuales](docs/09_inventario_visuales.md) ⚙️ | Mantenimiento | Páginas, visuales y campos que usa cada uno |
+| [10 · Catálogo de riesgos](docs/10_catalogo_riesgos.md) | Mantenimiento / agronomía | Riesgos por cultivo con condiciones, umbrales, fuentes y estado de validación ([CSV editable](config/riesgos_cultivo.csv)) |
 
 ⚙️ = se genera automáticamente; no editar a mano.
 
@@ -52,6 +56,8 @@ Después de cualquier cambio al modelo o al reporte, y antes de hacer *commit*:
 
 ```
 python tools/generar_docs_modelo.py
+python tools/generar_catalogo_riesgos.py   # si se editaron config/riesgos_cultivo.csv o config/fuentes_riesgos.csv
+python tools/generar_riesgos_modelo.py     # aplica el CSV de riesgos al modelo (con Power BI Desktop cerrado)
 ```
 
 Y registrar el cambio en [06 · Decisiones y cambios](docs/06_decisiones_y_cambios.md).

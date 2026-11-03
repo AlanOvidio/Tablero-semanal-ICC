@@ -1,0 +1,57 @@
+table Cultivos
+	lineageTag: 70cd85b6-3d94-5ad3-a7a3-9d38316dc82d
+
+	column Cultivo
+		dataType: string
+		lineageTag: 9df2f1d2-c31a-552e-a1e9-34b23c92b92b
+		summarizeBy: none
+		sourceColumn: Cultivo
+		sortByColumn: Orden
+
+		annotation SummarizationSetBy = User
+
+	column Orden
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: a9f3831b-57d9-54cf-9bdb-d4dcc8140e1f
+		summarizeBy: none
+		sourceColumn: Orden
+
+		annotation SummarizationSetBy = User
+
+	column GDD_Base
+		dataType: double
+		formatString: 0.0
+		lineageTag: 3a1d1bd0-3e33-516e-b2be-8dbde590371d
+		summarizeBy: none
+		sourceColumn: GDD_Base
+
+		annotation SummarizationSetBy = User
+
+	column GDD_Tope
+		dataType: double
+		formatString: 0.0
+		lineageTag: 83861f0b-7ad9-52b8-ac83-e2633e04c8ef
+		summarizeBy: none
+		sourceColumn: GDD_Tope
+
+		annotation SummarizationSetBy = User
+
+	partition Cultivos = m
+		mode: import
+		source =
+				let
+				    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+				    Tabla = #table(type table [Cultivo = text, Orden = Int64.Type, GDD_Base = number, GDD_Tope = number], {
+					{"Caña de azúcar", 1, 10, 34},
+					{"Banano", 2, 15, 28},
+					{"Aguacate", 3, 10, 24},
+					{"Palma de aceite", 4, 15, 30},
+					{"Granos básicos", 5, 10, 30}
+				    })
+				in
+				    Tabla
+
+	annotation PBI_ResultType = Table
+

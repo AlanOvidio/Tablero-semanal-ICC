@@ -17,3 +17,7 @@ desktop.ini
 .DS_Store
 __pycache__/
 *.pyc
+
+# ── Referencias en PDF (derechos de autor / tamaño) ──
+referencias/*.pdf
+**/.pbi/unappliedChanges.json

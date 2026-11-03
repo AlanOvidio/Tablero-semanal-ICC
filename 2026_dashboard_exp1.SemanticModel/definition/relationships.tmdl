@@ -40,3 +40,7 @@ relationship b2847546-c611-4c82-b7d4-a4c3be200b7b
 	fromColumn: Fact_Horaria_riesgo.Sector_Viento
 	toColumn: Direcciones_Viento.Orden
 
+relationship 96ffbcca-d3da-51a3-9a9f-9840f2d6c330
+	fromColumn: Riesgos_Cultivo.Cultivo
+	toColumn: Cultivos.Cultivo
+

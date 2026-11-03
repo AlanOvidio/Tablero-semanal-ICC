@@ -178,6 +178,7 @@ def relaciones():
     return out
 
 GRUPOS = [
+    ("Motor de riesgos por cultivo (generado desde config/riesgos_cultivo.csv)", lambda n, c: c in ("Riesgos por ID", "Genéricas", "Grados día", "Indicadores")),
     ("Viento", lambda n, c: c == "Viento" or "Viento" in n or n.startswith(("Direccion", "Rosa", "Frec_Dir", "Dir_", "Riesgo_Volcamiento", "Pct_Calmas"))),
     ("Radiación y luz", lambda n, c: c == "Radiación" or "Rad_" in n or n == "Horas_Luz"),
     ("Semáforos", lambda n, c: n.startswith("Semaforo")),
@@ -196,7 +197,7 @@ def grupo(m):
 
 def esc(x): return (x or "").replace("|", "\\|").replace("\n", " ")
 
-def ancla(g): return re.sub(r"[^a-z0-9áéíóúñü -]", "", g.lower()).replace(" ", "-")
+def ancla(g): return re.sub(r"[^a-z0-9áéíóúñü _-]", "", g.lower()).replace(" ", "-")
 
 PARAM_DESC = {
     "RangeStart": "Inicio del rango de carga en Desktop (en el servicio lo fija la actualización incremental). Usar 00:00.",
@@ -240,7 +241,7 @@ def gen_diccionario(T, R, E, fecha):
     return "\n".join(L)
 
 def gen_catalogo(T, fecha):
-    ms = T["_Medidas"]["medidas"]; por = {}
+    ms = [m for t in T.values() for m in t["medidas"]]; por = {}
     for m in ms: por.setdefault(grupo(m), []).append(m)
     L = ["# Catálogo de medidas DAX\n", f"> Generado automáticamente por `tools/generar_docs_modelo.py` el {fecha} ({len(ms)} medidas). No editar a mano.\n",
          "Convenciones: las medidas con prefijo `_` son auxiliares; `Semaforo_*` devuelve 1 = rojo, 2 = amarillo, 3 = verde. "

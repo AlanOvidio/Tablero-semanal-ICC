@@ -1,6 +1,6 @@
 # Diccionario de datos
 
-> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-02. No editar a mano: los cambios se pierden al regenerar.
+> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-03. No editar a mano: los cambios se pierden al regenerar.
 
 ## Parámetros y funciones de Power Query
 
@@ -35,6 +35,7 @@
 | `Fact_Horaria_riesgo.estacionid` | `Estaciones_met.estacionid` | Sí | una dirección |
 | `Fact_Horaria_riesgo.Hora` | `Horas_Dia.Hora` | Sí | una dirección |
 | `Fact_Horaria_riesgo.Sector_Viento` | `Direcciones_Viento.Orden` | Sí | una dirección |
+| `Riesgos_Cultivo.Cultivo` | `Cultivos.Cultivo` | Sí | una dirección |
 
 ## Tablas
 
@@ -207,6 +208,33 @@ let
 
 in
     #"Filas ordenadas"
+```
+</details>
+
+
+### `Cultivos`
+
+| Columna | Tipo | Formato | Ordenar por | Notas |
+|---|---|---|---|---|
+| `Cultivo` | string |  | `Orden` |  |
+| `Orden` | int64 | 0 |  | oculta |
+| `GDD_Base` | double | 0.0 |  |  |
+| `GDD_Tope` | double | 0.0 |  |  |
+
+<details><summary>Consulta de Power Query (M)</summary>
+
+```powerquery
+let
+    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+    Tabla = #table(type table [Cultivo = text, Orden = Int64.Type, GDD_Base = number, GDD_Tope = number], {
+	{"Caña de azúcar", 1, 10, 34},
+	{"Banano", 2, 15, 28},
+	{"Aguacate", 3, 10, 24},
+	{"Palma de aceite", 4, 15, 30},
+	{"Granos básicos", 5, 10, 30}
+    })
+in
+    Tabla
 ```
 </details>
 
@@ -553,6 +581,7 @@ in
 | `Viento_Media` | double | 0.0 |  |  |
 | `Dir_Viento` | double | 0 |  |  |
 | `Sector_Viento` | int64 | 0 |  |  |
+| `Rad_Media` | double | 0 |  |  |
 
 <details><summary>Consulta de Power Query (M)</summary>
 
@@ -575,7 +604,7 @@ let
         {
             "fecha", "temperatura", "humedad_relativa",
             "mojadura", "precipitacion",
-            "velocidad_viento", "direccion_viento"
+            "velocidad_viento", "direccion_viento", "radiacion"
         }
     ),
 
@@ -589,7 +618,8 @@ let
             {"mojadura",         type number},
             {"precipitacion",    type number},
             {"velocidad_viento", type number},
-            {"direccion_viento", type number}
+            {"direccion_viento", type number},
+            {"radiacion",        type number}
         }
     ),
 
@@ -638,6 +668,7 @@ let
             {"HR_Media",      each List.Average([humedad_relativa]), type number},
             {"Mojadura_Max",  each List.Max([mojadura]),             type number},
             {"Precip_Total",  each List.Sum([precipitacion]),        type number},
+            {"Rad_Media",     each List.Average([radiacion]),          type number},
             {"Viento_Media",  each List.Average([velocidad_viento]),  type number},
             {"Viento_U",      each List.Sum([Viento_U]),               type number},
             {"Viento_V",      each List.Sum([Viento_V]),               type number}
@@ -1545,6 +1576,83 @@ in
 </details>
 
 
+### `Riesgos_Cultivo`
+
+| Columna | Tipo | Formato | Ordenar por | Notas |
+|---|---|---|---|---|
+| `ID` | string |  |  |  |
+| `Cultivo` | string |  |  |  |
+| `Riesgo` | string |  | `Orden_Nombre` |  |
+| `Tipo` | string |  |  |  |
+| `Escala` | string |  |  |  |
+| `Unidad` | string |  |  |  |
+| `Umbral_Amarillo` | double | 0.## |  |  |
+| `Umbral_Rojo` | double | 0.## |  |  |
+| `Invertido` | boolean |  |  |  |
+| `Tiene_Horaria` | boolean |  |  |  |
+| `Condicion` | string |  |  |  |
+| `Aplicacion` | string |  |  |  |
+| `Fuente` | string |  |  |  |
+| `Confianza` | string |  |  |  |
+| `Validado` | boolean |  |  |  |
+| `Orden` | int64 | 0 |  | oculta |
+| `Orden_Nombre` | int64 | 0 |  | oculta |
+
+<details><summary>Consulta de Power Query (M)</summary>
+
+```powerquery
+let
+    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+    Tabla = #table(type table [ID = text, Cultivo = text, Riesgo = text, Tipo = text, Escala = text, Unidad = text, Umbral_Amarillo = number, Umbral_Rojo = number, Invertido = logical, Tiene_Horaria = logical, Condicion = text, Aplicacion = text, Fuente = text, Confianza = text, Validado = logical, Orden = Int64.Type, Orden_Nombre = Int64.Type], {
+	{"CAN_ROYA_CAFE", "Caña de azúcar", "Roya café", "Enfermedad", "H/D", "días/semana", 1, 3, false, true, "Las esporas requieren una película de agua ≥ 6 h para germinar; temperatura óptima de germinación 21 °C. Día favorable: Tmed 15–25 °C, HR media > 80 % y ≥ 6 h de mojadura. Hora favorable: T 15–25 °C, HR > 80 %, mojadura > 4.", "Etapa sensible: plantas jóvenes (hasta 5–6 meses); interpretar según fecha de corte o siembra.", "CENGICANA2012_ENF; MODELO", "A", false, 101, 101},
+	{"CAN_ROYA_NARANJA", "Caña de azúcar", "Roya naranja", "Enfermedad", "H/D", "días/semana", 2, 4, false, true, "Día favorable: Tmed 20–25 °C (cualquier mojadura) o Tmed > 25 °C con mojadura > 8 h. Desfavorable: Tmed < 20 °C, o > 25 °C con mojadura < 8 h. Germinación óptima con HR > 98 % y 21 °C. Esporula hasta la madurez y aun en época seca.", "Todas las estaciones, todo el año.", "ANGELOTTI2022; CENGICANA2012_ENF", "A/B", false, 102, 102},
+	{"CAN_ESCALDADURA", "Caña de azúcar", "Escaldadura foliar", "Enfermedad (bacteriana)", "D", "días/semana", 1, 2, false, false, "Importante en Guatemala: la alternancia de periodos lluviosos severos y secos severos favorece su expresión; se dispersa con la combinación de lluvia y viento fuertes. Día de dispersión: lluvia > 20 mm y viento máx > 30 km/h.", "Todas las estaciones, todo el año.", "CENGICANA2012_ENF", "B", false, 103, 103},
+	{"CAN_SALIVOSA", "Caña de azúcar", "Salivosa (Aeneolamia)", "Plaga", "H/D", "días/semana", 2, 4, false, true, "Aparece en abril con las primeras lluvias: 50–100 mm de lluvia inicial acumulan humedad suficiente para la eclosión de la mayoría de los huevos. La población se relaciona con la lluvia de 4 semanas antes; presenta 3–4 picos en la época lluviosa y desaparece en noviembre por el fotoperiodo, aunque siga lloviendo. Día favorable: lluvia > 5 mm, HR media > 80 %, Tmed 22–30 °C. Alerta de emergencia: lluvia acumulada desde el inicio de la temporada ≥ 50 mm.", "Solo abril–noviembre (época lluviosa; crítico julio–agosto).", "CENGICANA_ET1997; UVG2017; UVG2016; IMN2019", "A", false, 104, 104},
+	{"CAN_BARRENADOR", "Caña de azúcar", "Barrenador (Diatraea)", "Plaga", "D", "días/semana", 2, 4, false, false, "La infestación aumenta con el establecimiento de la época seca y en la maduración. Día favorable: Tmed > 24 °C, HR media 60–80 %, día seco. 4–5 generaciones/año en El Salvador (oct–jun).", "Todas las estaciones. D. crambidoides predomina en estratos bajo y litoral; otras especies sobre 300 msnm.", "CENGICANA2012_MIP; UES2011; MODELO", "B", false, 105, 105},
+	{"CAN_CHINCHE_ENCAJE", "Caña de azúcar", "Chinche de encaje", "Plaga", "D/A", "días secos/semana", 4, 6, false, false, "Plaga en aumento en la zona cañera. Las lluvias intensas de julio a septiembre la reducen (derriban las colonias de ninfas); el estrés por exceso de humedad o por sequía la favorece. Semana favorable: sin días con lluvia > 20 mm y ≥ 4 días secos.", "Todas las estaciones; el efecto supresor de la lluvia es mayor en julio–septiembre.", "CENGICANA2012_MIP", "B", false, 106, 106},
+	{"CAN_COLUDO", "Caña de azúcar", "Coludo (saltahojas antillano)", "Plaga", "D", "días/semana", 3, 5, false, false, "Plaga exótica favorecida por la época seca (enero–abril): baja precipitación, alta evapotranspiración y baja humedad relativa. Día favorable: día seco y HR media < 70 %.", "Solo enero–abril (época seca).", "CENGICANA_ET2011", "B", false, 107, 107},
+	{"CAN_ESTRES", "Caña de azúcar", "Estrés térmico", "Abiótico", "H", "horas/semana", 14, 28, false, true, "Hora con T > 36 °C (umbral máximo de estrés para caña de azúcar; rango óptimo 20–33 °C) y radiación > 800 W/m².", "Todas las estaciones, todo el año.", "CHAVES2017", "A/B", false, 108, 108},
+	{"CAN_SUELO_SATURADO", "Caña de azúcar", "Suelo saturado: limitación de cosecha y tránsito", "Operativo", "D", "días/semana", 1, 3, false, false, "Día con lluvia > 10 mm durante la zafra: anegamiento del suelo que limita el corte, el alce y el tránsito de maquinaria.", "Solo noviembre–mayo (zafra).", "OPER", "C", true, 109, 109},
+	{"CAN_APLICACION", "Caña de azúcar", "Ventana para aplicación aérea", "Operativo (favorable)", "H", "horas aptas/día", 4, 2, true, true, "Hora apta para aplicar (madurantes y otros productos): T < 30 °C, HR > 60 % y viento < 10 km/h, de día. Evitar la inversión térmica (diciembre–febrero, noches despejadas y sin viento). Indicador positivo: horas aptas por día.", "Todo el año (madurantes: zafra, noviembre–abril). Riesgo de inversión térmica en diciembre–febrero.", "CENGICANA2012_MAD", "A", false, 110, 110},
+	{"CAN_QUEMA", "Caña de azúcar", "Riesgo de quema / incendio", "Operativo", "D", "días/semana", 1, 3, false, false, "Día con HR mínima < 40 %, viento máximo > 20 km/h y ≥ 3 días secos consecutivos.", "Todas las estaciones, todo el año.", "OPER", "C", true, 111, 111},
+	{"CAN_MADURACION", "Caña de azúcar", "Condiciones de maduración", "Productivo (favorable)", "D", "días/semana", 3, 1, true, false, "Condiciones favorables a la acumulación de sacarosa, de 4 a 6 semanas antes del corte: oscilación térmica día-noche ≈ 15 °C, lluvia de 30–100 mm/mes y 11.5–12.5 h de luz. El exceso de humedad en suelo y planta (inicio de zafra) la frena. Día favorable: amplitud térmica ≥ 15 °C; mes favorable: lluvia 30–100 mm. Semáforo invertido.", "Solo noviembre–abril (zafra).", "CENGICANA2012_MAD", "A", false, 112, 112},
+	{"BAN_SIG_NEGRA", "Banano", "Sigatoka negra", "Enfermedad", "H/D/A", "días/semana", 1, 3, false, true, "Óptimo 26–28 °C; la infección cae bajo ~20 °C (requiere ~21.5–28 °C). HR > 80 % favorable y > 90 % fuertemente asociada; lluvia frecuente y mojadura persistente. Radiación alta la reduce. Día favorable: Tmed 21.5–28 °C, HR media > 90 % y > 4 h de mojadura nocturna. Índice acumulado: días favorables en 14 días.", "Todas las estaciones, todo el año.", "TEC2022", "A", false, 213, 213},
+	{"BAN_MOKO", "Banano", "Moko (dispersión)", "Enfermedad", "D", "semana", 1, 1, false, false, "Semana con lluvia > 100 mm y balance positivo (dispersión por agua).", "Todas las estaciones, todo el año.", "MODELO", "C", false, 214, 214},
+	{"BAN_VOLCAMIENTO", "Banano", "Volcamiento por viento", "Abiótico", "D", "km/h", 40, 60, false, false, "Viento máximo diurno > 40 km/h (precaución) / > 60 km/h (alerta).", "Todas las estaciones, todo el año.", "MODELO", "C", false, 215, 215},
+	{"BAN_ESTRES", "Banano", "Estrés térmico", "Abiótico", "H", "horas/semana", 6, 14, false, true, "Hora con T > 38 °C (umbral máximo de estrés para banano; rango óptimo 20–30 °C) y radiación > 800 W/m².", "Todas las estaciones, todo el año.", "CHAVES2017", "A/B", false, 216, 108},
+	{"AGU_PHYTO", "Aguacate", "Phytophthora (pudrición de raíz)", "Enfermedad", "D", "días/semana", 1, 3, false, false, "Humedad alta, temperaturas altas y exceso de agua (mal drenaje). Día favorable: Tmed 20–30 °C y balance diario > 0.", "Todas las estaciones, todo el año.", "INTACR2022", "B", false, 317, 317},
+	{"AGU_ANTRACNOSIS", "Aguacate", "Antracnosis", "Enfermedad", "H/D", "días/semana", 2, 4, false, true, "Favorecida por temperaturas altas y humedad; la lluvia la dispersa. Día favorable: Tmed 20–30 °C, HR media > 80 % y lluvia > 1 mm o > 6 h de mojadura.", "Todas las estaciones, todo el año.", "INTACR2022", "B", false, 318, 318},
+	{"AGU_FRIO", "Aguacate", "Frío", "Abiótico", "D", "días/semana", 1, 3, false, false, "Tmín < 12 °C (umbral mínimo de estrés para aguacate).", "Más relevante en estaciones altas.", "CHAVES2017; MODELO", "A/B", false, 319, 319},
+	{"AGU_CALOR", "Aguacate", "Golpe de calor / quemadura de fruto", "Abiótico", "H", "horas/semana", 6, 14, false, true, "Hora con T > 36 °C (umbral máximo de estrés para aguacate; rango óptimo 15–30 °C) y radiación > 800 W/m².", "Todas las estaciones, todo el año.", "CHAVES2017; INTACR2022", "A/B", false, 320, 320},
+	{"AGU_VIENTO", "Aguacate", "Caída de flor y fruto por viento", "Abiótico", "D", "km/h", 30, 45, false, false, "Vientos fuertes causan caída de flor y fruto. Viento máximo diurno > 30 / 45 km/h.", "Etapa sensible: floración y fruto pequeño.", "INTACR2022", "B", false, 321, 321},
+	{"PAL_PC", "Palma de aceite", "Pudrición del cogollo (P. palmivora)", "Enfermedad", "D/A", "días/semana", 2, 4, false, false, "Severidad mayor con HR alta, lluvias frecuentes y encharcamiento; los periodos secos la reducen; el patógeno tolera 11–35 °C. Día favorable: lluvia > 5 mm y HR media > 90 %. Índice: días favorables en 14 días.", "Todas las estaciones, todo el año.", "FEDEPALMA", "B", false, 422, 422},
+	{"PAL_ESTRES", "Palma de aceite", "Estrés térmico", "Abiótico", "H", "horas/semana", 14, 28, false, true, "Hora con T > 34 °C (umbral máximo de estrés para palma de aceite; rango óptimo 22–32 °C) y radiación > 800 W/m².", "Todas las estaciones, todo el año.", "CHAVES2017", "A/B", false, 423, 108},
+	{"MAI_ASFALTO", "Granos básicos", "Maíz – Mancha de asfalto", "Enfermedad", "H/D", "días/semana", 2, 4, false, true, "Favorecida por temperaturas frescas (16–22 °C) y HR alta: HR media > 75 % y 7 h de mojadura nocturna. Aparece unas 2 semanas antes de la floración y alcanza su máximo ~6 semanas después. Presente en el altiplano de Guatemala.", "Etapa sensible: desde 2 semanas antes de la floración (interpretar según calendario de siembra).", "SENASICA2020; USFQ2024", "A/B", false, 524, 524},
+	{"MAI_ROYA", "Granos básicos", "Maíz – Roya común", "Enfermedad", "H/D", "días/semana", 2, 4, false, true, "Noches de 18–21 °C, temperatura diurna moderada, HR alta y ≥ 6 h de mojadura.", "Más relevante en estaciones altas (noches frescas).", "ISU", "B", false, 525, 525},
+	{"MAI_TIZON", "Granos básicos", "Maíz – Tizón foliar (Exserohilum)", "Enfermedad", "H/D", "días/semana", 2, 4, false, true, "18–28 °C con mojadura prolongada (lluvia o rocío).", "Todas las estaciones, todo el año.", "ISU", "B", false, 526, 526},
+	{"MAI_MANCHA_GRIS", "Granos básicos", "Maíz – Mancha gris (Cercospora)", "Enfermedad", "H/D", "días/semana", 2, 4, false, true, "Cálido (~27–32 °C) con HR > 90 % durante > 12 h.", "Todas las estaciones, todo el año.", "ISU", "B", false, 527, 527},
+	{"MAI_COGOLLERO", "Granos básicos", "Maíz – Gusano cogollero (generaciones)", "Plaga", "A/D", "días/semana (severidad)", 3, 5, false, false, "Generaciones por grados día: temperatura base 10.9 °C y 559 grados día por generación (indicador acumulado). Severidad: daño mayor con T > 30 °C y poca lluvia; día favorable: Tmáx > 30 °C y día seco.", "Todas las estaciones, todo el año.", "SENASICA2021; RAMIREZ2021; BHAT2026", "B", false, 528, 528},
+	{"MAI_CALOR_FLOR", "Granos básicos", "Maíz – Estrés térmico en floración", "Abiótico", "D", "días/semana", 1, 3, false, false, "Tmáx > 38 °C (umbral máximo de estrés para maíz; rango óptimo 10–35 °C).", "Etapa sensible: floración (interpretar según calendario de siembra).", "CHAVES2017", "A/B", false, 529, 529},
+	{"FRI_MUSTIA", "Granos básicos", "Frijol – Mustia hilachosa", "Enfermedad", "D", "días/semana", 2, 4, false, false, "25–32 °C con lluvia frecuente (salpique). Día favorable: Tmed 25–32 °C y lluvia > 5 mm.", "Todas las estaciones, todo el año.", "IICA2008", "A", false, 530, 530},
+	{"FRI_ROYA", "Granos básicos", "Frijol – Roya", "Enfermedad", "H/D", "días/semana", 2, 4, false, true, "17–27 °C con lluvia frecuente o noches frescas con rocío prolongado (prefloración y floración). Día favorable: Tmed 17–27 °C y (lluvia > 1 mm o > 8 h de mojadura nocturna).", "Etapa sensible: prefloración y floración (el modelo no conoce la etapa; interpretar según calendario de siembra).", "ICTA2024; IICA2008", "A", false, 531, 531},
+	{"FRI_ANTRACNOSIS", "Granos básicos", "Frijol – Antracnosis", "Enfermedad", "D", "días/semana", 2, 4, false, false, "HR alta (~92 %), lluvias frecuentes y 13–26 °C (óptimo 17 °C); zonas > 1000 msnm.", "Solo estaciones ≥ 1000 msnm.", "ICTA2024; IICA2008", "A", false, 532, 532},
+	{"FRI_MANCHA_ANGULAR", "Granos básicos", "Frijol – Mancha angular", "Enfermedad", "D/A", "días/semana", 2, 4, false, false, "18–28 °C con alternancia de periodos lluviosos y días secos. Semana favorable: ≥ 2 días con lluvia y ≥ 2 días secos con Tmed 18–28 °C.", "Todas las estaciones, todo el año.", "IICA2008", "A", false, 533, 533},
+	{"FRI_BACTERIOSIS", "Granos básicos", "Frijol – Bacteriosis común", "Enfermedad", "D", "días/semana", 2, 4, false, false, "20–32 °C con lluvia frecuente (salpique); zonas < 1200 msnm.", "Solo estaciones < 1200 msnm.", "IICA2008", "A", false, 534, 534},
+	{"FRI_MOSAICO", "Granos básicos", "Frijol – Mosaico dorado (mosca blanca)", "Plaga / virus", "D", "días/semana", 3, 5, false, false, "25–30 °C, zonas < 1200 msnm; poblaciones de mosca blanca aumentan en periodos secos. Día favorable: Tmed 25–30 °C y día seco.", "Solo estaciones < 1200 msnm.", "IICA2008; CORRALES2017", "A", false, 535, 535},
+	{"FRI_CALOR_FLOR", "Granos básicos", "Frijol – Estrés por calor en floración", "Abiótico", "D", "días/semana", 2, 4, false, false, "Tmáx > 34 °C (umbral máximo de estrés para frijol; rango óptimo 15–27 °C). Noches > 20 °C también reducen el cuajado.", "Etapa sensible: floración (interpretar según calendario de siembra).", "CHAVES2017", "A/B", false, 536, 536},
+	{"GRA_SEQUIA", "Granos básicos", "Sequía", "Abiótico", "D", "días/semana", 3, 5, false, false, "Días secos (lluvia < 1 mm).", "Todas las estaciones, todo el año.", "MODELO", "C", false, 537, 537},
+	{"CAN_FLORACION", "Caña de azúcar", "Condiciones de inducción floral", "Productivo (no deseado)", "D", "días en la ventana (16 días)", 5, 10, false, false, "Ventana de inducción en Guatemala: segunda quincena de agosto (fotoperiodo de 12 h 30 min hacia el 23–25 ago). Noche inductiva: Tmín 21–24 °C, con Tmáx ≤ 32 °C y suelo húmedo (sin déficit). Tmín < 18 °C reduce la floración; Tmáx > 32 °C la inhibe; más horas de brillo solar en agosto la reducen.", "Solo 16–31 de agosto. Mayor intensidad en estratos medio y alto (menos brillo solar). Estratos CENGICAÑA: litoral < 40, bajo 40–100, medio 100–300, alto > 300 msnm.", "CENGICANA2012_FLOR; ARALDI2010", "A", false, 138, 138},
+	{"CAN_ACAME", "Caña de azúcar", "Acame (volcamiento)", "Abiótico", "D", "días/semana", 1, 2, false, false, "Viento máximo fuerte combinado con lluvia (suelo húmedo y tallos pesados). Día con viento máx > 40 km/h y lluvia > 10 mm.", "Todas las estaciones, todo el año.", "OPER", "C", false, 139, 139},
+	{"AGU_ACAROS", "Aguacate", "Ácaros (arañita)", "Plaga", "D", "días/semana", 3, 5, false, false, "Más comunes en época seca y favorecidos por el viento. Día favorable: día seco, HR media < 65 % y viento máx > 20 km/h.", "Todas las estaciones, todo el año.", "INTACR2022", "B", false, 340, 340},
+	{"MAI_ACHAPARRAMIENTO", "Granos básicos", "Maíz – Chicharrita y achaparramiento", "Plaga / vector", "D", "días/semana", 3, 5, false, false, "El vector (Dalbulus maidis) se favorece con escasez de lluvia, altas temperaturas y baja humedad relativa; mayor incidencia cuando la siembra coincide con lluvias irregulares. Día favorable: día seco, Tmed > 26 °C y HR media < 70 %.", "Todas las estaciones, todo el año.", "CASTANON2000", "B", false, 541, 541},
+	{"MAI_PUDRICION_MAZORCA", "Granos básicos", "Maíz – Pudrición de mazorca", "Enfermedad", "D", "días con lluvia/semana", 4, 6, false, false, "Los años más lluviosos producen epifitias (Stenocarpella y Fusarium). Semana favorable: ≥ 4 días con lluvia > 1 mm.", "Etapa sensible: llenado de grano y madurez.", "URBINA1993", "B", false, 542, 542}
+    })
+in
+    Tabla
+```
+</details>
+
+
 ### `Semanas_Anio`
 
 | Columna | Tipo | Formato | Ordenar por | Notas |
@@ -1628,6 +1736,20 @@ let
     Tabla = Table.FromList(Estaciones, Splitter.SplitByNothing(), {"estacionid"})
 in
     Tabla
+```
+</details>
+
+
+### `_Riesgos`
+
+| Columna | Tipo | Formato | Ordenar por | Notas |
+|---|---|---|---|---|
+| `Column` | None | 0 |  | oculta |
+
+<details><summary>Consulta de Power Query (M)</summary>
+
+```powerquery
+Row("Column", BLANK())
 ```
 </details>
 

@@ -1,6 +1,6 @@
 # Inventario de páginas y visuales
 
-> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-02. No editar a mano.
+> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-03. No editar a mano.
 
 ## Validaciones1
 

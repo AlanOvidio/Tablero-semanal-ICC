@@ -26,7 +26,7 @@ table Fact_Horaria_riesgo
 			        {
 			            "fecha", "temperatura", "humedad_relativa",
 			            "mojadura", "precipitacion",
-			            "velocidad_viento", "direccion_viento"
+			            "velocidad_viento", "direccion_viento", "radiacion"
 			        }
 			    ),
 			
@@ -40,7 +40,8 @@ table Fact_Horaria_riesgo
 			            {"mojadura",         type number},
 			            {"precipitacion",    type number},
 			            {"velocidad_viento", type number},
-			            {"direccion_viento", type number}
+			            {"direccion_viento", type number},
+			            {"radiacion",        type number}
 			        }
 			    ),
 			
@@ -89,6 +90,7 @@ table Fact_Horaria_riesgo
 			            {"HR_Media",      each List.Average([humedad_relativa]), type number},
 			            {"Mojadura_Max",  each List.Max([mojadura]),             type number},
 			            {"Precip_Total",  each List.Sum([precipitacion]),        type number},
+			            {"Rad_Media",     each List.Average([radiacion]),          type number},
 			            {"Viento_Media",  each List.Average([velocidad_viento]),  type number},
 			            {"Viento_U",      each List.Sum([Viento_U]),               type number},
 			            {"Viento_V",      each List.Sum([Viento_V]),               type number}
@@ -311,6 +313,15 @@ table Fact_Horaria_riesgo
 
 		annotation SummarizationSetBy = User
 
+	column Rad_Media
+		dataType: double
+		formatString: 0
+		lineageTag: 9f749b31-abd3-4bae-b31c-e2ace64e15d4
+		summarizeBy: none
+		sourceColumn: Rad_Media
+
+		annotation SummarizationSetBy = User
+
 	partition Fact_Horaria_riesgo = m
 		mode: import
 		source =
@@ -332,7 +343,7 @@ table Fact_Horaria_riesgo
 				        {
 				            "fecha", "temperatura", "humedad_relativa",
 				            "mojadura", "precipitacion",
-				            "velocidad_viento", "direccion_viento"
+				            "velocidad_viento", "direccion_viento", "radiacion"
 				        }
 				    ),
 				
@@ -346,7 +357,8 @@ table Fact_Horaria_riesgo
 				            {"mojadura",         type number},
 				            {"precipitacion",    type number},
 				            {"velocidad_viento", type number},
-				            {"direccion_viento", type number}
+				            {"direccion_viento", type number},
+				            {"radiacion",        type number}
 				        }
 				    ),
 				
@@ -395,6 +407,7 @@ table Fact_Horaria_riesgo
 				            {"HR_Media",      each List.Average([humedad_relativa]), type number},
 				            {"Mojadura_Max",  each List.Max([mojadura]),             type number},
 				            {"Precip_Total",  each List.Sum([precipitacion]),        type number},
+				            {"Rad_Media",     each List.Average([radiacion]),          type number},
 				            {"Viento_Media",  each List.Average([velocidad_viento]),  type number},
 				            {"Viento_U",      each List.Sum([Viento_U]),               type number},
 				            {"Viento_V",      each List.Sum([Viento_V]),               type number}

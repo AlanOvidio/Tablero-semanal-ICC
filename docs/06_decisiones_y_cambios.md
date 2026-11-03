@@ -24,6 +24,13 @@ Registrar aquí cada cambio relevante al modelo o al reporte: **qué** cambió, 
 
 ## Bitácora de cambios
 
+### 2026-11-03 · Fase 1b: motor de riesgos multicultivo
+- Nuevo generador `tools/generar_riesgos_modelo.py`: crea desde `config/riesgos_cultivo.csv` las tablas `Cultivos` (5 cultivos con base y tope de grados día) y `Riesgos_Cultivo` (42 riesgos a incluir con umbrales, unidad, aplicación, fuente y validación), y la tabla de medidas `_Riesgos`.
+- `_Riesgos`: una medida por riesgo (`R_<ID>`) y medidas genéricas para los visuales: `Riesgo_Valor`, `Riesgo_Semaforo` (umbrales desde la tabla; admite indicadores favorables invertidos), `Riesgo_Color`, `Riesgo_Etiqueta`, `Riesgos_En_Alerta`, `Riesgos_En_Precaucion`, `Riesgo_Hora` (mapa de calor horario), `GDD_Cultivo*` (grados día del cultivo seleccionado), `Cogollero_Generaciones`, `Salivosa_Lluvia_Temporada` y `Salivosa_Alerta_Emergencia`.
+- Reglas: días favorables por estación promediados entre estaciones con datos; filtros automáticos por meses y altitud según el CSV; los riesgos horarios cuentan horas en `Fact_Horaria_riesgo`.
+- `Fact_Horaria_riesgo`: nueva columna `Rad_Media` (radiación horaria) para estrés térmico y ventana de aplicación.
+- Relación `Riesgos_Cultivo[Cultivo]` → `Cultivos[Cultivo]`. Las medidas anteriores de riesgo (`Dias_Riesgo_*`, `Semaforo_*`) se mantienen hasta que la Fase 2 cambie los visuales.
+
 ### 2026-11-02
 - Documentación inicial (`README.md`, `docs/`), generador `tools/generar_docs_modelo.py` y `.gitignore` para el repositorio.
 - Se quitaron de la documentación las referencias a organizaciones externas y a la experiencia institucional como fuente de umbrales.
