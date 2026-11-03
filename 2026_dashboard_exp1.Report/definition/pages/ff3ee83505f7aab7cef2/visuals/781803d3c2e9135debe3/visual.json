@@ -2,8 +2,8 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "781803d3c2e9135debe3",
   "position": {
-    "x": 671.25,
-    "y": 2016.25,
+    "x": 672,
+    "y": 2029,
     "z": 23000,
     "height": 68.75,
     "width": 615,
@@ -15,6 +15,21 @@
       "queryState": {
         "Values": {
           "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Riesgos_Cultivo"
+                    }
+                  },
+                  "Property": "Categoria"
+                }
+              },
+              "queryRef": "Riesgos_Cultivo.Categoria",
+              "nativeQueryRef": "Categoria",
+              "active": true
+            },
             {
               "field": {
                 "Column": {
@@ -43,7 +58,7 @@
                     "Entity": "Riesgos_Cultivo"
                   }
                 },
-                "Property": "Riesgo"
+                "Property": "Categoria"
               }
             },
             "direction": "Ascending"
@@ -51,6 +66,64 @@
         ]
       }
     },
+    "expansionStates": [
+      {
+        "roles": [
+          "Values"
+        ],
+        "levels": [
+          {
+            "queryRefs": [
+              "Riesgos_Cultivo.Categoria"
+            ],
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Riesgos_Cultivo"
+                    }
+                  },
+                  "Property": "Categoria"
+                }
+              }
+            ],
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "Riesgos_Cultivo.Riesgo"
+            ],
+            "isCollapsed": true,
+            "isPinned": true
+          }
+        ],
+        "root": {
+          "children": [
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'Manejo y producción'"
+                  }
+                }
+              ],
+              "isToggled": true
+            },
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'Plagas'"
+                  }
+                }
+              ],
+              "isToggled": true
+            }
+          ]
+        }
+      }
+    ],
     "objects": {
       "data": [
         {
@@ -97,7 +170,7 @@
                                   "Source": "r"
                                 }
                               },
-                              "Property": "Riesgo"
+                              "Property": "Categoria"
                             }
                           }
                         ],
@@ -105,10 +178,60 @@
                           [
                             {
                               "Literal": {
-                                "Value": "'Sigatoka negra'"
+                                "Value": "'Enfermedades'"
                               }
                             }
                           ]
+                        ]
+                      }
+                    },
+                    "Annotations": {
+                      "filterExpressionMetadata": {
+                        "expressions": [
+                          {
+                            "Column": {
+                              "Expression": {
+                                "SourceRef": {
+                                  "Entity": "Riesgos_Cultivo"
+                                }
+                              },
+                              "Property": "Categoria"
+                            }
+                          }
+                        ],
+                        "decomposedIdentities": {
+                          "values": [
+                            [
+                              {
+                                "0": [
+                                  {
+                                    "Literal": {
+                                      "Value": "'Enfermedades'"
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          ],
+                          "columns": [
+                            {
+                              "value": {
+                                "Column": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "Riesgos_Cultivo"
+                                    }
+                                  },
+                                  "Property": "Categoria"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "valueMap": [
+                          {
+                            "0": "Enfermedades"
+                          }
                         ]
                       }
                     }
@@ -125,7 +248,7 @@
             "strictSingleSelect": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
                 }
               }
             }
@@ -151,7 +274,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Riesgo del mapa de calor horario'"
+                  "Value": "'Mapa de calor: categoría o riesgo (sin selección = todos)'"
                 }
               }
             }

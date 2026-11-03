@@ -24,6 +24,13 @@ Registrar aquí cada cambio relevante al modelo o al reporte: **qué** cambió, 
 
 ## Bitácora de cambios
 
+### 2026-11-03 · Mapa de calor por categoría
+- `Riesgos_Cultivo` agrega `Categoria` (Enfermedades, Plagas, Clima (abióticos), Manejo y producción), derivada de `tipo`.
+- El segmentador del mapa de calor es jerárquico (categoría → riesgo) y admite varias selecciones. Con un riesgo, el mapa muestra el % de horas-estación favorables; con una categoría o varios riesgos, el % de horas-estación con al menos uno favorable; sin selección, todos los riesgos horarios del cultivo excepto los indicadores favorables (ventana de aplicación).
+- Tooltip `Riesgo_Hora_N`: número promedio de riesgos favorables por hora-estación. El título (`Riesgo_Hora_Titulo`) indica qué se muestra.
+- Un clic en una fila del semáforo también filtra el mapa de calor a ese riesgo (si tiene condición horaria).
+- Condiciones horarias (mapa de calor y riesgos por hora): una hora sin dato en alguna variable usada ya no cuenta como favorable.
+
 ### 2026-11-03 · Fase 2: Resumen Semanal multicultivo
 - Segunda fila de segmentadores: **Cultivo** (selección única, Caña de azúcar por defecto) y **Estación** (desplegable, varias); tarjeta con título dinámico (`Titulo_Contexto`). El contenido existente bajó 80 px.
 - Bloque *Riesgos del cultivo* al final: conteo de riesgos en alerta/precaución, contexto productivo con `GDD_Cultivo_Acumulado`, matriz semáforo (riesgo, situación, umbrales, condición, aplicación, confianza) y matriz estrato/estación × riesgo coloreada con `Riesgo_Color`.

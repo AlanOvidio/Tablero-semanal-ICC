@@ -9675,6 +9675,27 @@ cultureInfo es-GT
 			          }
 			        }
 			      ]
+			    },
+			    "table_riesgos.riesgo_hora_n": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Riesgos",
+			          "ConceptualProperty": "Riesgo_Hora_N"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Riesgos favorables (promedio)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
 			    }
 			  },
 			  "Relationships": {

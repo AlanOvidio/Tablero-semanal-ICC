@@ -2,8 +2,8 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "3afd62b4549002e5dbb9",
   "position": {
-    "x": 671.25,
-    "y": 2085,
+    "x": 673,
+    "y": 2114,
     "z": 22000,
     "height": 622.5,
     "width": 606.25,
@@ -50,6 +50,25 @@
               "nativeQueryRef": "Hora del día",
               "active": true,
               "displayName": "Hora del día"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Riesgos"
+                    }
+                  },
+                  "Property": "Riesgo_Hora_N"
+                }
+              },
+              "queryRef": "_Riesgos.Riesgo_Hora_N",
+              "nativeQueryRef": "Riesgos favorables (promedio)",
+              "displayName": "Riesgos favorables (promedio)"
             }
           ]
         },
@@ -537,7 +556,6 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true,
     "visualContainerObjects": {
       "title": [
         {
@@ -564,6 +582,7 @@
           }
         }
       ]
-    }
+    },
+    "drillFilterOtherVisuals": true
   }
 }

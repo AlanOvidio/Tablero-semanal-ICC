@@ -158,7 +158,7 @@ table _Riesgos
 			        NOT ISEMPTY(CALCULATETABLE(Fact_Horaria_riesgo))
 			    )
 			RETURN
-			AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800))), 0))
+			AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800 )))), 0))
 		formatString: 0.#
 		displayFolder: Riesgos por ID
 		lineageTag: 78b50888-ba38-5ead-b896-1c3ce2d661d1
@@ -191,7 +191,7 @@ table _Riesgos
 			        NOT ISEMPTY(CALCULATETABLE(Fact_Horaria_riesgo))
 			    )
 			RETURN
-			AVERAGEX(_Est, DIVIDE(COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] < 30 && Fact_Horaria_riesgo[HR_Media] > 60 && Fact_Horaria_riesgo[Viento_Media] < 10 && Fact_Horaria_riesgo[Rad_Media] > 40))), 0), CALCULATE(DISTINCTCOUNT(Fact_Horaria_riesgo[Fecha]))))
+			AVERAGEX(_Est, DIVIDE(COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Viento_Media]) && ( Fact_Horaria_riesgo[Temp_Media] < 30 && Fact_Horaria_riesgo[HR_Media] > 60 && Fact_Horaria_riesgo[Viento_Media] < 10 && Fact_Horaria_riesgo[Rad_Media] > 40 )))), 0), CALCULATE(DISTINCTCOUNT(Fact_Horaria_riesgo[Fecha]))))
 		formatString: 0.#
 		displayFolder: Riesgos por ID
 		lineageTag: e2cbd146-7194-58f2-8f11-80c1e59684e0
@@ -298,7 +298,7 @@ table _Riesgos
 			        NOT ISEMPTY(CALCULATETABLE(Fact_Horaria_riesgo))
 			    )
 			RETURN
-			AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 38 && Fact_Horaria_riesgo[Rad_Media] > 800))), 0))
+			AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 38 && Fact_Horaria_riesgo[Rad_Media] > 800 )))), 0))
 		formatString: 0.#
 		displayFolder: Riesgos por ID
 		lineageTag: 845b7047-5cb7-50e4-890c-4b262f00a882
@@ -375,7 +375,7 @@ table _Riesgos
 			        NOT ISEMPTY(CALCULATETABLE(Fact_Horaria_riesgo))
 			    )
 			RETURN
-			AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800))), 0))
+			AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800 )))), 0))
 		formatString: 0.#
 		displayFolder: Riesgos por ID
 		lineageTag: 4ca6e457-7aba-52fe-af09-5b37cf80da1b
@@ -416,7 +416,7 @@ table _Riesgos
 			        NOT ISEMPTY(CALCULATETABLE(Fact_Horaria_riesgo))
 			    )
 			RETURN
-			AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 34 && Fact_Horaria_riesgo[Rad_Media] > 800))), 0))
+			AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 34 && Fact_Horaria_riesgo[Rad_Media] > 800 )))), 0))
 		formatString: 0.#
 		displayFolder: Riesgos por ID
 		lineageTag: 7496fe99-5c9d-5010-9b48-1ddb1cfa4c21
@@ -923,49 +923,38 @@ table _Riesgos
 		displayFolder: Genéricas
 		lineageTag: 2269381a-c677-58e8-a1e1-52a72c87da33
 
-	/// Mapa de calor: fracción de horas-estación favorables al riesgo seleccionado (solo riesgos con condición horaria).
+	/// Mapa de calor: fracción de horas-estación con al menos un riesgo elegido favorable (un riesgo, una categoría o todos los riesgos horarios del cultivo).
 	measure Riesgo_Hora =
-			VAR _sel = IF([_Riesgo_En_Cultivo], SELECTEDVALUE(Riesgos_Cultivo[ID]))
-			VAR _def =
-			    MAXX(
-			        TOPN(
-			            1,
-			            CALCULATETABLE(
-			                FILTER(Riesgos_Cultivo, Riesgos_Cultivo[Tiene_Horaria]),
-			                REMOVEFILTERS(Riesgos_Cultivo[Riesgo], Riesgos_Cultivo[ID], Riesgos_Cultivo[Orden_Nombre]),
-			                TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])
-			            ),
-			            Riesgos_Cultivo[Orden], ASC
-			        ),
-			        Riesgos_Cultivo[ID]
-			    )
-			VAR _id = COALESCE(_sel, _def)
+			VAR _cult = TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])
+			VAR _sel = CALCULATETABLE(VALUES(Riesgos_Cultivo[ID]), Riesgos_Cultivo[Tiene_Horaria] = TRUE(), _cult)
+			VAR _todos = CALCULATETABLE(VALUES(Riesgos_Cultivo[ID]), REMOVEFILTERS(Riesgos_Cultivo), Riesgos_Cultivo[Tiene_Horaria] = TRUE(), Riesgos_Cultivo[Invertido] = FALSE(), _cult)
+			VAR _usarSel = ( ISFILTERED(Riesgos_Cultivo[Categoria]) || ISFILTERED(Riesgos_Cultivo[Riesgo]) || ISFILTERED(Riesgos_Cultivo[ID]) ) && NOT ISEMPTY(_sel)
+			VAR _ids = UNION(FILTER(_sel, _usarSel), FILTER(_todos, NOT _usarSel))
 			VAR _n = COUNTROWS(Fact_Horaria_riesgo)
-			RETURN
-			DIVIDE(
-			    SWITCH(
-			        _id,
-			        "CAN_ROYA_CAFE", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 15 && Fact_Horaria_riesgo[Temp_Media] <= 25 && Fact_Horaria_riesgo[HR_Media] > 80 && Fact_Horaria_riesgo[Mojadura_Max] > 4)) + 0,
-			        "CAN_ROYA_NARANJA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 18 && Fact_Horaria_riesgo[Temp_Media] <= 28 && ( Fact_Horaria_riesgo[HR_Media] >= 98 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ))) + 0,
-			        "CAN_SALIVOSA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 22 && Fact_Horaria_riesgo[Temp_Media] <= 30 && Fact_Horaria_riesgo[HR_Media] > 80 && Fact_Horaria_riesgo[Precip_Total] > 0)) + 0,
-			        "CAN_BARRENADOR", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 24 && Fact_Horaria_riesgo[HR_Media] >= 60 && Fact_Horaria_riesgo[HR_Media] <= 80 && Fact_Horaria_riesgo[Precip_Total] = 0)) + 0,
-			        "CAN_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800)) + 0,
-			        "CAN_APLICACION", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] < 30 && Fact_Horaria_riesgo[HR_Media] > 60 && Fact_Horaria_riesgo[Viento_Media] < 10 && Fact_Horaria_riesgo[Rad_Media] > 40)) + 0,
-			        "BAN_SIG_NEGRA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 21.5 && Fact_Horaria_riesgo[Temp_Media] <= 28 && ( Fact_Horaria_riesgo[HR_Media] > 90 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ))) + 0,
-			        "BAN_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 38 && Fact_Horaria_riesgo[Rad_Media] > 800)) + 0,
-			        "AGU_ANTRACNOSIS", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 20 && Fact_Horaria_riesgo[Temp_Media] <= 30 && Fact_Horaria_riesgo[HR_Media] > 80 && ( Fact_Horaria_riesgo[Mojadura_Max] > 4 || Fact_Horaria_riesgo[Precip_Total] > 0 ))) + 0,
-			        "AGU_CALOR", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800)) + 0,
-			        "PAL_PC", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 11 && Fact_Horaria_riesgo[Temp_Media] <= 35 && Fact_Horaria_riesgo[HR_Media] > 90 && Fact_Horaria_riesgo[Precip_Total] > 0)) + 0,
-			        "PAL_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 34 && Fact_Horaria_riesgo[Rad_Media] > 800)) + 0,
-			        "MAI_ASFALTO", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 16 && Fact_Horaria_riesgo[Temp_Media] <= 22 && Fact_Horaria_riesgo[HR_Media] > 75 && Fact_Horaria_riesgo[Mojadura_Max] > 4)) + 0,
-			        "MAI_ROYA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 16 && Fact_Horaria_riesgo[Temp_Media] <= 23 && Fact_Horaria_riesgo[Mojadura_Max] > 4)) + 0,
-			        "MAI_TIZON", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 18 && Fact_Horaria_riesgo[Temp_Media] <= 28 && Fact_Horaria_riesgo[Mojadura_Max] > 4)) + 0,
-			        "MAI_MANCHA_GRIS", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 27 && Fact_Horaria_riesgo[Temp_Media] <= 32 && Fact_Horaria_riesgo[HR_Media] > 90)) + 0,
-			        "FRI_ROYA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 17 && Fact_Horaria_riesgo[Temp_Media] <= 27 && ( Fact_Horaria_riesgo[HR_Media] > 95 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ))) + 0,
-			        BLANK()
-			    ),
-			    _n
-			)
+			VAR _fav =
+			    COUNTROWS(
+			        FILTER(
+			            Fact_Horaria_riesgo,
+			            ( "CAN_ROYA_CAFE" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 15 && Fact_Horaria_riesgo[Temp_Media] <= 25 && Fact_Horaria_riesgo[HR_Media] > 80 && Fact_Horaria_riesgo[Mojadura_Max] > 4 ) )
+			            || ( "CAN_ROYA_NARANJA" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 18 && Fact_Horaria_riesgo[Temp_Media] <= 28 && ( Fact_Horaria_riesgo[HR_Media] >= 98 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ) ) )
+			            || ( "CAN_SALIVOSA" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Precip_Total]) && ( Fact_Horaria_riesgo[Temp_Media] >= 22 && Fact_Horaria_riesgo[Temp_Media] <= 30 && Fact_Horaria_riesgo[HR_Media] > 80 && Fact_Horaria_riesgo[Precip_Total] > 0 ) )
+			            || ( "CAN_BARRENADOR" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Precip_Total]) && ( Fact_Horaria_riesgo[Temp_Media] > 24 && Fact_Horaria_riesgo[HR_Media] >= 60 && Fact_Horaria_riesgo[HR_Media] <= 80 && Fact_Horaria_riesgo[Precip_Total] = 0 ) )
+			            || ( "CAN_ESTRES" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800 ) )
+			            || ( "CAN_APLICACION" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Viento_Media]) && ( Fact_Horaria_riesgo[Temp_Media] < 30 && Fact_Horaria_riesgo[HR_Media] > 60 && Fact_Horaria_riesgo[Viento_Media] < 10 && Fact_Horaria_riesgo[Rad_Media] > 40 ) )
+			            || ( "BAN_SIG_NEGRA" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 21.5 && Fact_Horaria_riesgo[Temp_Media] <= 28 && ( Fact_Horaria_riesgo[HR_Media] > 90 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ) ) )
+			            || ( "BAN_ESTRES" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 38 && Fact_Horaria_riesgo[Rad_Media] > 800 ) )
+			            || ( "AGU_ANTRACNOSIS" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && NOT ISBLANK(Fact_Horaria_riesgo[Precip_Total]) && ( Fact_Horaria_riesgo[Temp_Media] >= 20 && Fact_Horaria_riesgo[Temp_Media] <= 30 && Fact_Horaria_riesgo[HR_Media] > 80 && ( Fact_Horaria_riesgo[Mojadura_Max] > 4 || Fact_Horaria_riesgo[Precip_Total] > 0 ) ) )
+			            || ( "AGU_CALOR" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800 ) )
+			            || ( "PAL_PC" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Precip_Total]) && ( Fact_Horaria_riesgo[Temp_Media] >= 11 && Fact_Horaria_riesgo[Temp_Media] <= 35 && Fact_Horaria_riesgo[HR_Media] > 90 && Fact_Horaria_riesgo[Precip_Total] > 0 ) )
+			            || ( "PAL_ESTRES" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 34 && Fact_Horaria_riesgo[Rad_Media] > 800 ) )
+			            || ( "MAI_ASFALTO" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 16 && Fact_Horaria_riesgo[Temp_Media] <= 22 && Fact_Horaria_riesgo[HR_Media] > 75 && Fact_Horaria_riesgo[Mojadura_Max] > 4 ) )
+			            || ( "MAI_ROYA" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 16 && Fact_Horaria_riesgo[Temp_Media] <= 23 && Fact_Horaria_riesgo[Mojadura_Max] > 4 ) )
+			            || ( "MAI_TIZON" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 18 && Fact_Horaria_riesgo[Temp_Media] <= 28 && Fact_Horaria_riesgo[Mojadura_Max] > 4 ) )
+			            || ( "MAI_MANCHA_GRIS" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && ( Fact_Horaria_riesgo[Temp_Media] >= 27 && Fact_Horaria_riesgo[Temp_Media] <= 32 && Fact_Horaria_riesgo[HR_Media] > 90 ) )
+			            || ( "FRI_ROYA" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 17 && Fact_Horaria_riesgo[Temp_Media] <= 27 && ( Fact_Horaria_riesgo[HR_Media] > 95 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ) ) )
+			        )
+			    )
+			RETURN IF(NOT ISEMPTY(_ids), DIVIDE(_fav + 0, _n))
 		formatString: 0%
 		displayFolder: Genéricas
 		lineageTag: 7c8f5173-b0f0-536c-bb52-cdb058d676fa
@@ -1073,25 +1062,28 @@ table _Riesgos
 		displayFolder: Indicadores
 		lineageTag: 9b451f98-c0ed-55db-91eb-03c4e313630f
 
-	/// Título del mapa de calor horario con el riesgo que se está mostrando.
+	/// Título del mapa de calor horario según lo que se está mostrando.
 	measure Riesgo_Hora_Titulo =
-			VAR _sel = IF([_Riesgo_En_Cultivo], SELECTEDVALUE(Riesgos_Cultivo[ID]))
-			VAR _def =
-			    MAXX(
-			        TOPN(
-			            1,
-			            CALCULATETABLE(
-			                FILTER(Riesgos_Cultivo, Riesgos_Cultivo[Tiene_Horaria]),
-			                REMOVEFILTERS(Riesgos_Cultivo[Riesgo], Riesgos_Cultivo[ID], Riesgos_Cultivo[Orden_Nombre]),
-			                TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])
-			            ),
-			            Riesgos_Cultivo[Orden], ASC
-			        ),
-			        Riesgos_Cultivo[ID]
+			VAR _cult = TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])
+			VAR _sel = CALCULATETABLE(VALUES(Riesgos_Cultivo[ID]), Riesgos_Cultivo[Tiene_Horaria] = TRUE(), _cult)
+			VAR _todos = CALCULATETABLE(VALUES(Riesgos_Cultivo[ID]), REMOVEFILTERS(Riesgos_Cultivo), Riesgos_Cultivo[Tiene_Horaria] = TRUE(), Riesgos_Cultivo[Invertido] = FALSE(), _cult)
+			VAR _usarSel = ( ISFILTERED(Riesgos_Cultivo[Categoria]) || ISFILTERED(Riesgos_Cultivo[Riesgo]) || ISFILTERED(Riesgos_Cultivo[ID]) ) && NOT ISEMPTY(_sel)
+			VAR _ids = UNION(FILTER(_sel, _usarSel), FILTER(_todos, NOT _usarSel))
+			VAR _k = COUNTROWS(_ids)
+			VAR _nom = CALCULATE(SELECTEDVALUE(Riesgos_Cultivo[Riesgo]), REMOVEFILTERS(Riesgos_Cultivo), TREATAS(_ids, Riesgos_Cultivo[ID]))
+			VAR _grupo =
+			    IF(
+			        _usarSel,
+			        IF(ISFILTERED(Riesgos_Cultivo[Riesgo]) || ISFILTERED(Riesgos_Cultivo[ID]), "Riesgos seleccionados", CONCATENATEX(CALCULATETABLE(VALUES(Riesgos_Cultivo[Categoria]), TREATAS(_ids, Riesgos_Cultivo[ID])), Riesgos_Cultivo[Categoria], ", ")),
+			        "Todos los riesgos"
 			    )
-			VAR _id = COALESCE(_sel, _def)
-			VAR _nom = CALCULATE(SELECTEDVALUE(Riesgos_Cultivo[Riesgo]), REMOVEFILTERS(Riesgos_Cultivo), Riesgos_Cultivo[ID] = _id)
-			RETURN IF(ISBLANK(_nom), "Sin riesgo horario para este cultivo", "Horas favorables a " & LOWER(_nom) & " (% de horas-estación)")
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    _k = 0, "Sin riesgos con condición horaria para este cultivo",
+			    _k = 1, "Horas favorables a " & LOWER(_nom) & " (% de horas-estación)",
+			    _grupo & ": % de horas-estación con al menos uno de " & _k & " riesgos favorable"
+			)
 		displayFolder: Genéricas
 		lineageTag: 5739ca6d-adc2-5249-b053-b6b7cf6c9871
 
@@ -1125,6 +1117,46 @@ table _Riesgos
 			)
 		displayFolder: Genéricas
 		lineageTag: 02608518-deb8-5449-a163-6b20fbd93680
+
+	/// Mapa de calor (tooltip): número promedio de riesgos elegidos favorables por hora-estación.
+	measure Riesgo_Hora_N =
+			VAR _cult = TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])
+			VAR _sel = CALCULATETABLE(VALUES(Riesgos_Cultivo[ID]), Riesgos_Cultivo[Tiene_Horaria] = TRUE(), _cult)
+			VAR _todos = CALCULATETABLE(VALUES(Riesgos_Cultivo[ID]), REMOVEFILTERS(Riesgos_Cultivo), Riesgos_Cultivo[Tiene_Horaria] = TRUE(), Riesgos_Cultivo[Invertido] = FALSE(), _cult)
+			VAR _usarSel = ( ISFILTERED(Riesgos_Cultivo[Categoria]) || ISFILTERED(Riesgos_Cultivo[Riesgo]) || ISFILTERED(Riesgos_Cultivo[ID]) ) && NOT ISEMPTY(_sel)
+			VAR _ids = UNION(FILTER(_sel, _usarSel), FILTER(_todos, NOT _usarSel))
+			VAR _n = COUNTROWS(Fact_Horaria_riesgo)
+			RETURN
+			DIVIDE(
+			    SUMX(
+			        _ids,
+			        SWITCH(
+			            Riesgos_Cultivo[ID],
+			            "CAN_ROYA_CAFE", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 15 && Fact_Horaria_riesgo[Temp_Media] <= 25 && Fact_Horaria_riesgo[HR_Media] > 80 && Fact_Horaria_riesgo[Mojadura_Max] > 4 ))) + 0,
+			            "CAN_ROYA_NARANJA", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 18 && Fact_Horaria_riesgo[Temp_Media] <= 28 && ( Fact_Horaria_riesgo[HR_Media] >= 98 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ) ))) + 0,
+			            "CAN_SALIVOSA", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Precip_Total]) && ( Fact_Horaria_riesgo[Temp_Media] >= 22 && Fact_Horaria_riesgo[Temp_Media] <= 30 && Fact_Horaria_riesgo[HR_Media] > 80 && Fact_Horaria_riesgo[Precip_Total] > 0 ))) + 0,
+			            "CAN_BARRENADOR", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Precip_Total]) && ( Fact_Horaria_riesgo[Temp_Media] > 24 && Fact_Horaria_riesgo[HR_Media] >= 60 && Fact_Horaria_riesgo[HR_Media] <= 80 && Fact_Horaria_riesgo[Precip_Total] = 0 ))) + 0,
+			            "CAN_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800 ))) + 0,
+			            "CAN_APLICACION", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Viento_Media]) && ( Fact_Horaria_riesgo[Temp_Media] < 30 && Fact_Horaria_riesgo[HR_Media] > 60 && Fact_Horaria_riesgo[Viento_Media] < 10 && Fact_Horaria_riesgo[Rad_Media] > 40 ))) + 0,
+			            "BAN_SIG_NEGRA", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 21.5 && Fact_Horaria_riesgo[Temp_Media] <= 28 && ( Fact_Horaria_riesgo[HR_Media] > 90 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ) ))) + 0,
+			            "BAN_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 38 && Fact_Horaria_riesgo[Rad_Media] > 800 ))) + 0,
+			            "AGU_ANTRACNOSIS", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && NOT ISBLANK(Fact_Horaria_riesgo[Precip_Total]) && ( Fact_Horaria_riesgo[Temp_Media] >= 20 && Fact_Horaria_riesgo[Temp_Media] <= 30 && Fact_Horaria_riesgo[HR_Media] > 80 && ( Fact_Horaria_riesgo[Mojadura_Max] > 4 || Fact_Horaria_riesgo[Precip_Total] > 0 ) ))) + 0,
+			            "AGU_CALOR", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800 ))) + 0,
+			            "PAL_PC", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Precip_Total]) && ( Fact_Horaria_riesgo[Temp_Media] >= 11 && Fact_Horaria_riesgo[Temp_Media] <= 35 && Fact_Horaria_riesgo[HR_Media] > 90 && Fact_Horaria_riesgo[Precip_Total] > 0 ))) + 0,
+			            "PAL_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 34 && Fact_Horaria_riesgo[Rad_Media] > 800 ))) + 0,
+			            "MAI_ASFALTO", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 16 && Fact_Horaria_riesgo[Temp_Media] <= 22 && Fact_Horaria_riesgo[HR_Media] > 75 && Fact_Horaria_riesgo[Mojadura_Max] > 4 ))) + 0,
+			            "MAI_ROYA", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 16 && Fact_Horaria_riesgo[Temp_Media] <= 23 && Fact_Horaria_riesgo[Mojadura_Max] > 4 ))) + 0,
+			            "MAI_TIZON", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 18 && Fact_Horaria_riesgo[Temp_Media] <= 28 && Fact_Horaria_riesgo[Mojadura_Max] > 4 ))) + 0,
+			            "MAI_MANCHA_GRIS", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && ( Fact_Horaria_riesgo[Temp_Media] >= 27 && Fact_Horaria_riesgo[Temp_Media] <= 32 && Fact_Horaria_riesgo[HR_Media] > 90 ))) + 0,
+			            "FRI_ROYA", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 17 && Fact_Horaria_riesgo[Temp_Media] <= 27 && ( Fact_Horaria_riesgo[HR_Media] > 95 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ) ))) + 0,
+			            0
+			        )
+			    ),
+			    _n
+			)
+		formatString: 0.0
+		displayFolder: Genéricas
+		lineageTag: c8594e72-45f5-503a-850d-7ab34a228a72
 
 	column Column
 		isHidden

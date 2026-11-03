@@ -1,12 +1,12 @@
 # Catálogo de medidas DAX
 
-> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-03 (209 medidas). No editar a mano.
+> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-03 (210 medidas). No editar a mano.
 
 Convenciones: las medidas con prefijo `_` son auxiliares; `Semaforo_*` devuelve 1 = rojo, 2 = amarillo, 3 = verde. Las medidas de suma (lluvia, ETo, balance, horas, GDD, radiación acumulada) **suman por estación y promedian entre estaciones**; los máximos y mínimos devuelven **el extremo** de las estaciones seleccionadas. Ver `04_guia_usuario.md` y `06_decisiones_y_cambios.md`.
 
 ## Índice
 
-- [Motor de riesgos por cultivo (generado desde config/riesgos_cultivo.csv)](#motor-de-riesgos-por-cultivo-generado-desde-configriesgos_cultivocsv) (60)
+- [Motor de riesgos por cultivo (generado desde config/riesgos_cultivo.csv)](#motor-de-riesgos-por-cultivo-generado-desde-configriesgos_cultivocsv) (61)
 - [Viento](#viento) (19)
 - [Radiación y luz](#radiación-y-luz) (16)
 - [Semáforos](#semáforos) (16)
@@ -64,13 +64,17 @@ Convenciones: las medidas con prefijo `_` son auxiliares; `Semaforo_*` devuelve 
 | `R_AGU_ACAROS` | 0.# | Ácaros (arañita) (Aguacate). Unidad: días/semana. Más comunes en época seca y favorecidos por el viento. Día favorable: día seco, HR media < 65 % y viento máx > 20 km/h. |
 | `R_MAI_ACHAPARRAMIENTO` | 0.# | Maíz – Chicharrita y achaparramiento (Granos básicos). Unidad: días/semana. El vector (Dalbulus maidis) se favorece con escasez de lluvia, altas temperaturas y baja humedad relativa; mayor incidencia cuando la siembra coincide con lluvias irregulares. Día favorable: día seco, Tmed > 26 °C y HR media < 70 %. |
 | `R_MAI_PUDRICION_MAZORCA` | 0.# | Maíz – Pudrición de mazorca (Granos básicos). Unidad: días con lluvia/semana. Los años más lluviosos producen epifitias (Stenocarpella y Fusarium). Semana favorable: ≥ 4 días con lluvia > 1 mm. |
+| `_Riesgo_En_Cultivo` |  | TRUE si el riesgo en contexto pertenece al cultivo seleccionado (garantiza que no se muestren riesgos de otros cultivos). |
 | `Riesgo_Valor` | 0.# | Valor del riesgo seleccionado (días, horas o km/h según la unidad), promediado entre estaciones. |
 | `Riesgo_Semaforo` | 0 | 1 = alerta, 2 = precaución, 3 = normal. En indicadores favorables (invertidos) menos valor es peor. |
 | `Riesgo_Color` |  | Color hexadecimal del semáforo para formato condicional. |
 | `Riesgo_Etiqueta` |  | Valor con su unidad para tarjetas. |
 | `Riesgos_En_Alerta` | 0 | Número de riesgos del cultivo en alerta (rojo). |
 | `Riesgos_En_Precaucion` | 0 | Número de riesgos del cultivo en precaución (amarillo). |
-| `Riesgo_Hora` | 0% | Mapa de calor: fracción de horas-estación favorables al riesgo seleccionado (solo riesgos con condición horaria). |
+| `Riesgo_Hora` | 0% | Mapa de calor: fracción de horas-estación con al menos un riesgo elegido favorable (un riesgo, una categoría o todos los riesgos horarios del cultivo). |
+| `Riesgo_Hora_N` | 0.0 | Mapa de calor (tooltip): número promedio de riesgos elegidos favorables por hora-estación. |
+| `Riesgo_Hora_Titulo` |  | Título del mapa de calor horario según lo que se está mostrando. |
+| `Titulo_Contexto` |  | Título dinámico del Resumen Semanal: cultivo, estaciones o estrato y fechas del periodo. |
 | `GDD_Cultivo` | 0 | Grados día con tope del cultivo seleccionado en el periodo (por estación, promedio entre estaciones). |
 | `GDD_Cultivo_Acumulado` | 0 | Grados día acumulados del año hidrológico hasta la semana en contexto. |
 | `GDD_Cultivo_Acumulado_Anterior` | 0 | Ídem, año hidrológico anterior. |
@@ -79,9 +83,6 @@ Convenciones: las medidas con prefijo `_` son auxiliares; `Semaforo_*` devuelve 
 | `Cogollero_Generaciones` | 0.0 | Generaciones potenciales de gusano cogollero en el año hidrológico (base 10.9 °C, 559 grados día por generación). |
 | `Salivosa_Lluvia_Temporada` | 0 | Lluvia acumulada desde el 1 de abril (inicio de la temporada de salivosa). |
 | `Salivosa_Alerta_Emergencia` | 0 | 1 cuando la lluvia acumulada de la temporada alcanza 50 mm (eclosión de la mayoría de los huevos). |
-| `Riesgo_Hora_Titulo` |  | Título del mapa de calor horario con el riesgo que se está mostrando. |
-| `Titulo_Contexto` |  | Título dinámico del Resumen Semanal: cultivo, estaciones o estrato y fechas del periodo. |
-| `_Riesgo_En_Cultivo` |  | TRUE si el riesgo en contexto pertenece al cultivo seleccionado (garantiza que no se muestren riesgos de otros cultivos). |
 
 <details><summary><code>R_CAN_ROYA_CAFE</code></summary>
 
@@ -241,7 +242,7 @@ VAR _Est =
         NOT ISEMPTY(CALCULATETABLE(Fact_Horaria_riesgo))
     )
 RETURN
-AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800))), 0))
+AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800 )))), 0))
 ```
 </details>
 
@@ -274,7 +275,7 @@ VAR _Est =
         NOT ISEMPTY(CALCULATETABLE(Fact_Horaria_riesgo))
     )
 RETURN
-AVERAGEX(_Est, DIVIDE(COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] < 30 && Fact_Horaria_riesgo[HR_Media] > 60 && Fact_Horaria_riesgo[Viento_Media] < 10 && Fact_Horaria_riesgo[Rad_Media] > 40))), 0), CALCULATE(DISTINCTCOUNT(Fact_Horaria_riesgo[Fecha]))))
+AVERAGEX(_Est, DIVIDE(COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Viento_Media]) && ( Fact_Horaria_riesgo[Temp_Media] < 30 && Fact_Horaria_riesgo[HR_Media] > 60 && Fact_Horaria_riesgo[Viento_Media] < 10 && Fact_Horaria_riesgo[Rad_Media] > 40 )))), 0), CALCULATE(DISTINCTCOUNT(Fact_Horaria_riesgo[Fecha]))))
 ```
 </details>
 
@@ -382,7 +383,7 @@ VAR _Est =
         NOT ISEMPTY(CALCULATETABLE(Fact_Horaria_riesgo))
     )
 RETURN
-AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 38 && Fact_Horaria_riesgo[Rad_Media] > 800))), 0))
+AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 38 && Fact_Horaria_riesgo[Rad_Media] > 800 )))), 0))
 ```
 </details>
 
@@ -459,7 +460,7 @@ VAR _Est =
         NOT ISEMPTY(CALCULATETABLE(Fact_Horaria_riesgo))
     )
 RETURN
-AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800))), 0))
+AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800 )))), 0))
 ```
 </details>
 
@@ -501,7 +502,7 @@ VAR _Est =
         NOT ISEMPTY(CALCULATETABLE(Fact_Horaria_riesgo))
     )
 RETURN
-AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 34 && Fact_Horaria_riesgo[Rad_Media] > 800))), 0))
+AVERAGEX(_Est, COALESCE(CALCULATE(COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 34 && Fact_Horaria_riesgo[Rad_Media] > 800 )))), 0))
 ```
 </details>
 
@@ -908,6 +909,18 @@ AVERAGEX(
 ```
 </details>
 
+<details><summary><code>_Riesgo_En_Cultivo</code></summary>
+
+```dax
+NOT ISEMPTY(
+    CALCULATETABLE(
+        VALUES(Riesgos_Cultivo[ID]),
+        TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])
+    )
+)
+```
+</details>
+
 <details><summary><code>Riesgo_Valor</code></summary>
 
 ```dax
@@ -1015,47 +1028,123 @@ COUNTROWS(FILTER(VALUES(Riesgos_Cultivo[ID]), [Riesgo_Semaforo] = 2))
 <details><summary><code>Riesgo_Hora</code></summary>
 
 ```dax
-VAR _sel = IF([_Riesgo_En_Cultivo], SELECTEDVALUE(Riesgos_Cultivo[ID]))
-VAR _def =
-    MAXX(
-        TOPN(
-            1,
-            CALCULATETABLE(
-                FILTER(Riesgos_Cultivo, Riesgos_Cultivo[Tiene_Horaria]),
-                REMOVEFILTERS(Riesgos_Cultivo[Riesgo], Riesgos_Cultivo[ID], Riesgos_Cultivo[Orden_Nombre]),
-                TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])
-            ),
-            Riesgos_Cultivo[Orden], ASC
-        ),
-        Riesgos_Cultivo[ID]
+VAR _cult = TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])
+VAR _sel = CALCULATETABLE(VALUES(Riesgos_Cultivo[ID]), Riesgos_Cultivo[Tiene_Horaria] = TRUE(), _cult)
+VAR _todos = CALCULATETABLE(VALUES(Riesgos_Cultivo[ID]), REMOVEFILTERS(Riesgos_Cultivo), Riesgos_Cultivo[Tiene_Horaria] = TRUE(), Riesgos_Cultivo[Invertido] = FALSE(), _cult)
+VAR _usarSel = ( ISFILTERED(Riesgos_Cultivo[Categoria]) || ISFILTERED(Riesgos_Cultivo[Riesgo]) || ISFILTERED(Riesgos_Cultivo[ID]) ) && NOT ISEMPTY(_sel)
+VAR _ids = UNION(FILTER(_sel, _usarSel), FILTER(_todos, NOT _usarSel))
+VAR _n = COUNTROWS(Fact_Horaria_riesgo)
+VAR _fav =
+    COUNTROWS(
+        FILTER(
+            Fact_Horaria_riesgo,
+            ( "CAN_ROYA_CAFE" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 15 && Fact_Horaria_riesgo[Temp_Media] <= 25 && Fact_Horaria_riesgo[HR_Media] > 80 && Fact_Horaria_riesgo[Mojadura_Max] > 4 ) )
+            || ( "CAN_ROYA_NARANJA" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 18 && Fact_Horaria_riesgo[Temp_Media] <= 28 && ( Fact_Horaria_riesgo[HR_Media] >= 98 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ) ) )
+            || ( "CAN_SALIVOSA" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Precip_Total]) && ( Fact_Horaria_riesgo[Temp_Media] >= 22 && Fact_Horaria_riesgo[Temp_Media] <= 30 && Fact_Horaria_riesgo[HR_Media] > 80 && Fact_Horaria_riesgo[Precip_Total] > 0 ) )
+            || ( "CAN_BARRENADOR" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Precip_Total]) && ( Fact_Horaria_riesgo[Temp_Media] > 24 && Fact_Horaria_riesgo[HR_Media] >= 60 && Fact_Horaria_riesgo[HR_Media] <= 80 && Fact_Horaria_riesgo[Precip_Total] = 0 ) )
+            || ( "CAN_ESTRES" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800 ) )
+            || ( "CAN_APLICACION" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Viento_Media]) && ( Fact_Horaria_riesgo[Temp_Media] < 30 && Fact_Horaria_riesgo[HR_Media] > 60 && Fact_Horaria_riesgo[Viento_Media] < 10 && Fact_Horaria_riesgo[Rad_Media] > 40 ) )
+            || ( "BAN_SIG_NEGRA" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 21.5 && Fact_Horaria_riesgo[Temp_Media] <= 28 && ( Fact_Horaria_riesgo[HR_Media] > 90 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ) ) )
+            || ( "BAN_ESTRES" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 38 && Fact_Horaria_riesgo[Rad_Media] > 800 ) )
+            || ( "AGU_ANTRACNOSIS" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && NOT ISBLANK(Fact_Horaria_riesgo[Precip_Total]) && ( Fact_Horaria_riesgo[Temp_Media] >= 20 && Fact_Horaria_riesgo[Temp_Media] <= 30 && Fact_Horaria_riesgo[HR_Media] > 80 && ( Fact_Horaria_riesgo[Mojadura_Max] > 4 || Fact_Horaria_riesgo[Precip_Total] > 0 ) ) )
+            || ( "AGU_CALOR" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800 ) )
+            || ( "PAL_PC" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Precip_Total]) && ( Fact_Horaria_riesgo[Temp_Media] >= 11 && Fact_Horaria_riesgo[Temp_Media] <= 35 && Fact_Horaria_riesgo[HR_Media] > 90 && Fact_Horaria_riesgo[Precip_Total] > 0 ) )
+            || ( "PAL_ESTRES" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 34 && Fact_Horaria_riesgo[Rad_Media] > 800 ) )
+            || ( "MAI_ASFALTO" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 16 && Fact_Horaria_riesgo[Temp_Media] <= 22 && Fact_Horaria_riesgo[HR_Media] > 75 && Fact_Horaria_riesgo[Mojadura_Max] > 4 ) )
+            || ( "MAI_ROYA" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 16 && Fact_Horaria_riesgo[Temp_Media] <= 23 && Fact_Horaria_riesgo[Mojadura_Max] > 4 ) )
+            || ( "MAI_TIZON" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 18 && Fact_Horaria_riesgo[Temp_Media] <= 28 && Fact_Horaria_riesgo[Mojadura_Max] > 4 ) )
+            || ( "MAI_MANCHA_GRIS" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && ( Fact_Horaria_riesgo[Temp_Media] >= 27 && Fact_Horaria_riesgo[Temp_Media] <= 32 && Fact_Horaria_riesgo[HR_Media] > 90 ) )
+            || ( "FRI_ROYA" IN _ids && NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 17 && Fact_Horaria_riesgo[Temp_Media] <= 27 && ( Fact_Horaria_riesgo[HR_Media] > 95 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ) ) )
+        )
     )
-VAR _id = COALESCE(_sel, _def)
+RETURN IF(NOT ISEMPTY(_ids), DIVIDE(_fav + 0, _n))
+```
+</details>
+
+<details><summary><code>Riesgo_Hora_N</code></summary>
+
+```dax
+VAR _cult = TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])
+VAR _sel = CALCULATETABLE(VALUES(Riesgos_Cultivo[ID]), Riesgos_Cultivo[Tiene_Horaria] = TRUE(), _cult)
+VAR _todos = CALCULATETABLE(VALUES(Riesgos_Cultivo[ID]), REMOVEFILTERS(Riesgos_Cultivo), Riesgos_Cultivo[Tiene_Horaria] = TRUE(), Riesgos_Cultivo[Invertido] = FALSE(), _cult)
+VAR _usarSel = ( ISFILTERED(Riesgos_Cultivo[Categoria]) || ISFILTERED(Riesgos_Cultivo[Riesgo]) || ISFILTERED(Riesgos_Cultivo[ID]) ) && NOT ISEMPTY(_sel)
+VAR _ids = UNION(FILTER(_sel, _usarSel), FILTER(_todos, NOT _usarSel))
 VAR _n = COUNTROWS(Fact_Horaria_riesgo)
 RETURN
 DIVIDE(
-    SWITCH(
-        _id,
-        "CAN_ROYA_CAFE", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 15 && Fact_Horaria_riesgo[Temp_Media] <= 25 && Fact_Horaria_riesgo[HR_Media] > 80 && Fact_Horaria_riesgo[Mojadura_Max] > 4)) + 0,
-        "CAN_ROYA_NARANJA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 18 && Fact_Horaria_riesgo[Temp_Media] <= 28 && ( Fact_Horaria_riesgo[HR_Media] >= 98 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ))) + 0,
-        "CAN_SALIVOSA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 22 && Fact_Horaria_riesgo[Temp_Media] <= 30 && Fact_Horaria_riesgo[HR_Media] > 80 && Fact_Horaria_riesgo[Precip_Total] > 0)) + 0,
-        "CAN_BARRENADOR", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 24 && Fact_Horaria_riesgo[HR_Media] >= 60 && Fact_Horaria_riesgo[HR_Media] <= 80 && Fact_Horaria_riesgo[Precip_Total] = 0)) + 0,
-        "CAN_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800)) + 0,
-        "CAN_APLICACION", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] < 30 && Fact_Horaria_riesgo[HR_Media] > 60 && Fact_Horaria_riesgo[Viento_Media] < 10 && Fact_Horaria_riesgo[Rad_Media] > 40)) + 0,
-        "BAN_SIG_NEGRA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 21.5 && Fact_Horaria_riesgo[Temp_Media] <= 28 && ( Fact_Horaria_riesgo[HR_Media] > 90 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ))) + 0,
-        "BAN_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 38 && Fact_Horaria_riesgo[Rad_Media] > 800)) + 0,
-        "AGU_ANTRACNOSIS", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 20 && Fact_Horaria_riesgo[Temp_Media] <= 30 && Fact_Horaria_riesgo[HR_Media] > 80 && ( Fact_Horaria_riesgo[Mojadura_Max] > 4 || Fact_Horaria_riesgo[Precip_Total] > 0 ))) + 0,
-        "AGU_CALOR", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800)) + 0,
-        "PAL_PC", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 11 && Fact_Horaria_riesgo[Temp_Media] <= 35 && Fact_Horaria_riesgo[HR_Media] > 90 && Fact_Horaria_riesgo[Precip_Total] > 0)) + 0,
-        "PAL_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] > 34 && Fact_Horaria_riesgo[Rad_Media] > 800)) + 0,
-        "MAI_ASFALTO", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 16 && Fact_Horaria_riesgo[Temp_Media] <= 22 && Fact_Horaria_riesgo[HR_Media] > 75 && Fact_Horaria_riesgo[Mojadura_Max] > 4)) + 0,
-        "MAI_ROYA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 16 && Fact_Horaria_riesgo[Temp_Media] <= 23 && Fact_Horaria_riesgo[Mojadura_Max] > 4)) + 0,
-        "MAI_TIZON", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 18 && Fact_Horaria_riesgo[Temp_Media] <= 28 && Fact_Horaria_riesgo[Mojadura_Max] > 4)) + 0,
-        "MAI_MANCHA_GRIS", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 27 && Fact_Horaria_riesgo[Temp_Media] <= 32 && Fact_Horaria_riesgo[HR_Media] > 90)) + 0,
-        "FRI_ROYA", COUNTROWS(FILTER(Fact_Horaria_riesgo, Fact_Horaria_riesgo[Temp_Media] >= 17 && Fact_Horaria_riesgo[Temp_Media] <= 27 && ( Fact_Horaria_riesgo[HR_Media] > 95 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ))) + 0,
-        BLANK()
+    SUMX(
+        _ids,
+        SWITCH(
+            Riesgos_Cultivo[ID],
+            "CAN_ROYA_CAFE", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 15 && Fact_Horaria_riesgo[Temp_Media] <= 25 && Fact_Horaria_riesgo[HR_Media] > 80 && Fact_Horaria_riesgo[Mojadura_Max] > 4 ))) + 0,
+            "CAN_ROYA_NARANJA", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 18 && Fact_Horaria_riesgo[Temp_Media] <= 28 && ( Fact_Horaria_riesgo[HR_Media] >= 98 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ) ))) + 0,
+            "CAN_SALIVOSA", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Precip_Total]) && ( Fact_Horaria_riesgo[Temp_Media] >= 22 && Fact_Horaria_riesgo[Temp_Media] <= 30 && Fact_Horaria_riesgo[HR_Media] > 80 && Fact_Horaria_riesgo[Precip_Total] > 0 ))) + 0,
+            "CAN_BARRENADOR", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Precip_Total]) && ( Fact_Horaria_riesgo[Temp_Media] > 24 && Fact_Horaria_riesgo[HR_Media] >= 60 && Fact_Horaria_riesgo[HR_Media] <= 80 && Fact_Horaria_riesgo[Precip_Total] = 0 ))) + 0,
+            "CAN_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800 ))) + 0,
+            "CAN_APLICACION", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Viento_Media]) && ( Fact_Horaria_riesgo[Temp_Media] < 30 && Fact_Horaria_riesgo[HR_Media] > 60 && Fact_Horaria_riesgo[Viento_Media] < 10 && Fact_Horaria_riesgo[Rad_Media] > 40 ))) + 0,
+            "BAN_SIG_NEGRA", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 21.5 && Fact_Horaria_riesgo[Temp_Media] <= 28 && ( Fact_Horaria_riesgo[HR_Media] > 90 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ) ))) + 0,
+            "BAN_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 38 && Fact_Horaria_riesgo[Rad_Media] > 800 ))) + 0,
+            "AGU_ANTRACNOSIS", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && NOT ISBLANK(Fact_Horaria_riesgo[Precip_Total]) && ( Fact_Horaria_riesgo[Temp_Media] >= 20 && Fact_Horaria_riesgo[Temp_Media] <= 30 && Fact_Horaria_riesgo[HR_Media] > 80 && ( Fact_Horaria_riesgo[Mojadura_Max] > 4 || Fact_Horaria_riesgo[Precip_Total] > 0 ) ))) + 0,
+            "AGU_CALOR", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 36 && Fact_Horaria_riesgo[Rad_Media] > 800 ))) + 0,
+            "PAL_PC", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Precip_Total]) && ( Fact_Horaria_riesgo[Temp_Media] >= 11 && Fact_Horaria_riesgo[Temp_Media] <= 35 && Fact_Horaria_riesgo[HR_Media] > 90 && Fact_Horaria_riesgo[Precip_Total] > 0 ))) + 0,
+            "PAL_ESTRES", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Rad_Media]) && ( Fact_Horaria_riesgo[Temp_Media] > 34 && Fact_Horaria_riesgo[Rad_Media] > 800 ))) + 0,
+            "MAI_ASFALTO", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 16 && Fact_Horaria_riesgo[Temp_Media] <= 22 && Fact_Horaria_riesgo[HR_Media] > 75 && Fact_Horaria_riesgo[Mojadura_Max] > 4 ))) + 0,
+            "MAI_ROYA", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 16 && Fact_Horaria_riesgo[Temp_Media] <= 23 && Fact_Horaria_riesgo[Mojadura_Max] > 4 ))) + 0,
+            "MAI_TIZON", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 18 && Fact_Horaria_riesgo[Temp_Media] <= 28 && Fact_Horaria_riesgo[Mojadura_Max] > 4 ))) + 0,
+            "MAI_MANCHA_GRIS", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && ( Fact_Horaria_riesgo[Temp_Media] >= 27 && Fact_Horaria_riesgo[Temp_Media] <= 32 && Fact_Horaria_riesgo[HR_Media] > 90 ))) + 0,
+            "FRI_ROYA", COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && ( Fact_Horaria_riesgo[Temp_Media] >= 17 && Fact_Horaria_riesgo[Temp_Media] <= 27 && ( Fact_Horaria_riesgo[HR_Media] > 95 || Fact_Horaria_riesgo[Mojadura_Max] > 4 ) ))) + 0,
+            0
+        )
     ),
     _n
 )
+```
+</details>
+
+<details><summary><code>Riesgo_Hora_Titulo</code></summary>
+
+```dax
+VAR _cult = TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])
+VAR _sel = CALCULATETABLE(VALUES(Riesgos_Cultivo[ID]), Riesgos_Cultivo[Tiene_Horaria] = TRUE(), _cult)
+VAR _todos = CALCULATETABLE(VALUES(Riesgos_Cultivo[ID]), REMOVEFILTERS(Riesgos_Cultivo), Riesgos_Cultivo[Tiene_Horaria] = TRUE(), Riesgos_Cultivo[Invertido] = FALSE(), _cult)
+VAR _usarSel = ( ISFILTERED(Riesgos_Cultivo[Categoria]) || ISFILTERED(Riesgos_Cultivo[Riesgo]) || ISFILTERED(Riesgos_Cultivo[ID]) ) && NOT ISEMPTY(_sel)
+VAR _ids = UNION(FILTER(_sel, _usarSel), FILTER(_todos, NOT _usarSel))
+VAR _k = COUNTROWS(_ids)
+VAR _nom = CALCULATE(SELECTEDVALUE(Riesgos_Cultivo[Riesgo]), REMOVEFILTERS(Riesgos_Cultivo), TREATAS(_ids, Riesgos_Cultivo[ID]))
+VAR _grupo =
+    IF(
+        _usarSel,
+        IF(ISFILTERED(Riesgos_Cultivo[Riesgo]) || ISFILTERED(Riesgos_Cultivo[ID]), "Riesgos seleccionados", CONCATENATEX(CALCULATETABLE(VALUES(Riesgos_Cultivo[Categoria]), TREATAS(_ids, Riesgos_Cultivo[ID])), Riesgos_Cultivo[Categoria], ", ")),
+        "Todos los riesgos"
+    )
+RETURN
+SWITCH(
+    TRUE(),
+    _k = 0, "Sin riesgos con condición horaria para este cultivo",
+    _k = 1, "Horas favorables a " & LOWER(_nom) & " (% de horas-estación)",
+    _grupo & ": % de horas-estación con al menos uno de " & _k & " riesgos favorable"
+)
+```
+</details>
+
+<details><summary><code>Titulo_Contexto</code></summary>
+
+```dax
+VAR _ini = MIN(Calendario[Fecha])
+VAR _fin = MAX(Calendario[Fecha])
+VAR _est = FILTER(VALUES(Estaciones_met[estacionid]), NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met)))
+VAR _n = COUNTROWS(_est)
+VAR _txtEst =
+    SWITCH(
+        TRUE(),
+        NOT ISFILTERED(Estaciones_met), "Todas las estaciones (" & _n & ")",
+        _n = 1, "Estación " & CALCULATE(SELECTEDVALUE(Estaciones_met[finca]), _est),
+        ISFILTERED(Estaciones_met[estrato.nombre]) && NOT ISFILTERED(Estaciones_met[finca]) && NOT ISFILTERED(Estaciones_met[estacionid]),
+            "Estrato " & CONCATENATEX(VALUES(Estaciones_met[estrato.nombre]), Estaciones_met[estrato.nombre], ", ") & " (" & _n & " estaciones)",
+        _n & " estaciones seleccionadas"
+    )
+RETURN
+SELECTEDVALUE(Cultivos[Cultivo], "Sin cultivo") & "  ·  " & _txtEst & "  ·  " & FORMAT(_ini, "dd-mmm") & " al " & FORMAT(_fin, "dd-mmm-yyyy")
 ```
 </details>
 
@@ -1160,62 +1249,6 @@ IF(_fin >= _ini,
 
 ```dax
 IF([Salivosa_Lluvia_Temporada] >= 50, 1, 0)
-```
-</details>
-
-<details><summary><code>Riesgo_Hora_Titulo</code></summary>
-
-```dax
-VAR _sel = IF([_Riesgo_En_Cultivo], SELECTEDVALUE(Riesgos_Cultivo[ID]))
-VAR _def =
-    MAXX(
-        TOPN(
-            1,
-            CALCULATETABLE(
-                FILTER(Riesgos_Cultivo, Riesgos_Cultivo[Tiene_Horaria]),
-                REMOVEFILTERS(Riesgos_Cultivo[Riesgo], Riesgos_Cultivo[ID], Riesgos_Cultivo[Orden_Nombre]),
-                TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])
-            ),
-            Riesgos_Cultivo[Orden], ASC
-        ),
-        Riesgos_Cultivo[ID]
-    )
-VAR _id = COALESCE(_sel, _def)
-VAR _nom = CALCULATE(SELECTEDVALUE(Riesgos_Cultivo[Riesgo]), REMOVEFILTERS(Riesgos_Cultivo), Riesgos_Cultivo[ID] = _id)
-RETURN IF(ISBLANK(_nom), "Sin riesgo horario para este cultivo", "Horas favorables a " & LOWER(_nom) & " (% de horas-estación)")
-```
-</details>
-
-<details><summary><code>Titulo_Contexto</code></summary>
-
-```dax
-VAR _ini = MIN(Calendario[Fecha])
-VAR _fin = MAX(Calendario[Fecha])
-VAR _est = FILTER(VALUES(Estaciones_met[estacionid]), NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met)))
-VAR _n = COUNTROWS(_est)
-VAR _txtEst =
-    SWITCH(
-        TRUE(),
-        NOT ISFILTERED(Estaciones_met), "Todas las estaciones (" & _n & ")",
-        _n = 1, "Estación " & CALCULATE(SELECTEDVALUE(Estaciones_met[finca]), _est),
-        ISFILTERED(Estaciones_met[estrato.nombre]) && NOT ISFILTERED(Estaciones_met[finca]) && NOT ISFILTERED(Estaciones_met[estacionid]),
-            "Estrato " & CONCATENATEX(VALUES(Estaciones_met[estrato.nombre]), Estaciones_met[estrato.nombre], ", ") & " (" & _n & " estaciones)",
-        _n & " estaciones seleccionadas"
-    )
-RETURN
-SELECTEDVALUE(Cultivos[Cultivo], "Sin cultivo") & "  ·  " & _txtEst & "  ·  " & FORMAT(_ini, "dd-mmm") & " al " & FORMAT(_fin, "dd-mmm-yyyy")
-```
-</details>
-
-<details><summary><code>_Riesgo_En_Cultivo</code></summary>
-
-```dax
-NOT ISEMPTY(
-    CALCULATETABLE(
-        VALUES(Riesgos_Cultivo[ID]),
-        TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])
-    )
-)
 ```
 </details>
 

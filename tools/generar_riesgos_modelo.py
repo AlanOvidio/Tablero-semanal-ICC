@@ -128,6 +128,18 @@ PL = {
  "GRA_SEQUIA": dict(tipo="dia", cond=lambda r: f"p < {f(r['lluvia_max_mm'])}"),
 }
 
+# Condiciones horarias: una hora sin dato en alguna variable usada no cuenta como favorable
+# (en DAX un BLANK se compara como 0, p. ej. T < 30 sería verdadero).
+def con_dato(fn):
+    def g(r):
+        c = fn(r)
+        cols = [col for col in (T, HR, MJ, PP, RD, VT) if col in c]
+        return " && ".join([f"NOT ISBLANK({col})" for col in cols] + [f"( {c} )"]) if cols else c
+    return g
+for _pl in PL.values():
+    for _k in ("horaria", "hcond"):
+        if _k in _pl: _pl[_k] = con_dato(_pl[_k])
+
 def usadas(expr):
     import re
     return [v for v in V if re.search(r"\b%s\b" % v, expr)]
@@ -225,21 +237,27 @@ filas = []
 orden_nombre = {}
 for i, r in enumerate(INC, 1):
     orden_nombre.setdefault(r["riesgo"], ORD.get(r["cultivo"], 9) * 100 + i)
+def categoria(tipo):
+    t = tipo.lower()
+    if t.startswith("enfermedad"): return "Enfermedades", 1
+    if t.startswith("plaga"): return "Plagas", 2
+    if t.startswith("abi"): return "Clima (abióticos)", 3
+    return "Manejo y producción", 4
 for i, r in enumerate(INC, 1):
     am, ro = num(r["umbral_amarillo"]), num(r["umbral_rojo"])
     inv = am is not None and ro is not None and ro < am
     filas.append([r["id"], r["cultivo"], r["riesgo"], r["tipo"], r["escala"], r["semaforo_unidad"], am, ro, inv,
                   "horaria" in PL[r["id"]], r["condicion"], r["aplicacion"], r["fuente"], r["confianza"],
-                  r["validado"] == "si", ORD.get(r["cultivo"], 9) * 100 + i, orden_nombre[r["riesgo"]]])
+                  r["validado"] == "si", ORD.get(r["cultivo"], 9) * 100 + i, orden_nombre[r["riesgo"]], *categoria(r["tipo"])])
 rc_cols = [("ID", "text", "string", None), ("Cultivo", "text", "string", None), ("Riesgo", "text", "string", None),
            ("Tipo", "text", "string", None), ("Escala", "text", "string", None), ("Unidad", "text", "string", None),
            ("Umbral_Amarillo", "number", "double", "0.##"), ("Umbral_Rojo", "number", "double", "0.##"),
            ("Invertido", "logical", "boolean", None), ("Tiene_Horaria", "logical", "boolean", None),
            ("Condicion", "text", "string", None), ("Aplicacion", "text", "string", None), ("Fuente", "text", "string", None),
            ("Confianza", "text", "string", None), ("Validado", "logical", "boolean", None), ("Orden", "Int64.Type", "int64", "0"),
-           ("Orden_Nombre", "Int64.Type", "int64", "0")]
+           ("Orden_Nombre", "Int64.Type", "int64", "0"), ("Categoria", "text", "string", None), ("Orden_Categoria", "Int64.Type", "int64", "0")]
 open(os.path.join(DEF, "tables", "Riesgos_Cultivo.tmdl"), "w", encoding="utf-8", newline="").write(
-    tabla_m("Riesgos_Cultivo", rc_cols, filas, sort={"Riesgo": "Orden_Nombre"}, ocultas=("Orden", "Orden_Nombre")))
+    tabla_m("Riesgos_Cultivo", rc_cols, filas, sort={"Riesgo": "Orden_Nombre", "Categoria": "Orden_Categoria"}, ocultas=("Orden", "Orden_Nombre", "Orden_Categoria")))
 
 # ───────────────────────── _Riesgos (medidas) ─────────────────────────
 M = ["table _Riesgos", f"\tlineageTag: {tag('_Riesgos')}", ""]
@@ -272,24 +290,37 @@ M.append(medida("Riesgos_En_Alerta",
 M.append(medida("Riesgos_En_Precaucion",
     "COUNTROWS(FILTER(VALUES(Riesgos_Cultivo[ID]), [Riesgo_Semaforo] = 2))", "0", "Genéricas", "Número de riesgos del cultivo en precaución (amarillo)."))
 hor = [r for r in INC if "horaria" in PL[r["id"]]]
-# Riesgo horario: el elegido en el segmentador o, si no hay uno válido para el cultivo, el primero con condición horaria
-ID_HORA = ("VAR _sel = IF([_Riesgo_En_Cultivo], SELECTEDVALUE(Riesgos_Cultivo[ID]))" + CRLF +
-    "VAR _def =" + CRLF + "    MAXX(" + CRLF + "        TOPN(" + CRLF + "            1," + CRLF +
-    "            CALCULATETABLE(" + CRLF + "                FILTER(Riesgos_Cultivo, Riesgos_Cultivo[Tiene_Horaria])," + CRLF +
-    "                REMOVEFILTERS(Riesgos_Cultivo[Riesgo], Riesgos_Cultivo[ID], Riesgos_Cultivo[Orden_Nombre])," + CRLF +
-    "                TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])" + CRLF +
-    "            )," + CRLF + "            Riesgos_Cultivo[Orden], ASC" + CRLF + "        )," + CRLF + "        Riesgos_Cultivo[ID]" + CRLF + "    )" + CRLF +
-    "VAR _id = COALESCE(_sel, _def)" + CRLF)
+# Mapa de calor horario: riesgos elegidos (segmentador categoría → riesgo, o clic en el semáforo);
+# sin selección válida, todos los riesgos horarios del cultivo que no son indicadores favorables.
+IDS_HORA = ("VAR _cult = TREATAS(VALUES(Cultivos[Cultivo]), Riesgos_Cultivo[Cultivo])" + CRLF +
+    "VAR _sel = CALCULATETABLE(VALUES(Riesgos_Cultivo[ID]), Riesgos_Cultivo[Tiene_Horaria] = TRUE(), _cult)" + CRLF +
+    "VAR _todos = CALCULATETABLE(VALUES(Riesgos_Cultivo[ID]), REMOVEFILTERS(Riesgos_Cultivo), Riesgos_Cultivo[Tiene_Horaria] = TRUE(), Riesgos_Cultivo[Invertido] = FALSE(), _cult)" + CRLF +
+    "VAR _usarSel = ( ISFILTERED(Riesgos_Cultivo[Categoria]) || ISFILTERED(Riesgos_Cultivo[Riesgo]) || ISFILTERED(Riesgos_Cultivo[ID]) ) && NOT ISEMPTY(_sel)" + CRLF +
+    "VAR _ids = UNION(FILTER(_sel, _usarSel), FILTER(_todos, NOT _usarSel))" + CRLF)
 M.append(medida("Riesgo_Hora",
-    ID_HORA + "VAR _n = COUNTROWS(Fact_Horaria_riesgo)" + CRLF + "RETURN" + CRLF +
-    "DIVIDE(" + CRLF + "    SWITCH(" + CRLF + "        _id," + CRLF + "        " +
-    (CRLF + "        ").join(f'"{r["id"]}", COUNTROWS(FILTER(Fact_Horaria_riesgo, {PL[r["id"]]["horaria"](r)})) + 0,' for r in hor) + CRLF +
-    "        BLANK()" + CRLF + "    )," + CRLF + "    _n" + CRLF + ")", "0%", "Genéricas",
-    "Mapa de calor: fracción de horas-estación favorables al riesgo seleccionado (solo riesgos con condición horaria)."))
+    IDS_HORA + "VAR _n = COUNTROWS(Fact_Horaria_riesgo)" + CRLF +
+    "VAR _fav =" + CRLF + "    COUNTROWS(" + CRLF + "        FILTER(" + CRLF + "            Fact_Horaria_riesgo," + CRLF + "            " +
+    (CRLF + "            || ").join(f'( "{r["id"]}" IN _ids && {PL[r["id"]]["horaria"](r)} )' for r in hor) + CRLF +
+    "        )" + CRLF + "    )" + CRLF +
+    "RETURN IF(NOT ISEMPTY(_ids), DIVIDE(_fav + 0, _n))", "0%", "Genéricas",
+    "Mapa de calor: fracción de horas-estación con al menos un riesgo elegido favorable (un riesgo, una categoría o todos los riesgos horarios del cultivo)."))
+M.append(medida("Riesgo_Hora_N",
+    IDS_HORA + "VAR _n = COUNTROWS(Fact_Horaria_riesgo)" + CRLF + "RETURN" + CRLF +
+    "DIVIDE(" + CRLF + "    SUMX(" + CRLF + "        _ids," + CRLF + "        SWITCH(" + CRLF + "            Riesgos_Cultivo[ID]," + CRLF + "            " +
+    (CRLF + "            ").join(f'"{r["id"]}", COUNTROWS(FILTER(Fact_Horaria_riesgo, {PL[r["id"]]["horaria"](r)})) + 0,' for r in hor) + CRLF +
+    "            0" + CRLF + "        )" + CRLF + "    )," + CRLF + "    _n" + CRLF + ")", "0.0", "Genéricas",
+    "Mapa de calor (tooltip): número promedio de riesgos elegidos favorables por hora-estación."))
 M.append(medida("Riesgo_Hora_Titulo",
-    ID_HORA + "VAR _nom = CALCULATE(SELECTEDVALUE(Riesgos_Cultivo[Riesgo]), REMOVEFILTERS(Riesgos_Cultivo), Riesgos_Cultivo[ID] = _id)" + CRLF +
-    'RETURN IF(ISBLANK(_nom), "Sin riesgo horario para este cultivo", "Horas favorables a " & LOWER(_nom) & " (% de horas-estación)")',
-    None, "Genéricas", "Título del mapa de calor horario con el riesgo que se está mostrando."))
+    IDS_HORA + "VAR _k = COUNTROWS(_ids)" + CRLF +
+    "VAR _nom = CALCULATE(SELECTEDVALUE(Riesgos_Cultivo[Riesgo]), REMOVEFILTERS(Riesgos_Cultivo), TREATAS(_ids, Riesgos_Cultivo[ID]))" + CRLF +
+    "VAR _grupo =" + CRLF + "    IF(" + CRLF + "        _usarSel," + CRLF +
+    '        IF(ISFILTERED(Riesgos_Cultivo[Riesgo]) || ISFILTERED(Riesgos_Cultivo[ID]), "Riesgos seleccionados", CONCATENATEX(CALCULATETABLE(VALUES(Riesgos_Cultivo[Categoria]), TREATAS(_ids, Riesgos_Cultivo[ID])), Riesgos_Cultivo[Categoria], ", ")),' + CRLF +
+    '        "Todos los riesgos"' + CRLF + "    )" + CRLF + "RETURN" + CRLF +
+    "SWITCH(" + CRLF + "    TRUE()," + CRLF +
+    '    _k = 0, "Sin riesgos con condición horaria para este cultivo",' + CRLF +
+    '    _k = 1, "Horas favorables a " & LOWER(_nom) & " (% de horas-estación)",' + CRLF +
+    '    _grupo & ": % de horas-estación con al menos uno de " & _k & " riesgos favorable"' + CRLF + ")",
+    None, "Genéricas", "Título del mapa de calor horario según lo que se está mostrando."))
 M.append(medida("Titulo_Contexto",
     "VAR _ini = MIN(Calendario[Fecha])" + CRLF + "VAR _fin = MAX(Calendario[Fecha])" + CRLF +
     "VAR _est = FILTER(VALUES(Estaciones_met[estacionid]), NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met)))" + CRLF +

@@ -63,12 +63,12 @@ Tamaño 1300×4143 · 34 visuales · carpeta `ff3ee83505f7aab7cef2`
 | cardVisual | Sensación térmica semanal | IC_Media_Diurno, IC_Max_Diurno | `4ec2c7` |
 | lineChart | Condiciones de estrés atmosférico | Jerarquía hidrológica.Fecha, VPD_Media_Diurna, VPD_Max_Diurna, VPD_Media_Nocturna, HR_Min, HR_Media | `9c537a` |
 | lineChart | Condiciones de estrés vegetal | Jerarquía hidrológica.Fecha, Mojadura_Horas_Semanal, Mojadura_Horas_Nocturna_Semanal, Horas_Luz, Horas_Estres_Termico_Semanal, Rad_Max_Diurna, Rad_Media_Luz | `0b6a1f` |
-| lineChart | Radiación Solar Acumulada | Semana_Num, Rad_Acumulada_Anual_Anterior_Grafica, Rad_Acumulada_Anual_Grafica | `687d3b` |
 | lineChart | VPD y Temperatura Nocturna | Jerarquía hidrológica.Fecha, VPD_Max_Diurna, VPD_Media_Nocturna, VPD_Media_Diurna, Temp_Nocturna_Media, Temp_Min_Nocturna | `2c0af4` |
+| lineChart | Radiación Solar Acumulada | Semana_Num, Rad_Acumulada_Anual_Anterior_Grafica, Rad_Acumulada_Anual_Grafica | `687d3b` |
 | lineChart | Grados día acumulados del cultivo (año actual vs. anterior) | Semana_Num, GDD_Cultivo_Anterior_Grafica, GDD_Cultivo_Grafica | `5bd82a` |
 | lineChart | Comportamiento del viento | Fecha, Viento_Max_Diurno, Viento_Max_Nocturno, Viento_Media_Diurna, Viento_Media_Nocturna | `9189ab` |
-| slicer | Riesgo del mapa de calor horario | Riesgo | `781803` |
-| pivotTable |  | Fecha_Corta, Hora_Etiqueta, Riesgo_Hora | `3afd62` |
+| slicer | Mapa de calor: categoría o riesgo (sin selección = todos) | Categoria, Riesgo | `781803` |
+| pivotTable |  | Fecha_Corta, Hora_Etiqueta, Riesgo_Hora_N, Riesgo_Hora | `3afd62` |
 | slicer | Período del día (rosa de vientos) | Periodo | `b16e5e` |
 | tableEx |  | Rosa_Vientos_SVG | `411b72` |
 | cardVisual | Riesgos del cultivo en la semana | Riesgos_En_Alerta, Riesgos_En_Precaucion | `cfd277` |
