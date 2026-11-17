@@ -61,3 +61,7 @@ python tools/generar_riesgos_modelo.py     # aplica el CSV de riesgos al modelo 
 ```
 
 Y registrar el cambio en [06 · Decisiones y cambios](docs/06_decisiones_y_cambios.md).
+
+Version publicada disponible en:
+https://app.powerbi.com/view?r=eyJrIjoiMjBhODRkZmUtMzZmMi00YzA3LWFjNTktZGVkMGMyOWNiY2NiIiwidCI6Ijg5MTkwMzQ4LTg5MjUtNDQxOS1hNTZhLTE3ZDIxOGE3YzgwYyIsImMiOjR9
+
