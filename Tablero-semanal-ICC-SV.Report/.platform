@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Tablero-semanal-ICC-SV"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "8a9a49ba-2b5e-448d-bfd1-a894af2252ff"
+  }
+}

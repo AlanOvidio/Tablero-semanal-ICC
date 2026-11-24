@@ -1,0 +1,36 @@
+table Eje_Secundario
+	lineageTag: e85968d2-cdb7-5ad3-bb5f-f12d918f8b0f
+
+	column Opcion
+		dataType: string
+		lineageTag: f0a8bc21-3a7f-5ec4-a90f-c9390cca4035
+		summarizeBy: none
+		sourceColumn: Opcion
+		sortByColumn: Orden
+
+		annotation SummarizationSetBy = User
+
+	column Orden
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 613ccfc6-8f92-55ae-956a-53832d743391
+		summarizeBy: none
+		sourceColumn: Orden
+
+		annotation SummarizationSetBy = User
+
+	partition Eje_Secundario = m
+		mode: import
+		source =
+				let
+				    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+				    Tabla = #table(type table [Opcion = text, Orden = Int64.Type], {
+					{"Humedad relativa", 1},
+					{"Temperatura nocturna", 2}
+				    })
+				in
+				    Tabla
+
+	annotation PBI_ResultType = Table
+

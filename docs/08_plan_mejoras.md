@@ -53,6 +53,23 @@ Diseño acordado (2026-11-03): clima arriba (secciones actuales) y debajo un blo
 - [x] Título dinámico con el contexto (estación/estrato y fechas).
 - [x] Eliminar la página *Resumen Semanal – Caña Azúcar*.
 
+### Fase 2b · Reorganización en cuatro páginas (acordado 2026-11-20)
+
+Redistribución del Resumen Semanal conservando tamaños, colores y reglas de los visuales (1300 px de ancho con desplazamiento); encabezado con segmentadores, título con subtítulo explicativo, tarjeta **«Datos al dd/mm/aaaa»** (última fecha de la tabla que usa la página), indicador de semana/estaciones (`Titulo_Contexto`), enlace a la documentación y logo.
+
+**Correcciones**
+- [x] Semana automática: columna de selector en `Calendario` con la etiqueta **«Semana en curso»** para la semana que contiene la fecha de actualización (hora de Guatemala) y **«Año hidrológico actual»** para el año; los segmentadores se guardan con esa selección y avanzan solos.
+- [x] `Balance_Por_Semana`: las 3 semanas previas se cuentan por fecha de inicio de semana (cruza el cambio de año hidrológico).
+- [x] `Estaciones_met`: solo las estaciones de `TablaEstaciones_met` (como en condiciones observadas).
+- [x] Radiación y suma térmica **semana a semana**: columnas del año actual y línea de la misma semana del año anterior (últimas 12 semanas) + tarjetas de acumulado anual con diferencia % frente al año anterior.
+
+**Páginas**
+- [x] **1 · Agua y energía de la semana**: mapa (balance hídrico en paleta café → blanco → verde azulado, tamaño = lluvia), lluvia/ETo/balance, temperaturas, radiación y suma térmica; tarjetas con comparación frente a la semana anterior y a la misma semana del año anterior. Sin segmentador de cultivo.
+- [x] **2 · Estrés diurno y recuperación nocturna**: bloques Día (06–18 h) / Noche (19–05 h) con los mismos ejes: temperatura (Tmáx, IC, horas de estrés / Tmín y T nocturna), humedad y DPV (DPV máx y medio, HR mín / DPV y HR nocturnos), viento (diurno / nocturno) y mojadura (diurna / nocturna), con un texto «Cómo leerlo».
+- [x] **3 · Comportamiento horario**: rosa de vientos y mapa de calor solo con variables meteorológicas, con leyenda (tabla de rangos y colores de la variable elegida).
+- [x] **4 · Riesgos del cultivo**: segmentador de cultivo, semáforo, matriz por estación, conteo de alertas y mapa de calor de riesgos con paleta según la categoría (enfermedades morado, plagas café-naranja, clima rojo, ventana de aplicación verde) y leyenda.
+- [x] Panel común: Semana (sincronizada entre páginas), Estrato (botones), Estación (lista); el mapa queda como contexto/filtro momentáneo.
+
 ### Fase 3 · Pronóstico Semanal (Open-Meteo)
 - [ ] Ingesta: una llamada con las coordenadas de todas las estaciones; datos horarios, zona horaria de Guatemala; parámetro de horizonte (7 días por defecto); actualización completa diaria.
 - [ ] Tablas `Fact_Pron_Horaria`, `Fact_Pron_Diaria`, `Fact_Pron_Subdiaria` con las mismas columnas que las observadas.

@@ -1,0 +1,8 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "d18dbb7729765a1097a1",
+  "displayName": "Agua y energía",
+  "displayOption": "FitToWidth",
+  "height": 1624,
+  "width": 1300
+}

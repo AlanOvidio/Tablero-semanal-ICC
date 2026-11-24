@@ -1,0 +1,60 @@
+table Resumen_Variables
+	lineageTag: b9b23d4d-b0b4-5596-a782-bf154167c360
+
+	column Variable
+		dataType: string
+		lineageTag: d47968b9-a96d-5808-b50e-56712aaf0793
+		summarizeBy: none
+		sourceColumn: Variable
+		sortByColumn: Orden
+
+		annotation SummarizationSetBy = User
+
+	column Orden
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 072cccdd-d4e8-5cee-b72d-2d074e86145e
+		summarizeBy: none
+		sourceColumn: Orden
+
+		annotation SummarizationSetBy = User
+
+	column Unidad
+		dataType: string
+		lineageTag: c37a505a-d294-5728-bce1-18252e641d91
+		summarizeBy: none
+		sourceColumn: Unidad
+
+		annotation SummarizationSetBy = User
+
+	column Formato
+		dataType: string
+		isHidden
+		lineageTag: efa60433-953e-55ef-896f-3ec4b394d930
+		summarizeBy: none
+		sourceColumn: Formato
+
+		annotation SummarizationSetBy = User
+
+	partition Resumen_Variables = m
+		mode: import
+		source =
+				let
+				    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+				    Tabla = #table(type table [Variable = text, Orden = Int64.Type, Unidad = text, Formato = text], {
+					{"Lluvia", 1, "mm", "0.0"},
+					{"Evapotranspiración (ETo)", 2, "mm", "0.0"},
+					{"Balance hídrico", 3, "mm", "+0.0;-0.0;0.0"},
+					{"Temperatura media", 4, "°C", "0.0"},
+					{"Temperatura máxima", 5, "°C", "0.0"},
+					{"Temperatura mínima", 6, "°C", "0.0"},
+					{"Radiación (media diaria)", 7, "MJ/m²/día", "0.0"},
+					{"Horas con luz (media diaria)", 8, "h", "0.0"},
+					{"Grados día (media diaria)", 9, "°C día", "0.0"}
+				    })
+				in
+				    Tabla
+
+	annotation PBI_ResultType = Table
+

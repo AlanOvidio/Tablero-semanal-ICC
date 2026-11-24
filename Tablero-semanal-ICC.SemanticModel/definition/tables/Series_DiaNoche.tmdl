@@ -1,0 +1,76 @@
+table Series_DiaNoche
+	lineageTag: a836b55a-e790-522a-aab0-4439f4010758
+
+	column ID
+		dataType: string
+		isHidden
+		lineageTag: d2179db2-2e9f-5171-9468-38be59f52b4c
+		summarizeBy: none
+		sourceColumn: ID
+
+		annotation SummarizationSetBy = User
+
+	column Periodo
+		dataType: string
+		lineageTag: 27859d44-52ba-540f-9002-970d1da77c2f
+		summarizeBy: none
+		sourceColumn: Periodo
+
+		annotation SummarizationSetBy = User
+
+	column Serie
+		dataType: string
+		lineageTag: c6cf43b2-c2a0-5a9b-97e3-46058e08cad5
+		summarizeBy: none
+		sourceColumn: Serie
+		sortByColumn: Orden
+
+		annotation SummarizationSetBy = User
+
+	column Orden
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: fcbbc184-e61c-5eb0-bae5-8b9ed2f7165f
+		summarizeBy: none
+		sourceColumn: Orden
+
+		annotation SummarizationSetBy = User
+
+	column Grafica
+		dataType: string
+		lineageTag: a80ec661-dfde-5df3-aa42-b96ab0f704e3
+		summarizeBy: none
+		sourceColumn: Grafica
+
+		annotation SummarizationSetBy = User
+
+	partition Series_DiaNoche = m
+		mode: import
+		source =
+				let
+				    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+				    Tabla = #table(type table [ID = text, Grafica = text, Periodo = text, Serie = text, Orden = Int64.Type], {
+					{"DPV_MED_D", "Estrés atmosférico", "Día", "DPV medio diurno", 1},
+					{"DPV_MAX_D", "Estrés atmosférico", "Día", "DPV máx. diurno", 2},
+					{"DPV_MED_N", "Estrés atmosférico", "Noche", "DPV medio nocturno", 3},
+					{"HR_MIN", "Estrés atmosférico", "24 h", "HR mínima", 4},
+					{"HR_MED", "Estrés atmosférico", "24 h", "HR media", 5},
+					{"T_NOC", "Estrés atmosférico", "Noche", "T media nocturna", 6},
+					{"T_MIN_NOC", "Estrés atmosférico", "Noche", "T mínima nocturna", 7},
+					{"MOJ_D", "Estrés vegetal", "Día", "Mojadura diurna", 8},
+					{"MOJ_N", "Estrés vegetal", "Noche", "Mojadura nocturna", 9},
+					{"LUZ_D", "Estrés vegetal", "Día", "Horas con luz", 10},
+					{"ESTRES_D", "Estrés vegetal", "Día", "Horas de estrés térmico", 11},
+					{"IRR_MAX", "Estrés vegetal", "Día", "Irradiancia máx. diurna", 12},
+					{"IRR_LUZ", "Estrés vegetal", "Día", "Irradiancia media de luz", 13},
+					{"V_MAX_D", "Viento", "Día", "Viento máx. diurno", 14},
+					{"V_MAX_N", "Viento", "Noche", "Viento máx. nocturno", 15},
+					{"V_MED_D", "Viento", "Día", "Viento medio diurno", 16},
+					{"V_MED_N", "Viento", "Noche", "Viento medio nocturno", 17}
+				    })
+				in
+				    Tabla
+
+	annotation PBI_ResultType = Table
+

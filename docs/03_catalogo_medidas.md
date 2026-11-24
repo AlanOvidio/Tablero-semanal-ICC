@@ -1,6 +1,6 @@
 # Catálogo de medidas DAX
 
-> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-03 (215 medidas). No editar a mano.
+> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-24 (281 medidas). No editar a mano.
 
 Convenciones: las medidas con prefijo `_` son auxiliares; `Semaforo_*` devuelve 1 = rojo, 2 = amarillo, 3 = verde. Las medidas de suma (lluvia, ETo, balance, horas, GDD, radiación acumulada) **suman por estación y promedian entre estaciones**; los máximos y mínimos devuelven **el extremo** de las estaciones seleccionadas. Ver `04_guia_usuario.md` y `06_decisiones_y_cambios.md`.
 
@@ -8,15 +8,15 @@ Convenciones: las medidas con prefijo `_` son auxiliares; `Semaforo_*` devuelve 
 
 - [Motor de riesgos por cultivo (generado desde config/riesgos_cultivo.csv)](#motor-de-riesgos-por-cultivo-generado-desde-configriesgos_cultivocsv) (61)
 - [Viento](#viento) (19)
-- [Radiación y luz](#radiación-y-luz) (16)
+- [Radiación y luz](#radiación-y-luz) (31)
 - [Semáforos](#semáforos) (16)
 - [Días y condiciones de riesgo (plagas, enfermedades, clima)](#días-y-condiciones-de-riesgo-plagas-enfermedades-clima) (16)
-- [Grados día / suma térmica (GDD)](#grados-día--suma-térmica-gdd) (17)
-- [Históricos y comparaciones interanuales](#históricos-y-comparaciones-interanuales) (14)
+- [Grados día / suma térmica (GDD)](#grados-día--suma-térmica-gdd) (32)
+- [Históricos y comparaciones interanuales](#históricos-y-comparaciones-interanuales) (16)
 - [Precipitación, ETo y balance hídrico](#precipitación-eto-y-balance-hídrico) (16)
 - [Temperatura y sensación térmica](#temperatura-y-sensación-térmica) (13)
 - [Humedad, VPD, mojadura y estrés](#humedad-vpd-mojadura-y-estrés) (16)
-- [Auxiliares, calidad de datos y validación](#auxiliares-calidad-de-datos-y-validación) (11)
+- [Auxiliares, calidad de datos y validación](#auxiliares-calidad-de-datos-y-validación) (45)
 
 ## Motor de riesgos por cultivo (generado desde config/riesgos_cultivo.csv)
 
@@ -74,7 +74,7 @@ Convenciones: las medidas con prefijo `_` son auxiliares; `Semaforo_*` devuelve 
 | `Riesgo_Hora` | 0% | Mapa de calor: fracción de horas-estación con al menos un riesgo elegido favorable (un riesgo, una categoría o todos los riesgos horarios del cultivo). |
 | `Riesgo_Hora_N` | 0.0 | Mapa de calor (tooltip): número promedio de riesgos elegidos favorables por hora-estación. |
 | `Riesgo_Hora_Titulo` |  | Título del mapa de calor horario según lo que se está mostrando. |
-| `Titulo_Contexto` |  | Título dinámico del Resumen Semanal: cultivo, estaciones o estrato y fechas del periodo. |
+| `Titulo_Contexto` |  | Indicador de la página de riesgos: cultivo + Titulo_Semana. |
 | `GDD_Cultivo` | 0 | Grados día con tope del cultivo seleccionado en el periodo (por estación, promedio entre estaciones). |
 | `GDD_Cultivo_Acumulado` | 0 | Grados día acumulados del año hidrológico hasta la semana en contexto. |
 | `GDD_Cultivo_Acumulado_Anterior` | 0 | Ídem, año hidrológico anterior. |
@@ -1130,21 +1130,7 @@ SWITCH(
 <details><summary><code>Titulo_Contexto</code></summary>
 
 ```dax
-VAR _ini = MIN(Calendario[Fecha])
-VAR _fin = MAX(Calendario[Fecha])
-VAR _est = FILTER(VALUES(Estaciones_met[estacionid]), NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met)))
-VAR _n = COUNTROWS(_est)
-VAR _txtEst =
-    SWITCH(
-        TRUE(),
-        NOT ISFILTERED(Estaciones_met), "Todas las estaciones (" & _n & ")",
-        _n = 1, "Estación " & CALCULATE(SELECTEDVALUE(Estaciones_met[finca]), _est),
-        ISFILTERED(Estaciones_met[estrato.nombre]) && NOT ISFILTERED(Estaciones_met[finca]) && NOT ISFILTERED(Estaciones_met[estacionid]),
-            "Estrato " & CONCATENATEX(VALUES(Estaciones_met[estrato.nombre]), Estaciones_met[estrato.nombre], ", ") & " (" & _n & " estaciones)",
-        _n & " estaciones seleccionadas"
-    )
-RETURN
-SELECTEDVALUE(Cultivos[Cultivo], "Sin cultivo") & "  ·  " & _txtEst & "  ·  " & FORMAT(_ini, "dd-mmm") & " al " & FORMAT(_fin, "dd-mmm-yyyy")
+SELECTEDVALUE(Cultivos[Cultivo], "Sin cultivo") & "  ·  " & [Titulo_Semana]
 ```
 </details>
 
@@ -1640,6 +1626,21 @@ RETURN
 | `Duracion_Luz_Media` | 0.0 | Duración media del periodo de luz por día (h) |
 | `Hora_Inicio_Luz` | 0.00 | Hora media de inicio del periodo de luz (h decimal). |
 | `Hora_Fin_Luz` | 0.00 | Hora media de fin del periodo de luz (h decimal). |
+| `Rad_Diaria_Media` | 0.0 | Radiación media diaria (MJ/m²/día): promedio por estación y luego entre estaciones. |
+| `Rad_Sem_Grafica` | 0.0 | Gráfica semana a semana (eje Semanas_Grafica): Rad_Diaria_Media de cada una de las últimas 12 semanas hasta la elegida. |
+| `Rad_Sem_Anterior_Grafica` | 0.0 | Misma semana hidrológica del año anterior (Rad_Diaria_Media). |
+| `Rad_Acum_Hidro` | #,0 | Acumulado del año hidrológico hasta el último día con datos de la semana elegida (MJ/m²). |
+| `Rad_Acum_Hidro_Ant` | #,0 | Acumulado del año hidrológico anterior con el mismo número de días (MJ/m²). |
+| `Rad_Acum_Dif_Pct` | +0%;-0%;0% | Diferencia del acumulado frente al año anterior. |
+| `Rad_Titulo` |  | Título de la gráfica de radiación semana a semana con el acumulado del año. |
+| `Rad_Acum8` | #,0 | Acumulado del año actual desde el inicio de la ventana (4, 8, 12 semanas o inicio del año) hasta la semana del eje (MJ/m²). Eje: Semanas_Grafica. |
+| `Rad_Acum8_Ant` | #,0 | Acumulado de los mismos días del año anterior (MJ/m²). Eje: Semanas_Grafica. |
+| `Rad_Acum8_Media` | #,0 | Acumulado de la media de los mismos días en años anteriores (hasta 18) (MJ/m²). Eje: Semanas_Grafica. |
+| `Rad_Desv_Acum` | +0;-0;0 | Desviación acumulada del año actual frente a la media (mismos días de años anteriores) (MJ/m²). Eje: Semanas_Grafica. |
+| `Rad_Desv_Acum_Ant` | +0;-0;0 | Desviación acumulada del año anterior frente a la misma media (MJ/m²). Eje: Semanas_Grafica. |
+| `Rad_Titulo_Desv` |  | Título: acumulado de la ventana con la desviación frente a la media entre paréntesis (año actual y anterior) y acumulado de la media. |
+| `Rad_Texto_Actual` |  | Información sobre herramientas: acumulado del año actual (desviación frente a la media). |
+| `Rad_Texto_Anterior` |  | Información sobre herramientas: acumulado del año anterior (desviación frente a la media). |
 
 <details><summary><code>Rad_Media_Diurna</code></summary>
 
@@ -1843,6 +1844,214 @@ AVERAGE(Fact_Subdiaria_met_aux[Hora_Inicio_Luz])
 
 ```dax
 AVERAGE(Fact_Subdiaria_met_aux[Hora_Fin_Luz])
+```
+</details>
+
+<details><summary><code>Rad_Diaria_Media</code></summary>
+
+```dax
+AVERAGEX(FILTER(VALUES(Estaciones_met[estacionid]), NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))), CALCULATE(AVERAGE(Fact_Diaria_met[Rad_MJ])))
+```
+</details>
+
+<details><summary><code>Rad_Sem_Grafica</code></summary>
+
+```dax
+VAR _sel = CALCULATE(MAX(Calendario[Inicio_Semana]), ALLSELECTED(Calendario))
+VAR _eje = MAX(Semanas_Grafica[Inicio_Semana])
+RETURN
+IF(_eje <= _sel && _eje > _sel - 84, CALCULATE([Rad_Diaria_Media], ALL(Calendario), Calendario[Inicio_Semana] = _eje))
+```
+</details>
+
+<details><summary><code>Rad_Sem_Anterior_Grafica</code></summary>
+
+```dax
+VAR _sel = CALCULATE(MAX(Calendario[Inicio_Semana]), ALLSELECTED(Calendario))
+VAR _eje = MAX(Semanas_Grafica[Inicio_Semana])
+VAR _a = MAX(Semanas_Grafica[Año_Hidrologico])
+VAR _s = MAX(Semanas_Grafica[Semana_Hidrologica])
+RETURN
+IF(_eje <= _sel && _eje > _sel - 84, CALCULATE([Rad_Diaria_Media], ALL(Calendario), Calendario[Año_Hidrologico] = _a - 1, Calendario[Semana_Hidrologica] = _s))
+```
+</details>
+
+<details><summary><code>Rad_Acum_Hidro</code></summary>
+
+```dax
+VAR _anio = CALCULATE(MAX(Calendario[Año_Hidrologico]), ALLSELECTED(Calendario))
+VAR _ult = CALCULATE(MAX(Fact_Diaria_met[Fecha]), REMOVEFILTERS())
+VAR _fin = MIN(CALCULATE(MAX(Calendario[Fecha]), ALLSELECTED(Calendario)), _ult)
+VAR _ini = CALCULATE(MIN(Calendario[Fecha]), ALL(Calendario), Calendario[Año_Hidrologico] = _anio)
+RETURN
+CALCULATE(AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Rad_MJ]))), ALL(Calendario), DATESBETWEEN(Calendario[Fecha], _ini, _fin))
+```
+</details>
+
+<details><summary><code>Rad_Acum_Hidro_Ant</code></summary>
+
+```dax
+VAR _anio = CALCULATE(MAX(Calendario[Año_Hidrologico]), ALLSELECTED(Calendario))
+VAR _ult = CALCULATE(MAX(Fact_Diaria_met[Fecha]), REMOVEFILTERS())
+VAR _fin = MIN(CALCULATE(MAX(Calendario[Fecha]), ALLSELECTED(Calendario)), _ult)
+VAR _ini = CALCULATE(MIN(Calendario[Fecha]), ALL(Calendario), Calendario[Año_Hidrologico] = _anio)
+VAR _ini2 = CALCULATE(MIN(Calendario[Fecha]), ALL(Calendario), Calendario[Año_Hidrologico] = _anio - 1)
+VAR _fin2 = _ini2 + (_fin - _ini)
+RETURN
+CALCULATE(AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Diaria_met[Rad_MJ]))), ALL(Calendario), DATESBETWEEN(Calendario[Fecha], _ini2, _fin2))
+```
+</details>
+
+<details><summary><code>Rad_Acum_Dif_Pct</code></summary>
+
+```dax
+DIVIDE([Rad_Acum_Hidro] - [Rad_Acum_Hidro_Ant], [Rad_Acum_Hidro_Ant])
+```
+</details>
+
+<details><summary><code>Rad_Titulo</code></summary>
+
+```dax
+"Radiación media diaria (MJ/m²) · acumulado del año: " & FORMAT([Rad_Acum_Hidro], "#,0") & " MJ/m² (" & FORMAT([Rad_Acum_Dif_Pct], "+0%;-0%;0%") & " vs. año anterior)"
+```
+</details>
+
+<details><summary><code>Rad_Acum8</code></summary>
+
+```dax
+VAR _sel = CALCULATE(MAX(Calendario[Inicio_Semana]), ALLSELECTED(Calendario))
+VAR _eje = MAX(Semanas_Grafica[Inicio_Semana])
+VAR _ult = CALCULATE(MAX(Fact_Diaria_met[Fecha]), REMOVEFILTERS())
+VAR _w = SELECTEDVALUE(Ventana_Semanas[Semanas], 8)
+VAR _anioVent = CALCULATE(MAX(Calendario[Año_Hidrologico]), ALLSELECTED(Calendario))
+VAR _iniAnio = CALCULATE(MIN(Calendario[Inicio_Semana]), ALL(Calendario), Calendario[Año_Hidrologico] = _anioVent)
+VAR _ini = IF(_w = 0, _iniAnio, _sel - 7 * (_w - 1))
+VAR _t =
+    ADDCOLUMNS(
+        FILTER(ALL(Semanas_Grafica[Inicio_Semana]), Semanas_Grafica[Inicio_Semana] >= _ini && Semanas_Grafica[Inicio_Semana] <= _eje),
+        "@x", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE([Rad_Diaria_Media], ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@n", MAX(0, MIN(7, INT(_ult - Semanas_Grafica[Inicio_Semana]) + 1)),
+        "@ant", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(CALCULATE([Rad_Diaria_Media], DATEADD(Calendario[Fecha], -1, YEAR)), ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@clim", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(AVERAGEX(GENERATESERIES(1, 18), VAR _k = [Value] RETURN CALCULATE([Rad_Diaria_Media], DATEADD(Calendario[Fecha], -_k, YEAR))), ALL(Calendario), Calendario[Inicio_Semana] = _i)
+    )
+RETURN
+IF(_eje <= _sel && _eje >= _ini, SUMX(_t, [@x] * [@n]))
+```
+</details>
+
+<details><summary><code>Rad_Acum8_Ant</code></summary>
+
+```dax
+VAR _sel = CALCULATE(MAX(Calendario[Inicio_Semana]), ALLSELECTED(Calendario))
+VAR _eje = MAX(Semanas_Grafica[Inicio_Semana])
+VAR _ult = CALCULATE(MAX(Fact_Diaria_met[Fecha]), REMOVEFILTERS())
+VAR _w = SELECTEDVALUE(Ventana_Semanas[Semanas], 8)
+VAR _anioVent = CALCULATE(MAX(Calendario[Año_Hidrologico]), ALLSELECTED(Calendario))
+VAR _iniAnio = CALCULATE(MIN(Calendario[Inicio_Semana]), ALL(Calendario), Calendario[Año_Hidrologico] = _anioVent)
+VAR _ini = IF(_w = 0, _iniAnio, _sel - 7 * (_w - 1))
+VAR _t =
+    ADDCOLUMNS(
+        FILTER(ALL(Semanas_Grafica[Inicio_Semana]), Semanas_Grafica[Inicio_Semana] >= _ini && Semanas_Grafica[Inicio_Semana] <= _eje),
+        "@x", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE([Rad_Diaria_Media], ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@n", MAX(0, MIN(7, INT(_ult - Semanas_Grafica[Inicio_Semana]) + 1)),
+        "@ant", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(CALCULATE([Rad_Diaria_Media], DATEADD(Calendario[Fecha], -1, YEAR)), ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@clim", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(AVERAGEX(GENERATESERIES(1, 18), VAR _k = [Value] RETURN CALCULATE([Rad_Diaria_Media], DATEADD(Calendario[Fecha], -_k, YEAR))), ALL(Calendario), Calendario[Inicio_Semana] = _i)
+    )
+RETURN
+IF(_eje <= _sel && _eje >= _ini, SUMX(_t, [@ant] * 7))
+```
+</details>
+
+<details><summary><code>Rad_Acum8_Media</code></summary>
+
+```dax
+VAR _sel = CALCULATE(MAX(Calendario[Inicio_Semana]), ALLSELECTED(Calendario))
+VAR _eje = MAX(Semanas_Grafica[Inicio_Semana])
+VAR _ult = CALCULATE(MAX(Fact_Diaria_met[Fecha]), REMOVEFILTERS())
+VAR _w = SELECTEDVALUE(Ventana_Semanas[Semanas], 8)
+VAR _anioVent = CALCULATE(MAX(Calendario[Año_Hidrologico]), ALLSELECTED(Calendario))
+VAR _iniAnio = CALCULATE(MIN(Calendario[Inicio_Semana]), ALL(Calendario), Calendario[Año_Hidrologico] = _anioVent)
+VAR _ini = IF(_w = 0, _iniAnio, _sel - 7 * (_w - 1))
+VAR _t =
+    ADDCOLUMNS(
+        FILTER(ALL(Semanas_Grafica[Inicio_Semana]), Semanas_Grafica[Inicio_Semana] >= _ini && Semanas_Grafica[Inicio_Semana] <= _eje),
+        "@x", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE([Rad_Diaria_Media], ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@n", MAX(0, MIN(7, INT(_ult - Semanas_Grafica[Inicio_Semana]) + 1)),
+        "@ant", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(CALCULATE([Rad_Diaria_Media], DATEADD(Calendario[Fecha], -1, YEAR)), ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@clim", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(AVERAGEX(GENERATESERIES(1, 18), VAR _k = [Value] RETURN CALCULATE([Rad_Diaria_Media], DATEADD(Calendario[Fecha], -_k, YEAR))), ALL(Calendario), Calendario[Inicio_Semana] = _i)
+    )
+RETURN
+IF(_eje <= _sel && _eje >= _ini, SUMX(_t, [@clim] * [@n]))
+```
+</details>
+
+<details><summary><code>Rad_Desv_Acum</code></summary>
+
+```dax
+VAR _sel = CALCULATE(MAX(Calendario[Inicio_Semana]), ALLSELECTED(Calendario))
+VAR _eje = MAX(Semanas_Grafica[Inicio_Semana])
+VAR _ult = CALCULATE(MAX(Fact_Diaria_met[Fecha]), REMOVEFILTERS())
+VAR _w = SELECTEDVALUE(Ventana_Semanas[Semanas], 8)
+VAR _anioVent = CALCULATE(MAX(Calendario[Año_Hidrologico]), ALLSELECTED(Calendario))
+VAR _iniAnio = CALCULATE(MIN(Calendario[Inicio_Semana]), ALL(Calendario), Calendario[Año_Hidrologico] = _anioVent)
+VAR _ini = IF(_w = 0, _iniAnio, _sel - 7 * (_w - 1))
+VAR _t =
+    ADDCOLUMNS(
+        FILTER(ALL(Semanas_Grafica[Inicio_Semana]), Semanas_Grafica[Inicio_Semana] >= _ini && Semanas_Grafica[Inicio_Semana] <= _eje),
+        "@x", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE([Rad_Diaria_Media], ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@n", MAX(0, MIN(7, INT(_ult - Semanas_Grafica[Inicio_Semana]) + 1)),
+        "@ant", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(CALCULATE([Rad_Diaria_Media], DATEADD(Calendario[Fecha], -1, YEAR)), ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@clim", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(AVERAGEX(GENERATESERIES(1, 18), VAR _k = [Value] RETURN CALCULATE([Rad_Diaria_Media], DATEADD(Calendario[Fecha], -_k, YEAR))), ALL(Calendario), Calendario[Inicio_Semana] = _i)
+    )
+RETURN
+IF(_eje <= _sel && _eje >= _ini, SUMX(FILTER(_t, NOT ISBLANK([@x]) && NOT ISBLANK([@clim])), ([@x] - [@clim]) * [@n]))
+```
+</details>
+
+<details><summary><code>Rad_Desv_Acum_Ant</code></summary>
+
+```dax
+VAR _sel = CALCULATE(MAX(Calendario[Inicio_Semana]), ALLSELECTED(Calendario))
+VAR _eje = MAX(Semanas_Grafica[Inicio_Semana])
+VAR _ult = CALCULATE(MAX(Fact_Diaria_met[Fecha]), REMOVEFILTERS())
+VAR _w = SELECTEDVALUE(Ventana_Semanas[Semanas], 8)
+VAR _anioVent = CALCULATE(MAX(Calendario[Año_Hidrologico]), ALLSELECTED(Calendario))
+VAR _iniAnio = CALCULATE(MIN(Calendario[Inicio_Semana]), ALL(Calendario), Calendario[Año_Hidrologico] = _anioVent)
+VAR _ini = IF(_w = 0, _iniAnio, _sel - 7 * (_w - 1))
+VAR _t =
+    ADDCOLUMNS(
+        FILTER(ALL(Semanas_Grafica[Inicio_Semana]), Semanas_Grafica[Inicio_Semana] >= _ini && Semanas_Grafica[Inicio_Semana] <= _eje),
+        "@x", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE([Rad_Diaria_Media], ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@n", MAX(0, MIN(7, INT(_ult - Semanas_Grafica[Inicio_Semana]) + 1)),
+        "@ant", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(CALCULATE([Rad_Diaria_Media], DATEADD(Calendario[Fecha], -1, YEAR)), ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@clim", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(AVERAGEX(GENERATESERIES(1, 18), VAR _k = [Value] RETURN CALCULATE([Rad_Diaria_Media], DATEADD(Calendario[Fecha], -_k, YEAR))), ALL(Calendario), Calendario[Inicio_Semana] = _i)
+    )
+RETURN
+IF(_eje <= _sel && _eje >= _ini, SUMX(FILTER(_t, NOT ISBLANK([@ant]) && NOT ISBLANK([@clim])), ([@ant] - [@clim]) * 7))
+```
+</details>
+
+<details><summary><code>Rad_Titulo_Desv</code></summary>
+
+```dax
+VAR _sel = CALCULATE(MAX(Calendario[Inicio_Semana]), ALLSELECTED(Calendario))
+VAR _v = SELECTEDVALUE(Ventana_Semanas[Ventana], "8 semanas")
+RETURN
+"Radiación (MJ/m²) · " & _v & ": acumulado " & FORMAT(CALCULATE([Rad_Acum8], TREATAS({_sel}, Semanas_Grafica[Inicio_Semana])), "#,0") & " (" & FORMAT(CALCULATE([Rad_Desv_Acum], TREATAS({_sel}, Semanas_Grafica[Inicio_Semana])), "+0;-0;0") & " vs. media) · año anterior " & FORMAT(CALCULATE([Rad_Acum8_Ant], TREATAS({_sel}, Semanas_Grafica[Inicio_Semana])), "#,0") & " (" & FORMAT(CALCULATE([Rad_Desv_Acum_Ant], TREATAS({_sel}, Semanas_Grafica[Inicio_Semana])), "+0;-0;0") & ") · media " & FORMAT(CALCULATE([Rad_Acum8_Media], TREATAS({_sel}, Semanas_Grafica[Inicio_Semana])), "#,0")
+```
+</details>
+
+<details><summary><code>Rad_Texto_Actual</code></summary>
+
+```dax
+FORMAT([Rad_Acum8], "#,0") & " (" & FORMAT([Rad_Desv_Acum], "+0;-0;0") & ")"
+```
+</details>
+
+<details><summary><code>Rad_Texto_Anterior</code></summary>
+
+```dax
+FORMAT([Rad_Acum8_Ant], "#,0") & " (" & FORMAT([Rad_Desv_Acum_Ant], "+0;-0;0") & ")"
 ```
 </details>
 
@@ -2433,6 +2642,21 @@ AVERAGE(Fact_Horaria_riesgo[Flag_Carbon])
 | `GDD_Display_cana` |  | Texto con GDD acumulado de caña actual y del año anterior. |
 | `GDD_Cana_ST_Acumulado_Grafica` |  | Suma térmica con temperatura óptima tope para caña de azúcar acumulada del año hidrológico (por semana del eje). |
 | `GDD_Cana_ST_Acumulado_Anterior_Grafica` |  | Suma térmica con temperatura óptima tope para caña de azúcar acumulada del año hidrológico, año anterior (por semana del eje). |
+| `GDD_Diario_Medio` | 0.0 | Grados día medios por día (base y tope del cultivo elegido; sin cultivo, base 10 °C y tope 30 °C). |
+| `GDD_Sem_Grafica` | 0.0 | Gráfica semana a semana (eje Semanas_Grafica): GDD_Diario_Medio de cada una de las últimas 12 semanas hasta la elegida. |
+| `GDD_Sem_Anterior_Grafica` | 0.0 | Misma semana hidrológica del año anterior (GDD_Diario_Medio). |
+| `GDD_Acum_Hidro` | #,0 | Acumulado del año hidrológico hasta el último día con datos de la semana elegida (°C día). |
+| `GDD_Acum_Hidro_Ant` | #,0 | Acumulado del año hidrológico anterior con el mismo número de días (°C día). |
+| `GDD_Acum_Dif_Pct` | +0%;-0%;0% | Diferencia del acumulado frente al año anterior. |
+| `GDD_Titulo` |  | Título de la gráfica de grados día semana a semana con el acumulado del año. |
+| `GDD_Acum8` | #,0 | Acumulado del año actual desde el inicio de la ventana (4, 8, 12 semanas o inicio del año) hasta la semana del eje (°C día). Eje: Semanas_Grafica. |
+| `GDD_Acum8_Ant` | #,0 | Acumulado de los mismos días del año anterior (°C día). Eje: Semanas_Grafica. |
+| `GDD_Acum8_Media` | #,0 | Acumulado de la media de los mismos días en años anteriores (hasta 18) (°C día). Eje: Semanas_Grafica. |
+| `GDD_Desv_Acum` | +0;-0;0 | Desviación acumulada del año actual frente a la media (mismos días de años anteriores) (°C día). Eje: Semanas_Grafica. |
+| `GDD_Desv_Acum_Ant` | +0;-0;0 | Desviación acumulada del año anterior frente a la misma media (°C día). Eje: Semanas_Grafica. |
+| `GDD_Titulo_Desv` |  | Título: acumulado de la ventana con la desviación frente a la media entre paréntesis (año actual y anterior) y acumulado de la media. |
+| `GDD_Texto_Actual` |  | Información sobre herramientas: acumulado del año actual (desviación frente a la media). |
+| `GDD_Texto_Anterior` |  | Información sobre herramientas: acumulado del año anterior (desviación frente a la media). |
 
 <details><summary><code>GDD_Semanal_Base10</code></summary>
 
@@ -2633,6 +2857,221 @@ CALCULATE(
 ```
 </details>
 
+<details><summary><code>GDD_Diario_Medio</code></summary>
+
+```dax
+VAR _b = SELECTEDVALUE(Cultivos[GDD_Base], 10)
+VAR _t = SELECTEDVALUE(Cultivos[GDD_Tope], 30)
+RETURN
+AVERAGEX(FILTER(VALUES(Estaciones_met[estacionid]), NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))), CALCULATE(AVERAGEX(FILTER(Fact_Diaria_met, NOT ISBLANK(Fact_Diaria_met[Temp_Media])), MIN(MAX(Fact_Diaria_met[Temp_Media] - _b, 0), _t - _b))))
+```
+</details>
+
+<details><summary><code>GDD_Sem_Grafica</code></summary>
+
+```dax
+VAR _sel = CALCULATE(MAX(Calendario[Inicio_Semana]), ALLSELECTED(Calendario))
+VAR _eje = MAX(Semanas_Grafica[Inicio_Semana])
+RETURN
+IF(_eje <= _sel && _eje > _sel - 84, CALCULATE([GDD_Diario_Medio], ALL(Calendario), Calendario[Inicio_Semana] = _eje))
+```
+</details>
+
+<details><summary><code>GDD_Sem_Anterior_Grafica</code></summary>
+
+```dax
+VAR _sel = CALCULATE(MAX(Calendario[Inicio_Semana]), ALLSELECTED(Calendario))
+VAR _eje = MAX(Semanas_Grafica[Inicio_Semana])
+VAR _a = MAX(Semanas_Grafica[Año_Hidrologico])
+VAR _s = MAX(Semanas_Grafica[Semana_Hidrologica])
+RETURN
+IF(_eje <= _sel && _eje > _sel - 84, CALCULATE([GDD_Diario_Medio], ALL(Calendario), Calendario[Año_Hidrologico] = _a - 1, Calendario[Semana_Hidrologica] = _s))
+```
+</details>
+
+<details><summary><code>GDD_Acum_Hidro</code></summary>
+
+```dax
+VAR _b = SELECTEDVALUE(Cultivos[GDD_Base], 10)
+VAR _t = SELECTEDVALUE(Cultivos[GDD_Tope], 30)
+VAR _anio = CALCULATE(MAX(Calendario[Año_Hidrologico]), ALLSELECTED(Calendario))
+VAR _ult = CALCULATE(MAX(Fact_Diaria_met[Fecha]), REMOVEFILTERS())
+VAR _fin = MIN(CALCULATE(MAX(Calendario[Fecha]), ALLSELECTED(Calendario)), _ult)
+VAR _ini = CALCULATE(MIN(Calendario[Fecha]), ALL(Calendario), Calendario[Año_Hidrologico] = _anio)
+RETURN
+CALCULATE(AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUMX(FILTER(Fact_Diaria_met, NOT ISBLANK(Fact_Diaria_met[Temp_Media])), MIN(MAX(Fact_Diaria_met[Temp_Media] - _b, 0), _t - _b)))), ALL(Calendario), DATESBETWEEN(Calendario[Fecha], _ini, _fin))
+```
+</details>
+
+<details><summary><code>GDD_Acum_Hidro_Ant</code></summary>
+
+```dax
+VAR _b = SELECTEDVALUE(Cultivos[GDD_Base], 10)
+VAR _t = SELECTEDVALUE(Cultivos[GDD_Tope], 30)
+VAR _anio = CALCULATE(MAX(Calendario[Año_Hidrologico]), ALLSELECTED(Calendario))
+VAR _ult = CALCULATE(MAX(Fact_Diaria_met[Fecha]), REMOVEFILTERS())
+VAR _fin = MIN(CALCULATE(MAX(Calendario[Fecha]), ALLSELECTED(Calendario)), _ult)
+VAR _ini = CALCULATE(MIN(Calendario[Fecha]), ALL(Calendario), Calendario[Año_Hidrologico] = _anio)
+VAR _ini2 = CALCULATE(MIN(Calendario[Fecha]), ALL(Calendario), Calendario[Año_Hidrologico] = _anio - 1)
+VAR _fin2 = _ini2 + (_fin - _ini)
+RETURN
+CALCULATE(AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUMX(FILTER(Fact_Diaria_met, NOT ISBLANK(Fact_Diaria_met[Temp_Media])), MIN(MAX(Fact_Diaria_met[Temp_Media] - _b, 0), _t - _b)))), ALL(Calendario), DATESBETWEEN(Calendario[Fecha], _ini2, _fin2))
+```
+</details>
+
+<details><summary><code>GDD_Acum_Dif_Pct</code></summary>
+
+```dax
+DIVIDE([GDD_Acum_Hidro] - [GDD_Acum_Hidro_Ant], [GDD_Acum_Hidro_Ant])
+```
+</details>
+
+<details><summary><code>GDD_Titulo</code></summary>
+
+```dax
+"Grados día por día (base " & SELECTEDVALUE(Cultivos[GDD_Base], 10) & " °C, tope " & SELECTEDVALUE(Cultivos[GDD_Tope], 30) & " °C) · acumulado del año: " & FORMAT([GDD_Acum_Hidro], "#,0") & " (" & FORMAT([GDD_Acum_Dif_Pct], "+0%;-0%;0%") & " vs. año anterior)"
+```
+</details>
+
+<details><summary><code>GDD_Acum8</code></summary>
+
+```dax
+VAR _sel = CALCULATE(MAX(Calendario[Inicio_Semana]), ALLSELECTED(Calendario))
+VAR _eje = MAX(Semanas_Grafica[Inicio_Semana])
+VAR _ult = CALCULATE(MAX(Fact_Diaria_met[Fecha]), REMOVEFILTERS())
+VAR _w = SELECTEDVALUE(Ventana_Semanas[Semanas], 8)
+VAR _anioVent = CALCULATE(MAX(Calendario[Año_Hidrologico]), ALLSELECTED(Calendario))
+VAR _iniAnio = CALCULATE(MIN(Calendario[Inicio_Semana]), ALL(Calendario), Calendario[Año_Hidrologico] = _anioVent)
+VAR _ini = IF(_w = 0, _iniAnio, _sel - 7 * (_w - 1))
+VAR _t =
+    ADDCOLUMNS(
+        FILTER(ALL(Semanas_Grafica[Inicio_Semana]), Semanas_Grafica[Inicio_Semana] >= _ini && Semanas_Grafica[Inicio_Semana] <= _eje),
+        "@x", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE([GDD_Diario_Medio], ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@n", MAX(0, MIN(7, INT(_ult - Semanas_Grafica[Inicio_Semana]) + 1)),
+        "@ant", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(CALCULATE([GDD_Diario_Medio], DATEADD(Calendario[Fecha], -1, YEAR)), ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@clim", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(AVERAGEX(GENERATESERIES(1, 18), VAR _k = [Value] RETURN CALCULATE([GDD_Diario_Medio], DATEADD(Calendario[Fecha], -_k, YEAR))), ALL(Calendario), Calendario[Inicio_Semana] = _i)
+    )
+RETURN
+IF(_eje <= _sel && _eje >= _ini, SUMX(_t, [@x] * [@n]))
+```
+</details>
+
+<details><summary><code>GDD_Acum8_Ant</code></summary>
+
+```dax
+VAR _sel = CALCULATE(MAX(Calendario[Inicio_Semana]), ALLSELECTED(Calendario))
+VAR _eje = MAX(Semanas_Grafica[Inicio_Semana])
+VAR _ult = CALCULATE(MAX(Fact_Diaria_met[Fecha]), REMOVEFILTERS())
+VAR _w = SELECTEDVALUE(Ventana_Semanas[Semanas], 8)
+VAR _anioVent = CALCULATE(MAX(Calendario[Año_Hidrologico]), ALLSELECTED(Calendario))
+VAR _iniAnio = CALCULATE(MIN(Calendario[Inicio_Semana]), ALL(Calendario), Calendario[Año_Hidrologico] = _anioVent)
+VAR _ini = IF(_w = 0, _iniAnio, _sel - 7 * (_w - 1))
+VAR _t =
+    ADDCOLUMNS(
+        FILTER(ALL(Semanas_Grafica[Inicio_Semana]), Semanas_Grafica[Inicio_Semana] >= _ini && Semanas_Grafica[Inicio_Semana] <= _eje),
+        "@x", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE([GDD_Diario_Medio], ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@n", MAX(0, MIN(7, INT(_ult - Semanas_Grafica[Inicio_Semana]) + 1)),
+        "@ant", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(CALCULATE([GDD_Diario_Medio], DATEADD(Calendario[Fecha], -1, YEAR)), ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@clim", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(AVERAGEX(GENERATESERIES(1, 18), VAR _k = [Value] RETURN CALCULATE([GDD_Diario_Medio], DATEADD(Calendario[Fecha], -_k, YEAR))), ALL(Calendario), Calendario[Inicio_Semana] = _i)
+    )
+RETURN
+IF(_eje <= _sel && _eje >= _ini, SUMX(_t, [@ant] * 7))
+```
+</details>
+
+<details><summary><code>GDD_Acum8_Media</code></summary>
+
+```dax
+VAR _sel = CALCULATE(MAX(Calendario[Inicio_Semana]), ALLSELECTED(Calendario))
+VAR _eje = MAX(Semanas_Grafica[Inicio_Semana])
+VAR _ult = CALCULATE(MAX(Fact_Diaria_met[Fecha]), REMOVEFILTERS())
+VAR _w = SELECTEDVALUE(Ventana_Semanas[Semanas], 8)
+VAR _anioVent = CALCULATE(MAX(Calendario[Año_Hidrologico]), ALLSELECTED(Calendario))
+VAR _iniAnio = CALCULATE(MIN(Calendario[Inicio_Semana]), ALL(Calendario), Calendario[Año_Hidrologico] = _anioVent)
+VAR _ini = IF(_w = 0, _iniAnio, _sel - 7 * (_w - 1))
+VAR _t =
+    ADDCOLUMNS(
+        FILTER(ALL(Semanas_Grafica[Inicio_Semana]), Semanas_Grafica[Inicio_Semana] >= _ini && Semanas_Grafica[Inicio_Semana] <= _eje),
+        "@x", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE([GDD_Diario_Medio], ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@n", MAX(0, MIN(7, INT(_ult - Semanas_Grafica[Inicio_Semana]) + 1)),
+        "@ant", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(CALCULATE([GDD_Diario_Medio], DATEADD(Calendario[Fecha], -1, YEAR)), ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@clim", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(AVERAGEX(GENERATESERIES(1, 18), VAR _k = [Value] RETURN CALCULATE([GDD_Diario_Medio], DATEADD(Calendario[Fecha], -_k, YEAR))), ALL(Calendario), Calendario[Inicio_Semana] = _i)
+    )
+RETURN
+IF(_eje <= _sel && _eje >= _ini, SUMX(_t, [@clim] * [@n]))
+```
+</details>
+
+<details><summary><code>GDD_Desv_Acum</code></summary>
+
+```dax
+VAR _sel = CALCULATE(MAX(Calendario[Inicio_Semana]), ALLSELECTED(Calendario))
+VAR _eje = MAX(Semanas_Grafica[Inicio_Semana])
+VAR _ult = CALCULATE(MAX(Fact_Diaria_met[Fecha]), REMOVEFILTERS())
+VAR _w = SELECTEDVALUE(Ventana_Semanas[Semanas], 8)
+VAR _anioVent = CALCULATE(MAX(Calendario[Año_Hidrologico]), ALLSELECTED(Calendario))
+VAR _iniAnio = CALCULATE(MIN(Calendario[Inicio_Semana]), ALL(Calendario), Calendario[Año_Hidrologico] = _anioVent)
+VAR _ini = IF(_w = 0, _iniAnio, _sel - 7 * (_w - 1))
+VAR _t =
+    ADDCOLUMNS(
+        FILTER(ALL(Semanas_Grafica[Inicio_Semana]), Semanas_Grafica[Inicio_Semana] >= _ini && Semanas_Grafica[Inicio_Semana] <= _eje),
+        "@x", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE([GDD_Diario_Medio], ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@n", MAX(0, MIN(7, INT(_ult - Semanas_Grafica[Inicio_Semana]) + 1)),
+        "@ant", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(CALCULATE([GDD_Diario_Medio], DATEADD(Calendario[Fecha], -1, YEAR)), ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@clim", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(AVERAGEX(GENERATESERIES(1, 18), VAR _k = [Value] RETURN CALCULATE([GDD_Diario_Medio], DATEADD(Calendario[Fecha], -_k, YEAR))), ALL(Calendario), Calendario[Inicio_Semana] = _i)
+    )
+RETURN
+IF(_eje <= _sel && _eje >= _ini, SUMX(FILTER(_t, NOT ISBLANK([@x]) && NOT ISBLANK([@clim])), ([@x] - [@clim]) * [@n]))
+```
+</details>
+
+<details><summary><code>GDD_Desv_Acum_Ant</code></summary>
+
+```dax
+VAR _sel = CALCULATE(MAX(Calendario[Inicio_Semana]), ALLSELECTED(Calendario))
+VAR _eje = MAX(Semanas_Grafica[Inicio_Semana])
+VAR _ult = CALCULATE(MAX(Fact_Diaria_met[Fecha]), REMOVEFILTERS())
+VAR _w = SELECTEDVALUE(Ventana_Semanas[Semanas], 8)
+VAR _anioVent = CALCULATE(MAX(Calendario[Año_Hidrologico]), ALLSELECTED(Calendario))
+VAR _iniAnio = CALCULATE(MIN(Calendario[Inicio_Semana]), ALL(Calendario), Calendario[Año_Hidrologico] = _anioVent)
+VAR _ini = IF(_w = 0, _iniAnio, _sel - 7 * (_w - 1))
+VAR _t =
+    ADDCOLUMNS(
+        FILTER(ALL(Semanas_Grafica[Inicio_Semana]), Semanas_Grafica[Inicio_Semana] >= _ini && Semanas_Grafica[Inicio_Semana] <= _eje),
+        "@x", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE([GDD_Diario_Medio], ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@n", MAX(0, MIN(7, INT(_ult - Semanas_Grafica[Inicio_Semana]) + 1)),
+        "@ant", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(CALCULATE([GDD_Diario_Medio], DATEADD(Calendario[Fecha], -1, YEAR)), ALL(Calendario), Calendario[Inicio_Semana] = _i),
+        "@clim", VAR _i = Semanas_Grafica[Inicio_Semana] RETURN CALCULATE(AVERAGEX(GENERATESERIES(1, 18), VAR _k = [Value] RETURN CALCULATE([GDD_Diario_Medio], DATEADD(Calendario[Fecha], -_k, YEAR))), ALL(Calendario), Calendario[Inicio_Semana] = _i)
+    )
+RETURN
+IF(_eje <= _sel && _eje >= _ini, SUMX(FILTER(_t, NOT ISBLANK([@ant]) && NOT ISBLANK([@clim])), ([@ant] - [@clim]) * 7))
+```
+</details>
+
+<details><summary><code>GDD_Titulo_Desv</code></summary>
+
+```dax
+VAR _sel = CALCULATE(MAX(Calendario[Inicio_Semana]), ALLSELECTED(Calendario))
+VAR _v = SELECTEDVALUE(Ventana_Semanas[Ventana], "8 semanas")
+RETURN
+"Grados día (base 10 °C, tope 30 °C) (°C día) · " & _v & ": acumulado " & FORMAT(CALCULATE([GDD_Acum8], TREATAS({_sel}, Semanas_Grafica[Inicio_Semana])), "#,0") & " (" & FORMAT(CALCULATE([GDD_Desv_Acum], TREATAS({_sel}, Semanas_Grafica[Inicio_Semana])), "+0;-0;0") & " vs. media) · año anterior " & FORMAT(CALCULATE([GDD_Acum8_Ant], TREATAS({_sel}, Semanas_Grafica[Inicio_Semana])), "#,0") & " (" & FORMAT(CALCULATE([GDD_Desv_Acum_Ant], TREATAS({_sel}, Semanas_Grafica[Inicio_Semana])), "+0;-0;0") & ") · media " & FORMAT(CALCULATE([GDD_Acum8_Media], TREATAS({_sel}, Semanas_Grafica[Inicio_Semana])), "#,0")
+```
+</details>
+
+<details><summary><code>GDD_Texto_Actual</code></summary>
+
+```dax
+FORMAT([GDD_Acum8], "#,0") & " (" & FORMAT([GDD_Desv_Acum], "+0;-0;0") & ")"
+```
+</details>
+
+<details><summary><code>GDD_Texto_Anterior</code></summary>
+
+```dax
+FORMAT([GDD_Acum8_Ant], "#,0") & " (" & FORMAT([GDD_Desv_Acum_Ant], "+0;-0;0") & ")"
+```
+</details>
+
 ## Históricos y comparaciones interanuales
 
 | Medida | Formato | Descripción |
@@ -2651,6 +3090,8 @@ CALCULATE(
 | `ETO_Historico_Promedio` |  | ETO: promedio de la misma semana en años hidrológicos anteriores al seleccionado. |
 | `Balance_Historico_Promedio` |  | Balance: promedio de la misma semana en años hidrológicos anteriores al seleccionado. |
 | `Delta_ETO_YoY` |  | Diferencia de ETO vs. la misma semana del año hidrológico anterior. |
+| `Resumen_Semana_Anterior` | 0.0 | Los mismos días de la semana anterior (si la semana va incompleta, compara solo esos días). |
+| `Resumen_Anio_Anterior` | 0.0 | Los mismos días 52 semanas antes (mismo día de la semana). |
 
 <details><summary><code>Precip_Historico_Promedio</code></summary>
 
@@ -2906,23 +3347,45 @@ RETURN
 ```
 </details>
 
+<details><summary><code>Resumen_Semana_Anterior</code></summary>
+
+```dax
+VAR _ult = CALCULATE(MAX(Fact_Diaria_met[Fecha]), REMOVEFILTERS())
+VAR _f = FILTER(VALUES(Calendario[Fecha]), Calendario[Fecha] <= _ult)
+VAR _d = SELECTCOLUMNS(_f, "F", Calendario[Fecha] - 7)
+RETURN
+CALCULATE([Resumen_Actual], ALL(Calendario), TREATAS(_d, Calendario[Fecha]))
+```
+</details>
+
+<details><summary><code>Resumen_Anio_Anterior</code></summary>
+
+```dax
+VAR _ult = CALCULATE(MAX(Fact_Diaria_met[Fecha]), REMOVEFILTERS())
+VAR _f = FILTER(VALUES(Calendario[Fecha]), Calendario[Fecha] <= _ult)
+VAR _d = SELECTCOLUMNS(_f, "F", Calendario[Fecha] - 364)
+RETURN
+CALCULATE([Resumen_Actual], ALL(Calendario), TREATAS(_d, Calendario[Fecha]))
+```
+</details>
+
 ## Precipitación, ETo y balance hídrico
 
 | Medida | Formato | Descripción |
 |---|---|---|
-| `Precip_Semanal` |  | Lluvia de la semana hidrológica en contexto (mm); suma por estación, promedio entre estaciones. |
+| `Precip_Semanal` | 0.00 | Lluvia de la semana hidrológica en contexto (mm); suma por estación, promedio entre estaciones. |
 | `Precip_Diaria` |  | Lluvia diaria (mm); por estación y promedio entre estaciones. |
 | `Precip_Max_Evento` |  | Máximo de 15 min por estación, promediado entre estaciones (consistente con Precip_Diaria: nunca supera el promedio diario) |
-| `ETO_Semanal` |  | ETo de la semana (mm); suma por estación, promedio entre estaciones. |
+| `ETO_Semanal` | 0.00 | ETo de la semana (mm); suma por estación, promedio entre estaciones. |
 | `ETO_Diaria` |  | ETo diaria (mm); promedio entre estaciones con dato de ETo. |
-| `Balance_Semanal` |  | Σ balance diario (P − ETo, días con ambos datos) por estación, promediado entre estaciones |
+| `Balance_Semanal` | 0.00 | Σ balance diario (P − ETo, días con ambos datos) por estación, promediado entre estaciones |
 | `Balance_Diario` |  | Balance hídrico diario P − ETo (mm), solo días con ambos datos; promedio entre estaciones. |
 | `Precip_Acumulada_Anual` |  | Lluvia acumulada desde el inicio del año hidrológico (mm). |
 | `ETO_Acumulada_Anual` |  | ETo acumulada desde el inicio del año hidrológico (mm). |
 | `Balance_Acumulado_Anual` |  | Precipitación acumulada − ETo acumulada del año hidrológico (mm). |
 | `Estaciones_Deficit_Critico` | 0 | Número de estaciones con balance semanal < −20 mm. |
 | `Estaciones_Superavit` | 0 | Número de estaciones con balance semanal > 0 mm. |
-| `Balance_Por_Semana` |  | Balance de las 3 semanas previas a la seleccionada: Σ balance diario por estación, promediado entre estaciones (igual que Balance_Semanal) |
+| `Balance_Por_Semana` |  | Balance de las 3 semanas previas a la seleccionada (por fecha de inicio de semana, cruza el cambio de año hidrológico). Eje: Semanas_Grafica. |
 | `ETO_Max_Diurna` |  | ETo máxima de 15 min diurna (mm): extremo. |
 | `ETO_Acum_Diurna_Semanal` |  | ETo acumulada diurna (mm); suma por estación, promedio. |
 | `ETO_Acum_Nocturna_Semanal` |  | ETo acumulada nocturna (mm); suma por estación, promedio. |
@@ -3073,25 +3536,20 @@ CALCULATE(
 <details><summary><code>Balance_Por_Semana</code></summary>
 
 ```dax
-// Balance de las 3 semanas previas a la seleccionada:
-// Σ balance diario por estación, promediado entre estaciones (igual que Balance_Semanal)
-VAR SemanaActual = CALCULATE(MAX(Calendario[Semana_Hidrologica]), ALLSELECTED(Calendario))
-VAR AnioActual   = CALCULATE(MAX(Calendario[Año_Hidrologico]),    ALLSELECTED(Calendario))
-VAR SemanaEje    = MAX(Semanas_Grafica[Semana_Hidrologica])
-VAR AnioEje      = MAX(Semanas_Grafica[Año_Hidrologico])
+// Balance de las 3 semanas previas a la seleccionada (por fecha de inicio de semana,
+// cruza el cambio de año hidrológico). Eje: Semanas_Grafica.
+VAR _sel = CALCULATE(MAX(Calendario[Inicio_Semana]), ALLSELECTED(Calendario))
+VAR _eje = MAX(Semanas_Grafica[Inicio_Semana])
 RETURN
 IF(
-    AnioEje = AnioActual &&
-    SemanaEje >= SemanaActual - 3 &&
-    SemanaEje <= SemanaActual - 1,
+    _eje >= _sel - 21 && _eje <= _sel - 7,
     CALCULATE(
         AVERAGEX(
             VALUES(Estaciones_met[estacionid]),
             CALCULATE(SUM(Fact_Diaria_met[Balance_Hidrico]))
         ),
         ALL(Calendario),
-        TREATAS({SemanaEje}, Calendario[Semana_Hidrologica]),
-        TREATAS({AnioEje},   Calendario[Año_Hidrologico])
+        Calendario[Inicio_Semana] = _eje
     )
 )
 ```
@@ -3130,11 +3588,11 @@ AVERAGEX(VALUES(Estaciones_met[estacionid]), CALCULATE(SUM(Fact_Subdiaria_met_au
 | `IC_Media` |  | Índice de calor medio diurno (°C). |
 | `IC_Media_Diurno` |  | Índice de calor medio diurno (°C). |
 | `IC_Max_Diurno` |  | Índice de calor máximo diurno (°C): extremo. |
-| `Temp_Nocturna_Media` |  | Temperatura media nocturna (19–05 h) (°C). |
+| `Temp_Nocturna_Media` | 0.00 | Temperatura media nocturna (19–05 h) (°C). |
 | `Hora_Temp_Max_Diurna` |  | Hora promedio de temp max diurna. |
 | `Hora_IC_Max_Diurno` |  | Hora promedio de ic max diurno. |
 | `Hora_Temp_Min_Nocturna` |  | Hora promedio de temp min nocturna. |
-| `Temp_Min_Nocturna` |  | Temperatura mínima nocturna (°C): extremo. |
+| `Temp_Min_Nocturna` | 0.00 | Temperatura mínima nocturna (°C): extremo. |
 
 <details><summary><code>Temp_Max</code></summary>
 
@@ -3233,11 +3691,11 @@ MIN(Fact_Subdiaria_met_aux[Temp_Min_Nocturna])
 |---|---|---|
 | `HR_Media` |  | Humedad relativa media (%). |
 | `HR_Min` |  | Humedad relativa mínima (%): extremo. |
-| `VPD_Media_Diurna` |  | Déficit de presión de vapor medio diurno (kPa). |
-| `VPD_Max_Diurna` |  | VPD máximo diurno (kPa): extremo. |
+| `VPD_Media_Diurna` | 0.00 | Déficit de presión de vapor medio diurno (kPa). |
+| `VPD_Max_Diurna` | 0.00 | VPD máximo diurno (kPa): extremo. |
 | `Mojadura_Horas_Semanal` |  | Horas de mojadura diurna (sensor > 4); suma por estación, promedio entre estaciones. |
-| `Horas_Estres_Termico_Semanal` |  | Horas con T > 35 °C y radiación > 800 W/m²; suma por estación, promedio entre estaciones. |
-| `VPD_Media_Nocturna` |  | VPD medio nocturno (kPa). |
+| `Horas_Estres_Termico_Semanal` | 0.00 | Horas con T > 35 °C y radiación > 800 W/m²; suma por estación, promedio entre estaciones. |
+| `VPD_Media_Nocturna` | 0.00 | VPD medio nocturno (kPa). |
 | `Mojadura_Horas_Nocturna_Semanal` |  | Horas de mojadura nocturna; suma por estación, promedio entre estaciones. |
 | `Mojadura_Horas_Total_Semanal` |  | Horas de mojadura total; suma por estación, promedio entre estaciones. |
 | `HR_Max` |  | Humedad relativa máxima (%): extremo. |
@@ -3245,7 +3703,7 @@ MIN(Fact_Subdiaria_met_aux[Temp_Min_Nocturna])
 | `Hora_ETO_Max_Diurna` |  | Hora promedio de eto max diurna. |
 | `Hora_Inicio_Mojadura` |  | Hora promedio de inicio mojadura. |
 | `Hora_Fin_Mojadura` |  | Hora promedio de fin mojadura. |
-| `VPD_Min_Nocturno` |  | VPD mínimo nocturno (kPa): extremo. |
+| `VPD_Min_Nocturno` | 0.00 | VPD mínimo nocturno (kPa): extremo. |
 | `Duracion_Mojadura` |  | Hora fin − hora inicio de mojadura (h), promedio. |
 
 <details><summary><code>HR_Media</code></summary>
@@ -3378,7 +3836,41 @@ IF(
 | `Mapa_Calor_Color` |  | Color de fondo de la casilla según los rangos fijos de cada vista (ver Vistas_Mapa_Calor[Leyenda]). |
 | `Mapa_Calor_Fuente` |  | Color del texto: blanco sobre fondos oscuros. |
 | `Mapa_Calor_N` | 0.0 | Tooltip: riesgos favorables en promedio (solo en la vista Riesgos). |
-| `Mapa_Calor_Titulo` |  | Título del mapa de calor con la vista, la unidad y la leyenda de colores. |
+| `Mapa_Calor_Titulo` |  | Título del mapa de calor con la vista y la unidad. |
+| `Leyenda_Mostrar` | 0 | Filtro de la tabla de leyenda: 1 en los rangos de la vista (y categoría de riesgo) que se muestra. |
+| `Leyenda_Color` |  | Color de la fila de leyenda. |
+| `Leyenda_Fuente` |  | Color del texto de la leyenda. |
+| `Titulo_Semana` |  | Indicador de la semana: país (si hay uno solo), estaciones o estrato, fechas y, si la semana está incompleta, días con datos. |
+| `Datos_Al_Diaria` |  | Última fecha con datos diarios (tarjeta «Datos al…»). |
+| `Datos_Al_Horaria` |  | Última fecha y hora con datos horarios (tarjeta «Datos al…» de la página horaria). |
+| `Horas_Luz_Diaria` | 0.0 | Duración media diaria del periodo de luz (h). |
+| `Mapa_Balance_Color` |  | Color del mapa de la página 1 por balance hídrico de la semana (café = déficit, verde azulado = excedente). |
+| `Desv_Media_Linea` | 0 | Línea de la media (desviación 0) en las gráficas de desviación acumulada. |
+| `Mapa_DPV_Color` |  | Color del mapa de la página de estrés: DPV máximo diurno con la paleta del mapa de calor. |
+| `Mapa_Riesgo_Color` |  | Color del mapa de riesgos: número de riesgos en alerta (azules: 0, 1, 2–3, ≥ 4; blanco sin datos); con un riesgo elegido en el semáforo, su color de semáforo. |
+| `Leyenda_Riesgo_Mostrar` | 0 | Filtro de la leyenda del mapa de riesgos: número de alertas, o semáforo si hay un riesgo elegido. |
+| `Leyenda_Riesgo_Color` |  | Color de la fila de la leyenda del mapa de riesgos. |
+| `Leyenda_Riesgo_Fuente` |  | Color del texto de la leyenda del mapa de riesgos. |
+| `Leyenda_Riesgo_Titulo` |  | Título del mapa de riesgos y de su leyenda. |
+| `Riesgo_Valor_Max_Estacion` | 0.# | Indica si la estación tiene algún valor de riesgo calculado (para distinguir «sin datos» en el mapa). |
+| `DN_DPV_MED_D` | 0.0 | DPV medio diurno (Estrés atmosférico): se muestra según los botones Día / Noche / Ambos, la lista de series y, si aplica, el eje secundario. |
+| `DN_DPV_MAX_D` | 0.0 | DPV máx. diurno (Estrés atmosférico): se muestra según los botones Día / Noche / Ambos, la lista de series y, si aplica, el eje secundario. |
+| `DN_DPV_MED_N` | 0.0 | DPV medio nocturno (Estrés atmosférico): se muestra según los botones Día / Noche / Ambos, la lista de series y, si aplica, el eje secundario. |
+| `DN_HR_MIN` | 0.0 | HR mínima (Estrés atmosférico): se muestra según los botones Día / Noche / Ambos, la lista de series y, si aplica, el eje secundario. |
+| `DN_HR_MED` | 0.0 | HR media (Estrés atmosférico): se muestra según los botones Día / Noche / Ambos, la lista de series y, si aplica, el eje secundario. |
+| `DN_T_NOC` | 0.0 | T media nocturna (Estrés atmosférico): se muestra según los botones Día / Noche / Ambos, la lista de series y, si aplica, el eje secundario. |
+| `DN_T_MIN_NOC` | 0.0 | T mínima nocturna (Estrés atmosférico): se muestra según los botones Día / Noche / Ambos, la lista de series y, si aplica, el eje secundario. |
+| `DN_MOJ_D` | 0.0 | Mojadura diurna (Estrés vegetal): se muestra según los botones Día / Noche / Ambos, la lista de series y, si aplica, el eje secundario. |
+| `DN_MOJ_N` | 0.0 | Mojadura nocturna (Estrés vegetal): se muestra según los botones Día / Noche / Ambos, la lista de series y, si aplica, el eje secundario. |
+| `DN_LUZ_D` | 0.0 | Horas con luz (Estrés vegetal): se muestra según los botones Día / Noche / Ambos, la lista de series y, si aplica, el eje secundario. |
+| `DN_ESTRES_D` | 0.0 | Horas de estrés térmico (Estrés vegetal): se muestra según los botones Día / Noche / Ambos, la lista de series y, si aplica, el eje secundario. |
+| `DN_IRR_MAX` | 0.0 | Irradiancia máx. diurna (Estrés vegetal): se muestra según los botones Día / Noche / Ambos, la lista de series y, si aplica, el eje secundario. |
+| `DN_IRR_LUZ` | 0.0 | Irradiancia media de luz (Estrés vegetal): se muestra según los botones Día / Noche / Ambos, la lista de series y, si aplica, el eje secundario. |
+| `DN_V_MAX_D` | 0.0 | Viento máx. diurno (Viento): se muestra según los botones Día / Noche / Ambos, la lista de series y, si aplica, el eje secundario. |
+| `DN_V_MAX_N` | 0.0 | Viento máx. nocturno (Viento): se muestra según los botones Día / Noche / Ambos, la lista de series y, si aplica, el eje secundario. |
+| `DN_V_MED_D` | 0.0 | Viento medio diurno (Viento): se muestra según los botones Día / Noche / Ambos, la lista de series y, si aplica, el eje secundario. |
+| `DN_V_MED_N` | 0.0 | Viento medio nocturno (Viento): se muestra según los botones Día / Noche / Ambos, la lista de series y, si aplica, el eje secundario. |
+| `Resumen_Actual` | 0.0 | Valor de la semana elegida para la variable de la fila (solo días con datos). |
 
 <details><summary><code>_Semana_Hidro_Actual</code></summary>
 
@@ -3437,14 +3929,14 @@ RETURN
 SWITCH(
     _v,
     "Riesgos", [Riesgo_Hora],
-    "Temperatura", AVERAGE(Fact_Horaria_riesgo[Temp_Media]),
+    "Temperatura del aire", AVERAGE(Fact_Horaria_riesgo[Temp_Media]),
     "Humedad relativa", AVERAGE(Fact_Horaria_riesgo[HR_Media]),
     "Déficit de presión de vapor", AVERAGEX(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Temp_Media]) && NOT ISBLANK(Fact_Horaria_riesgo[HR_Media])), 0.6108 * EXP(17.27 * Fact_Horaria_riesgo[Temp_Media] / (Fact_Horaria_riesgo[Temp_Media] + 237.3)) * (1 - Fact_Horaria_riesgo[HR_Media] / 100)),
-    "Sensación térmica", AVERAGE(Fact_Horaria_riesgo[IC_Media]),
-    "Mojadura", DIVIDE(COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && Fact_Horaria_riesgo[Mojadura_Max] > 4)) + 0, COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max])))),
+    "Sensación térmica (índice de calor)", AVERAGE(Fact_Horaria_riesgo[IC_Media]),
+    "Mojadura de la hoja", DIVIDE(COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max]) && Fact_Horaria_riesgo[Mojadura_Max] > 4)) + 0, COUNTROWS(FILTER(Fact_Horaria_riesgo, NOT ISBLANK(Fact_Horaria_riesgo[Mojadura_Max])))),
     "Lluvia", AVERAGE(Fact_Horaria_riesgo[Precip_Total]),
-    "Viento", AVERAGE(Fact_Horaria_riesgo[Viento_Media]),
-    "Radiación", AVERAGE(Fact_Horaria_riesgo[Rad_Media])
+    "Velocidad del viento", AVERAGE(Fact_Horaria_riesgo[Viento_Media]),
+    "Irradiancia", AVERAGE(Fact_Horaria_riesgo[Rad_Media])
 )
 ```
 </details>
@@ -3460,14 +3952,14 @@ IF(
     SWITCH(
         _v,
         "Riesgos", SWITCH(TRUE(), _x < 0.0000001, "#FFFFFF", _x < 0.25, "#F9E79F", _x < 0.5, "#F39C12", "#C0392B"),
-        "Temperatura", SWITCH(TRUE(), _x < 18, "#4575B4", _x < 24, "#91BFDB", _x < 30, "#FFFFBF", _x < 34, "#FC8D59", "#D73027"),
+        "Temperatura del aire", SWITCH(TRUE(), _x < 18, "#4575B4", _x < 24, "#91BFDB", _x < 30, "#FFFFBF", _x < 34, "#FC8D59", "#D73027"),
         "Humedad relativa", SWITCH(TRUE(), _x < 60, "#F7FBFF", _x < 80, "#C6DBEF", _x < 90, "#6BAED6", "#2171B5"),
         "Déficit de presión de vapor", SWITCH(TRUE(), _x < 0.4, "#6BAED6", _x < 1.2, "#A1D99B", _x < 1.6, "#FED976", "#F03B20"),
-        "Sensación térmica", SWITCH(TRUE(), _x < 27, "#FFFFFF", _x < 32, "#FFFFB2", _x < 41, "#FECC5C", _x < 54, "#FD8D3C", "#E31A1C"),
-        "Mojadura", SWITCH(TRUE(), _x < 0.0000001, "#FFFFFF", _x < 0.5, "#9ECAE1", "#3182BD"),
+        "Sensación térmica (índice de calor)", SWITCH(TRUE(), _x < 27, "#FFFFFF", _x < 32, "#FFFFB2", _x < 41, "#FECC5C", _x < 54, "#FD8D3C", "#E31A1C"),
+        "Mojadura de la hoja", SWITCH(TRUE(), _x < 0.0000001, "#FFFFFF", _x < 0.5, "#9ECAE1", "#3182BD"),
         "Lluvia", SWITCH(TRUE(), _x < 0.0000001, "#FFFFFF", _x < 1, "#DEEBF7", _x < 5, "#9ECAE1", _x < 10, "#4292C6", "#08519C"),
-        "Viento", SWITCH(TRUE(), _x < 1.8, "#FFFFFF", _x < 10, "#E5F5E0", _x < 20, "#A1D99B", _x < 30, "#41AB5D", "#006D2C"),
-        "Radiación", SWITCH(TRUE(), _x < 40.0000001, "#F0F0F0", _x < 300, "#FFF7BC", _x < 600, "#FEC44F", _x < 800, "#FE9929", "#D95F0E")
+        "Velocidad del viento", SWITCH(TRUE(), _x < 1.8, "#FFFFFF", _x < 10, "#E5F5E0", _x < 20, "#A1D99B", _x < 30, "#41AB5D", "#006D2C"),
+        "Irradiancia", SWITCH(TRUE(), _x < 40.0000001, "#F0F0F0", _x < 300, "#FFF7BC", _x < 600, "#FEC44F", _x < 800, "#FE9929", "#D95F0E")
     )
 )
 ```
@@ -3477,7 +3969,7 @@ IF(
 
 ```dax
 VAR _c = [Mapa_Calor_Color]
-RETURN IF(_c IN { "#4575B4", "#D73027", "#2171B5", "#F03B20", "#E31A1C", "#3182BD", "#4292C6", "#08519C", "#41AB5D", "#006D2C", "#D95F0E", "#C0392B" }, "#FFFFFF", "#252525")
+RETURN IF(_c IN { "#54278F", "#A63603", "#A50F15", "#252525", "#969696", "#9E9AC8", "#FB6A4A", "#4575B4", "#D73027", "#2171B5", "#F03B20", "#E31A1C", "#3182BD", "#4292C6", "#08519C", "#41AB5D", "#006D2C", "#D95F0E", "#C0392B" }, "#FFFFFF", "#252525")
 ```
 </details>
 
@@ -3497,7 +3989,312 @@ RETURN
 IF(
     _v = "Riesgos",
     [Riesgo_Hora_Titulo],
-    _v & " (" & SELECTEDVALUE(Vistas_Mapa_Calor[Unidad]) & "), promedio horario de las estaciones · " & SELECTEDVALUE(Vistas_Mapa_Calor[Leyenda])
+    _v & " (" & SELECTEDVALUE(Vistas_Mapa_Calor[Unidad]) & "), promedio horario de las estaciones"
+)
+```
+</details>
+
+<details><summary><code>Leyenda_Mostrar</code></summary>
+
+```dax
+VAR _v = SELECTEDVALUE(Vistas_Mapa_Calor[Vista], "Riesgos")
+RETURN IF(SELECTEDVALUE(Leyenda_Mapa_Calor[Vista]) = _v, 1)
+```
+</details>
+
+<details><summary><code>Leyenda_Color</code></summary>
+
+```dax
+SELECTEDVALUE(Leyenda_Mapa_Calor[Color])
+```
+</details>
+
+<details><summary><code>Leyenda_Fuente</code></summary>
+
+```dax
+IF([Leyenda_Color] IN { "#54278F", "#A63603", "#A50F15", "#252525", "#969696", "#9E9AC8", "#FB6A4A", "#4575B4", "#D73027", "#2171B5", "#F03B20", "#E31A1C", "#3182BD", "#4292C6", "#08519C", "#41AB5D", "#006D2C", "#D95F0E", "#C0392B" }, "#FFFFFF", "#252525")
+```
+</details>
+
+<details><summary><code>Titulo_Semana</code></summary>
+
+```dax
+VAR _ini = MIN(Calendario[Fecha])
+VAR _fin = MAX(Calendario[Fecha])
+VAR _est = FILTER(VALUES(Estaciones_met[estacionid]), NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met)))
+VAR _n = COUNTROWS(_est)
+VAR _txtEst =
+    SWITCH(
+        TRUE(),
+        NOT ISFILTERED(Estaciones_met[estrato.nombre]) && NOT ISFILTERED(Estaciones_met[finca]) && NOT ISFILTERED(Estaciones_met[estacionid]),
+            "Todas las estaciones (" & _n & ")",
+        _n = 1, "Estación " & CALCULATE(SELECTEDVALUE(Estaciones_met[finca]), _est),
+        ISFILTERED(Estaciones_met[estrato.nombre]) && NOT ISFILTERED(Estaciones_met[finca]) && NOT ISFILTERED(Estaciones_met[estacionid]),
+            "Estrato " & CONCATENATEX(VALUES(Estaciones_met[estrato.nombre]), Estaciones_met[estrato.nombre], ", ") & " (" & _n & " estaciones)",
+        _n & " estaciones seleccionadas"
+    )
+VAR _ult = CALCULATE(MAX(Fact_Diaria_met[Fecha]), REMOVEFILTERS())
+VAR _dias = COUNTROWS(FILTER(VALUES(Calendario[Fecha]), Calendario[Fecha] <= _ult))
+VAR _tot = COUNTROWS(VALUES(Calendario[Fecha]))
+VAR _pais = IF(HASONEVALUE(Estaciones_met[pais.nombre]), VALUES(Estaciones_met[pais.nombre]) & "  ·  ")
+RETURN
+_pais & _txtEst & "  ·  " & FORMAT(_ini, "dd-mmm") & " al " & FORMAT(_fin, "dd-mmm-yyyy") & IF(_dias < _tot, "  ·  " & _dias & " de " & _tot & " días con datos")
+```
+</details>
+
+<details><summary><code>Datos_Al_Diaria</code></summary>
+
+```dax
+VAR _f = CALCULATE(MAX(Fact_Diaria_met[Fecha]), REMOVEFILTERS())
+RETURN "Datos al " & FORMAT(_f, "dd/mm/yyyy")
+```
+</details>
+
+<details><summary><code>Datos_Al_Horaria</code></summary>
+
+```dax
+VAR _f = CALCULATE(MAX(Fact_Horaria_riesgo[Fecha]), REMOVEFILTERS())
+VAR _h = CALCULATE(MAX(Fact_Horaria_riesgo[Hora]), REMOVEFILTERS(), Fact_Horaria_riesgo[Fecha] = _f)
+RETURN "Datos al " & FORMAT(_f, "dd/mm/yyyy") & " " & FORMAT(_h, "00") & ":00 h"
+```
+</details>
+
+<details><summary><code>Horas_Luz_Diaria</code></summary>
+
+```dax
+AVERAGEX(FILTER(VALUES(Estaciones_met[estacionid]), NOT ISEMPTY(CALCULATETABLE(Fact_Diaria_met))), CALCULATE(AVERAGE(Fact_Subdiaria_met_aux[Duracion_Luz_h])))
+```
+</details>
+
+<details><summary><code>Mapa_Balance_Color</code></summary>
+
+```dax
+VAR _b = [Balance_Semanal]
+RETURN
+IF(ISBLANK(_b), "#BDBDBD", SWITCH(TRUE(), _b <= -30, "#8C510A", _b <= -10, "#D8B365", _b < 10, "#F5F5F5", _b < 30, "#5AB4AC", "#01665E"))
+```
+</details>
+
+<details><summary><code>Desv_Media_Linea</code></summary>
+
+```dax
+VAR _sel = CALCULATE(MAX(Calendario[Inicio_Semana]), ALLSELECTED(Calendario))
+VAR _eje = MAX(Semanas_Grafica[Inicio_Semana])
+VAR _w = SELECTEDVALUE(Ventana_Semanas[Semanas], 8)
+VAR _anioVent = CALCULATE(MAX(Calendario[Año_Hidrologico]), ALLSELECTED(Calendario))
+VAR _iniAnio = CALCULATE(MIN(Calendario[Inicio_Semana]), ALL(Calendario), Calendario[Año_Hidrologico] = _anioVent)
+VAR _ini = IF(_w = 0, _iniAnio, _sel - 7 * (_w - 1))
+RETURN IF(_eje <= _sel && _eje >= _ini, 0)
+```
+</details>
+
+<details><summary><code>Mapa_DPV_Color</code></summary>
+
+```dax
+VAR _x = [VPD_Max_Diurna]
+RETURN IF(ISBLANK(_x), "#BDBDBD", SWITCH(TRUE(), _x < 0.4, "#6BAED6", _x < 1.2, "#A1D99B", _x < 1.6, "#FED976", "#F03B20"))
+```
+</details>
+
+<details><summary><code>Mapa_Riesgo_Color</code></summary>
+
+```dax
+VAR _uno = ISFILTERED(Riesgos_Cultivo[Riesgo]) && HASONEVALUE(Riesgos_Cultivo[ID])
+VAR _n = [Riesgos_En_Alerta]
+RETURN
+IF(_uno, [Riesgo_Color], SWITCH(TRUE(), ISBLANK([Riesgo_Valor_Max_Estacion]), "#FFFFFF", COALESCE(_n, 0) = 0, "#C6DBEF", _n = 1, "#6BAED6", _n <= 3, "#2171B5", "#08306B"))
+```
+</details>
+
+<details><summary><code>Leyenda_Riesgo_Mostrar</code></summary>
+
+```dax
+VAR _uno = ISFILTERED(Riesgos_Cultivo[Riesgo]) && HASONEVALUE(Riesgos_Cultivo[ID])
+RETURN IF(SELECTEDVALUE(Leyenda_Mapa_Riesgo[Modo]) = IF(_uno, "Riesgo", "Conteo"), 1)
+```
+</details>
+
+<details><summary><code>Leyenda_Riesgo_Color</code></summary>
+
+```dax
+SELECTEDVALUE(Leyenda_Mapa_Riesgo[Color])
+```
+</details>
+
+<details><summary><code>Leyenda_Riesgo_Fuente</code></summary>
+
+```dax
+IF([Leyenda_Riesgo_Color] IN {"#2171B5", "#08306B", "#D64550", "#3BA272"}, "#FFFFFF", "#252525")
+```
+</details>
+
+<details><summary><code>Leyenda_Riesgo_Titulo</code></summary>
+
+```dax
+VAR _uno = ISFILTERED(Riesgos_Cultivo[Riesgo]) && HASONEVALUE(Riesgos_Cultivo[ID])
+RETURN IF(_uno, "Semáforo de " & LOWER(SELECTEDVALUE(Riesgos_Cultivo[Riesgo])), "Riesgos en alerta por estación")
+```
+</details>
+
+<details><summary><code>Riesgo_Valor_Max_Estacion</code></summary>
+
+```dax
+MAXX(VALUES(Riesgos_Cultivo[ID]), [Riesgo_Valor])
+```
+</details>
+
+<details><summary><code>DN_DPV_MED_D</code></summary>
+
+```dax
+VAR _vis = SELECTEDVALUE(Periodo_Vista[Vista], "Ambos")
+RETURN IF("DPV medio diurno" IN VALUES(Series_DiaNoche[Serie]) && (_vis = "Ambos" || _vis = "Día"), [VPD_Media_Diurna])
+```
+</details>
+
+<details><summary><code>DN_DPV_MAX_D</code></summary>
+
+```dax
+VAR _vis = SELECTEDVALUE(Periodo_Vista[Vista], "Ambos")
+RETURN IF("DPV máx. diurno" IN VALUES(Series_DiaNoche[Serie]) && (_vis = "Ambos" || _vis = "Día"), [VPD_Max_Diurna])
+```
+</details>
+
+<details><summary><code>DN_DPV_MED_N</code></summary>
+
+```dax
+VAR _vis = SELECTEDVALUE(Periodo_Vista[Vista], "Ambos")
+RETURN IF("DPV medio nocturno" IN VALUES(Series_DiaNoche[Serie]) && (_vis = "Ambos" || _vis = "Noche"), [VPD_Media_Nocturna])
+```
+</details>
+
+<details><summary><code>DN_HR_MIN</code></summary>
+
+```dax
+VAR _vis = SELECTEDVALUE(Periodo_Vista[Vista], "Ambos")
+RETURN IF("HR mínima" IN VALUES(Series_DiaNoche[Serie]) && SELECTEDVALUE(Eje_Secundario[Opcion], "Humedad relativa") = "Humedad relativa", [HR_Min])
+```
+</details>
+
+<details><summary><code>DN_HR_MED</code></summary>
+
+```dax
+VAR _vis = SELECTEDVALUE(Periodo_Vista[Vista], "Ambos")
+RETURN IF("HR media" IN VALUES(Series_DiaNoche[Serie]) && SELECTEDVALUE(Eje_Secundario[Opcion], "Humedad relativa") = "Humedad relativa", [HR_Media])
+```
+</details>
+
+<details><summary><code>DN_T_NOC</code></summary>
+
+```dax
+VAR _vis = SELECTEDVALUE(Periodo_Vista[Vista], "Ambos")
+RETURN IF("T media nocturna" IN VALUES(Series_DiaNoche[Serie]) && (_vis = "Ambos" || _vis = "Noche") && SELECTEDVALUE(Eje_Secundario[Opcion], "Humedad relativa") = "Temperatura nocturna", [Temp_Nocturna_Media])
+```
+</details>
+
+<details><summary><code>DN_T_MIN_NOC</code></summary>
+
+```dax
+VAR _vis = SELECTEDVALUE(Periodo_Vista[Vista], "Ambos")
+RETURN IF("T mínima nocturna" IN VALUES(Series_DiaNoche[Serie]) && (_vis = "Ambos" || _vis = "Noche") && SELECTEDVALUE(Eje_Secundario[Opcion], "Humedad relativa") = "Temperatura nocturna", [Temp_Min_Nocturna])
+```
+</details>
+
+<details><summary><code>DN_MOJ_D</code></summary>
+
+```dax
+VAR _vis = SELECTEDVALUE(Periodo_Vista[Vista], "Ambos")
+RETURN IF("Mojadura diurna" IN VALUES(Series_DiaNoche[Serie]) && (_vis = "Ambos" || _vis = "Día"), [Mojadura_Horas_Semanal])
+```
+</details>
+
+<details><summary><code>DN_MOJ_N</code></summary>
+
+```dax
+VAR _vis = SELECTEDVALUE(Periodo_Vista[Vista], "Ambos")
+RETURN IF("Mojadura nocturna" IN VALUES(Series_DiaNoche[Serie]) && (_vis = "Ambos" || _vis = "Noche"), [Mojadura_Horas_Nocturna_Semanal])
+```
+</details>
+
+<details><summary><code>DN_LUZ_D</code></summary>
+
+```dax
+VAR _vis = SELECTEDVALUE(Periodo_Vista[Vista], "Ambos")
+RETURN IF("Horas con luz" IN VALUES(Series_DiaNoche[Serie]) && (_vis = "Ambos" || _vis = "Día"), [Horas_Luz])
+```
+</details>
+
+<details><summary><code>DN_ESTRES_D</code></summary>
+
+```dax
+VAR _vis = SELECTEDVALUE(Periodo_Vista[Vista], "Ambos")
+RETURN IF("Horas de estrés térmico" IN VALUES(Series_DiaNoche[Serie]) && (_vis = "Ambos" || _vis = "Día"), [Horas_Estres_Termico_Semanal])
+```
+</details>
+
+<details><summary><code>DN_IRR_MAX</code></summary>
+
+```dax
+VAR _vis = SELECTEDVALUE(Periodo_Vista[Vista], "Ambos")
+RETURN IF("Irradiancia máx. diurna" IN VALUES(Series_DiaNoche[Serie]) && (_vis = "Ambos" || _vis = "Día"), [Rad_Max_Diurna])
+```
+</details>
+
+<details><summary><code>DN_IRR_LUZ</code></summary>
+
+```dax
+VAR _vis = SELECTEDVALUE(Periodo_Vista[Vista], "Ambos")
+RETURN IF("Irradiancia media de luz" IN VALUES(Series_DiaNoche[Serie]) && (_vis = "Ambos" || _vis = "Día"), [Rad_Media_Luz])
+```
+</details>
+
+<details><summary><code>DN_V_MAX_D</code></summary>
+
+```dax
+VAR _vis = SELECTEDVALUE(Periodo_Vista[Vista], "Ambos")
+RETURN IF("Viento máx. diurno" IN VALUES(Series_DiaNoche[Serie]) && (_vis = "Ambos" || _vis = "Día"), [Viento_Max_Diurno])
+```
+</details>
+
+<details><summary><code>DN_V_MAX_N</code></summary>
+
+```dax
+VAR _vis = SELECTEDVALUE(Periodo_Vista[Vista], "Ambos")
+RETURN IF("Viento máx. nocturno" IN VALUES(Series_DiaNoche[Serie]) && (_vis = "Ambos" || _vis = "Noche"), [Viento_Max_Nocturno])
+```
+</details>
+
+<details><summary><code>DN_V_MED_D</code></summary>
+
+```dax
+VAR _vis = SELECTEDVALUE(Periodo_Vista[Vista], "Ambos")
+RETURN IF("Viento medio diurno" IN VALUES(Series_DiaNoche[Serie]) && (_vis = "Ambos" || _vis = "Día"), [Viento_Media_Diurna])
+```
+</details>
+
+<details><summary><code>DN_V_MED_N</code></summary>
+
+```dax
+VAR _vis = SELECTEDVALUE(Periodo_Vista[Vista], "Ambos")
+RETURN IF("Viento medio nocturno" IN VALUES(Series_DiaNoche[Serie]) && (_vis = "Ambos" || _vis = "Noche"), [Viento_Media_Nocturna])
+```
+</details>
+
+<details><summary><code>Resumen_Actual</code></summary>
+
+```dax
+VAR _v = SELECTEDVALUE(Resumen_Variables[Variable])
+RETURN
+SWITCH(
+    _v,
+    "Lluvia", [Precip_Semanal],
+    "Evapotranspiración (ETo)", [ETO_Semanal],
+    "Balance hídrico", [Balance_Semanal],
+    "Temperatura media", [Temp_Media],
+    "Temperatura máxima", [Temp_Max],
+    "Temperatura mínima", [Temp_Min],
+    "Radiación (media diaria)", [Rad_Diaria_Media],
+    "Horas con luz (media diaria)", [Horas_Luz_Diaria],
+    "Grados día (media diaria)", [GDD_Diario_Medio]
 )
 ```
 </details>

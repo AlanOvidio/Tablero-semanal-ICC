@@ -20,15 +20,15 @@ flowchart LR
         D["Fact_Diaria_met<br/>18 años"]
         S["Fact_Subdiaria_met_aux<br/>5 años"]
         H["Fact_Horaria_riesgo<br/>5 años"]
-        R["Fact_Meteorologia<br/>15 min · sin uso en visuales"]
     end
     A1 --> E
     L --> F1 & F2
-    A2 --> F1 --> S & H & R
+    A2 --> F1 --> S & H
+    A2 -.-> R["Fact_Meteorologia<br/>(consulta sin carga)"]
     A3 --> F2 --> D
     E -.-> D & S & H
     C -.-> D & S & H
-    D & S & H --> REP["Reporte<br/>Resumen Semanal · Caña"]
+    D & S & H --> REP["Reporte<br/>Agua y energía · Estrés · Horario · Riesgos del cultivo"]
 ```
 
 Cada tabla de hechos llama a la API **por estación** (una llamada por cada ID de `TablaEstaciones_met`) y filtra por `RangeStart`/`RangeEnd`. Esto permite la **actualización incremental**: en el servicio solo se vuelven a descargar los últimos 7 días.
@@ -39,27 +39,31 @@ Cada tabla de hechos llama a la API **por estación** (una llamada por cada ID d
 |---|---|---|---|---|
 | `Fact_Diaria_met` | estación × día | endpoint diario | 18 años | Lluvia, ETo, balance, temperaturas, HR, viento medio, radiación diaria (MJ), GDD por cultivo. Base de **históricos y acumulados**. |
 | `Fact_Subdiaria_met_aux` | estación × día | agregación de lecturas de 15 min | 5 años | Variables diurnas/nocturnas: VPD, mojadura, índice de calor, viento diurno/nocturno, horas de extremos, periodo de luz y energía, calidad de datos (`N_Lecturas`, `Dia_Completo`). |
-| `Fact_Horaria_riesgo` | estación × día × hora | agregación de lecturas de 15 min | 5 años | Banderas horarias de plagas (mapa de calor) y viento horario vectorial (rosa de vientos). |
-| `Fact_Meteorologia` | lectura de 15 min | endpoint de lecturas | 18 años | Datos crudos. Ninguna medida ni visual la usa (relaciones inactivas); se mantiene por decisión del proyecto. |
+| `Fact_Horaria_riesgo` | estación × día × hora | agregación de lecturas de 15 min | 5 años | Condiciones horarias de riesgos y variables del mapa de calor (T, HR, mojadura, lluvia, viento, radiación, índice de calor) y viento horario vectorial (rosa de vientos). |
+
+`Fact_Meteorologia` (lecturas crudas de 15 min) queda como consulta de Power Query **sin carga** al modelo desde 2026-11-24: ningún visual la usaba y era la tabla más pesada. Se reactiva con *Habilitar carga*; copia de su definición en `_respaldo/fact_meteorologia_2026-11-24/`.
 
 ## Dimensiones y tablas auxiliares
 
 | Tabla | Rol |
 |---|---|
-| `Estaciones_met` | Estaciones (finca, coordenadas, altitud, estrato altitudinal, país). Filtra a las tres tablas de hechos. |
-| `Calendario` | Tabla de fechas marcada (2008 → hoy). Año y semana **hidrológicos** con la jerarquía `Jerarquía hidrológica` (Año hidrológico → Semana → Fecha). |
+| `Estaciones_met` | Estaciones de `TablaEstaciones_met` (finca, coordenadas, altitud, estrato altitudinal, país). Filtra a las tres tablas de hechos. |
+| `Calendario` | Tabla de fechas marcada (2008 → hoy, hora de Guatemala). Año y semana **hidrológicos** con la jerarquía `Jerarquía hidrológica` (Año hidrológico → Semana → Fecha); selectores automáticos `Año_Selector` y `Semana_Selector`; `Semana_Eje` (número de semana para ejes). |
 | `TablaEstaciones_met` | Lista fija de IDs de estaciones que se descargan. **Aquí se agregan o quitan estaciones.** |
-| `Semanas_Grafica`, `Semanas_Anio` | Ejes desconectados para gráficas de balance por semana y acumulados (GDD, radiación) que no deben filtrarse por el segmentador de semana. |
+| `Semanas_Grafica`, `Semanas_Anio` | Ejes desconectados para gráficas por semana (balances anteriores, radiación y grados día) que no deben filtrarse por el segmentador de semana. |
 | `Horas_Dia`, `Periodos_Dia` | Eje de horas del mapa de calor y períodos del día de la rosa de vientos. |
-| `Plagas` | Segmentador del mapa de calor horario (Roya, Carbón, Salivosa, Barrenador). |
+| `Cultivos`, `Riesgos_Cultivo` | Cultivos (base y tope de grados día) y catálogo de riesgos con umbrales, generados desde `config/riesgos_cultivo.csv`. |
+| `Vistas_Mapa_Calor`, `Leyenda_Mapa_Calor`, `Leyenda_Mapa_Riesgo` | Vistas, rangos y colores del mapa de calor y del mapa de riesgos. |
+| `Resumen_Variables`, `Ventana_Semanas`, `Series_DiaNoche`, `Periodo_Vista`, `Eje_Secundario` | Tablas desconectadas para la tabla *Resumen de la semana*, la ventana de radiación y grados día y los botones día/noche. |
 | `Direcciones_Viento` | 8 sectores de 45° (N … NO), relacionados con `Fact_Horaria_riesgo[Sector_Viento]`. |
-| `_Medidas` | Contenedor de todas las medidas DAX. |
+| `_Medidas`, `_Riesgos` | Medidas DAX: generales y del motor de riesgos, mapas y gráficas (esta última generada por `tools/generar_riesgos_modelo.py`). |
 
 ## Calendario hidrológico
 
 - El año hidrológico inicia el **lunes de la semana que contiene la fecha** `InicioAnioHidrologico` (mes/día; actualmente 2 de noviembre).
 - Una semana pertenece al año hidrológico **siguiente** si su lunes es igual o posterior a ese lunes. Ejemplo: la semana del 27-oct-2025 es la semana 1 del año hidrológico **2026**.
-- `Semana_Etiqueta` = `"03 | 2026 (10-nov - 16-nov)"`, ordenada cronológicamente por `Inicio_Semana`.
+- `Semana_Etiqueta` = `"03 | 2025-2026 (10-nov - 16-nov)"`, ordenada cronológicamente por `Inicio_Semana`.
+- `Semana_Selector` llama «Última semana completa» a la semana anterior a la actual y «Semana en curso» a la actual; `Año_Selector` llama «Año hidrológico actual» al año de la última semana completa. Los segmentadores guardan esas etiquetas y avanzan solos en cada actualización.
 
 ## Definiciones físicas
 
@@ -82,6 +86,23 @@ Cada tabla de hechos llama a la API **por estación** (una llamada por cada ID d
 
 Unidades: viento en **km/h**, lluvia y ETo en mm, radiación en W/m² (irradiancia) o MJ/m² (energía), VPD en kPa.
 
+## Control de calidad
+
+En Power Query, antes del filtro incremental, las lecturas fuera de rango se convierten en faltantes (rangos de `aplicar_qc` de los scripts R):
+
+| Variable (15 min) | Faltante si |
+|---|---|
+| Precipitación | < 0 o > 90 mm |
+| Temperatura | < −5 o > 50 °C |
+| Humedad relativa | < 20 o > 100 % |
+| Radiación | < 0 o > 1500 W/m² |
+| Velocidad del viento | < 0 o > 270 km/h |
+| Mojadura | < 0 o > 10 |
+| ETo | < 0 o > 90 |
+| Dirección del viento | 360 → 0; fuera de 0–360, faltante |
+
+En `Fact_Diaria_met` se aplican los mismos límites a temperaturas y HR, y se descartan los valores negativos de lluvia, ETo y radiación.
+
 ## Reglas de agregación entre estaciones
 
 Cuando el filtro abarca varias estaciones (selección en el mapa, estrato altitudinal):
@@ -98,4 +119,4 @@ Cada variable se promedia sobre las estaciones que **la miden**. Por eso `Precip
 
 ## Históricos
 
-Las medidas `*_Historico_*` comparan la **misma semana hidrológica** en los años **anteriores al año seleccionado**. En el servicio usan toda la historia de `Fact_Diaria_met` (desde 2008); en Desktop solo lo que cargue `RangeStart`.
+La desviación acumulada de radiación y grados día compara con la media de **los mismos días** de hasta 18 años anteriores (`DATEADD`). Las medidas `*_Historico_*` comparan la **misma semana hidrológica** en los años **anteriores al año seleccionado**. En el servicio usan toda la historia de `Fact_Diaria_met` (desde 2008); en Desktop solo lo que cargue `RangeStart`.

@@ -1,0 +1,88 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "e4a5d460e29a5644893a",
+  "position": {
+    "x": 10.042134831460674,
+    "y": 526.75561797752812,
+    "z": 2000,
+    "height": 38.342696629213485,
+    "width": 639.95786516853934,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "DPV máx. diurno (kPa):  ",
+                    "textStyle": {
+                      "fontSize": "10pt"
+                    }
+                  },
+                  {
+                    "value": "■ ",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "color": "#6baed6"
+                    }
+                  },
+                  {
+                    "value": "< 0.4    ",
+                    "textStyle": {
+                      "fontSize": "10pt"
+                    }
+                  },
+                  {
+                    "value": "■ ",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "color": "#a1d99b"
+                    }
+                  },
+                  {
+                    "value": "0.4 – 1.2    ",
+                    "textStyle": {
+                      "fontSize": "10pt"
+                    }
+                  },
+                  {
+                    "value": "■ ",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "color": "#fed976"
+                    }
+                  },
+                  {
+                    "value": "1.2 – 1.6    ",
+                    "textStyle": {
+                      "fontSize": "10pt"
+                    }
+                  },
+                  {
+                    "value": "■ ",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "color": "#f03b20"
+                    }
+                  },
+                  {
+                    "value": "≥ 1.6 estrés    ",
+                    "textStyle": {
+                      "fontSize": "10pt"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

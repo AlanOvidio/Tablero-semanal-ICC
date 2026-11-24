@@ -27,20 +27,37 @@ En el **servicio** estos parámetros no se usan: cada tabla con actualización i
 
 ## Publicar y actualizar en el servicio
 
+### Un modelo, tres informes
+
+| Archivo | Qué publica | Uso |
+|---|---|---|
+| `Tablero-semanal-ICC.pbip` | modelo `Tablero-semanal-ICC` + informe de trabajo del mismo nombre | diseño, páginas de validación; uso interno |
+| `Tablero-semanal-ICC-GT.pbip` | solo el informe `Tablero-semanal-ICC-GT` | público, estaciones de Guatemala |
+| `Tablero-semanal-ICC-SV.pbip` | solo el informe `Tablero-semanal-ICC-SV` | público, estaciones de El Salvador |
+
+- Los cambios de diseño se hacen **solo** en `Tablero-semanal-ICC.pbip`. Después, con Desktop cerrado: `python tools/generar_informes_pais.py`. El script copia las páginas públicas (omite *Validaciones* y *Pronóstico*), pone el filtro de país a nivel de informe (oculto y bloqueado) y deja los mapas con ajuste automático. La copia anterior queda en `_respaldo/informes_pais/`.
+- **Conexión de GT y SV.** Sin `config/conexion_servicio.json` apuntan al modelo local (para revisarlos en Desktop). Con ese archivo apuntan al modelo publicado y son informes ligeros: **publicarlos no reemplaza el modelo** ni sus particiones incrementales. Contenido del archivo (el id está en la URL del modelo en el servicio, `.../datasets/<id>`):
+  ```json
+  { "workspace": "<nombre del área de trabajo>", "semanticmodelid": "<id del modelo>" }
+  ```
+- Nunca publicar GT o SV mientras apunten al modelo local: Desktop publicaría también un modelo `Tablero-semanal-ICC-GT`/`-SV` y su informe quedaría conectado a él.
+- El enlace de *Publicar en la web* pertenece a cada informe: los informes GT y SV tienen enlaces propios.
+
 ### Pasos para publicar una versión nueva
 
-1. Cerrar Desktop, confirmar en GitHub Desktop que no hay cambios sin commit y abrir `2026_dashboard_exp1.pbip` **de esta carpeta** (no la copia antigua de OneDrive).
+1. Cerrar Desktop, confirmar en GitHub Desktop que no hay cambios sin commit y abrir `Tablero-semanal-ICC.pbip` **de esta carpeta** (no la copia antigua de OneDrive).
 2. *Inicio → Actualizar* para comprobar que todo carga sin errores.
-3. *Inicio → Publicar* → elegir el área de trabajo de siempre → **Reemplazar** el modelo semántico `2026_dashboard_exp1`. Al conservar el nombre se mantienen el enlace, los permisos y la programación.
+3. *Inicio → Publicar* → elegir el área de trabajo de siempre → **Reemplazar** el modelo semántico `Tablero-semanal-ICC`. Al conservar el nombre se mantienen el enlace, los permisos y la programación.
 4. En el servicio, *Configuración del modelo semántico → Credenciales del origen de datos*: el origen web `redmet.icc.org.gt` con autenticación **Anónima** y el nivel de privacidad que se usa en Desktop. Si el servicio pide revisar credenciales tras publicar, volver a guardarlas.
 5. Lanzar **Actualizar ahora**. Como el modelo se reemplazó, el servicio rehace las particiones y descarga todo el historial (ver tabla abajo); es la actualización más larga. Revisar el *Historial de actualizaciones* al terminar.
 6. Confirmar la **actualización programada**: después de la hora en que termina el control de calidad de datos.
-7. Si el tablero se comparte como **aplicación**, *Actualizar aplicación* para que los usuarios vean la versión nueva.
+7. Si cambió el diseño: crear o revisar `config/conexion_servicio.json`, ejecutar `python tools/generar_informes_pais.py`, abrir `Tablero-semanal-ICC-GT.pbip` y `Tablero-semanal-ICC-SV.pbip` y publicarlos en la misma área de trabajo (**Reemplazar** el informe del mismo nombre).
+8. Si el tablero se comparte como **aplicación**, *Actualizar aplicación* para que los usuarios vean la versión nueva.
 
 
 | Tabla | Ventana | Refresca |
 |---|---|---|
-| `Fact_Diaria_met`, `Fact_Meteorologia` | 18 años | últimos 7 días |
+| `Fact_Diaria_met` | 18 años | últimos 7 días |
 | `Fact_Subdiaria_met_aux`, `Fact_Horaria_riesgo` | 5 años | últimos 7 días |
 
 - **Primera publicación o cambio de política/columnas:** el servicio hace una carga completa. Las tablas de 15 min con muchos años pueden tardar; si se excede el límite de 2 h de Pro o la API responde con *timeout*, reintentar o publicar primero con menos años y ampliar después.
@@ -50,7 +67,7 @@ En el **servicio** estos parámetros no se usan: cada tabla con actualización i
 ## Tareas frecuentes
 
 ### Agregar o quitar una estación
-Editar la lista en la consulta `TablaEstaciones_met` (Power Query). Tras publicar, hacer una actualización completa para que se descargue su historia.
+Editar la lista en la consulta `TablaEstaciones_met` (Power Query); está separada por país con comentarios. El país de cada estación viene de la API (`Estaciones_met[pais.nombre]`) y decide en qué informe aparece. Tras publicar, hacer una actualización completa para que se descargue su historia.
 
 ### Cambiar un umbral de semáforo o de riesgo
 Editar la medida `Semaforo_*` o `Dias_Riesgo_*` en `_Medidas`. Actualizar la tabla de umbrales en [04 · Guía de usuario](04_guia_usuario.md) y registrar el cambio en [06](06_decisiones_y_cambios.md).

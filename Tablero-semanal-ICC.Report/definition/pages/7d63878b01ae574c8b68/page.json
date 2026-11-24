@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "7d63878b01ae574c8b68",
+  "displayName": "Riesgos del cultivo",
+  "displayOption": "FitToWidth",
+  "height": 2369.808917197452,
+  "width": 1300,
+  "visualInteractions": [
+    {
+      "source": "15a15e9f445c568da742",
+      "target": "f409f8fa2e8f575a9fcc",
+      "type": "NoFilter"
+    },
+    {
+      "source": "15a15e9f445c568da742",
+      "target": "e9bcd0e088745ff7b1e2",
+      "type": "NoFilter"
+    },
+    {
+      "source": "15a15e9f445c568da742",
+      "target": "eb968e80bed3563092ad",
+      "type": "NoFilter"
+    },
+    {
+      "source": "15a15e9f445c568da742",
+      "target": "7ac1414492965455ba92",
+      "type": "NoFilter"
+    },
+    {
+      "source": "15a15e9f445c568da742",
+      "target": "3860fbeb9b9156b98e88",
+      "type": "NoFilter"
+    },
+    {
+      "source": "15a15e9f445c568da742",
+      "target": "fb7e92f93c5f5eeabee4",
+      "type": "NoFilter"
+    }
+  ]
+}

@@ -10,17 +10,21 @@ Modelo semántico y reporte de Power BI que reemplazan los boletines meteorológ
 
 ```
 Tablero/
-├── 2026_dashboard_exp1.pbip            ← abrir este archivo en Power BI Desktop
-├── 2026_dashboard_exp1.SemanticModel/  ← modelo: tablas, Power Query (M), medidas DAX (TMDL)
+├── Tablero-semanal-ICC.pbip            ← informe de trabajo + modelo: el único que se edita en Desktop
+├── Tablero-semanal-ICC-GT.pbip         ← informe Guatemala (generado, no editar)
+├── Tablero-semanal-ICC-SV.pbip         ← informe El Salvador (generado, no editar)
+├── Tablero-semanal-ICC.SemanticModel/  ← modelo: tablas, Power Query (M), medidas DAX (TMDL)
 │   └── definition/
 │       ├── tables/*.tmdl               ← una tabla por archivo; _Medidas.tmdl tiene todas las medidas
 │       ├── relationships.tmdl
 │       └── expressions.tmdl            ← parámetros (RangeStart, RangeEnd…) y funciones de la API
-├── 2026_dashboard_exp1.Report/         ← reporte: páginas y visuales (JSON)
+├── Tablero-semanal-ICC.Report/         ← informe de trabajo: páginas y visuales (JSON), incluye Validaciones
+├── Tablero-semanal-ICC-GT.Report/      ← copia generada con filtro Guatemala (tools/generar_informes_pais.py)
+├── Tablero-semanal-ICC-SV.Report/      ← copia generada con filtro El Salvador
 ├── docs/                               ← documentación
 ├── config/                             ← catálogo de riesgos y fuentes (CSV editables en Excel)
 ├── referencias/                        ← PDFs de las fuentes (no se suben al repositorio)
-├── tools/                              ← generadores de documentación
+├── tools/                              ← generadores del modelo, de los informes por país y de la documentación
 ├── .gitignore
 └── README.md
 ```
@@ -44,10 +48,10 @@ Tablero/
 
 ## Inicio rápido
 
-1. Abrir `2026_dashboard_exp1.pbip` con Power BI Desktop (cerrar OneDrive o esperar a que termine de sincronizar).
+1. Abrir `Tablero-semanal-ICC.pbip` con Power BI Desktop (cerrar OneDrive o esperar a que termine de sincronizar).
 2. En Power Query → **Administrar parámetros**: `RangeEnd` = las **00:00 del día siguiente** al último día del boletín (p. ej., boletín al domingo 25-oct → `26-oct 00:00`).
 3. **Inicio → Actualizar**.
-4. En la página **Resumen Semanal**, elegir *Año hidrológico* y *Semana*.
+4. El tablero abre en la **última semana completa**; las cuatro páginas son *Agua y energía de la semana*, *Estrés atmosférico y vegetal*, *Comportamiento horario* y *Riesgos del cultivo* (ver [Guía de usuario](docs/04_guia_usuario.md)).
 5. Para publicar: **Publicar** al área de trabajo; la primera vez hacer una actualización completa en el servicio (ver [Operación](docs/05_operacion.md)).
 
 ## Mantener la documentación al día

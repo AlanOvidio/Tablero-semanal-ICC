@@ -1,0 +1,324 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "38eac11f51685febbf67",
+  "position": {
+    "x": 701.12359550561791,
+    "y": 270.22471910112358,
+    "z": 2400,
+    "height": 262.00842696629212,
+    "width": 588.83426966292132,
+    "tabOrder": 2400
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Resumen_Variables"
+                    }
+                  },
+                  "Property": "Variable"
+                }
+              },
+              "queryRef": "Resumen_Variables.Variable",
+              "nativeQueryRef": "Variable",
+              "displayName": "Variable"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Riesgos"
+                    }
+                  },
+                  "Property": "Resumen_Actual"
+                }
+              },
+              "queryRef": "_Riesgos.Resumen_Actual",
+              "nativeQueryRef": "Esta semana",
+              "displayName": "Esta semana"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Riesgos"
+                    }
+                  },
+                  "Property": "Resumen_Semana_Anterior"
+                }
+              },
+              "queryRef": "_Riesgos.Resumen_Semana_Anterior",
+              "nativeQueryRef": "Semana anterior",
+              "displayName": "Semana anterior"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Riesgos"
+                    }
+                  },
+                  "Property": "Resumen_Anio_Anterior"
+                }
+              },
+              "queryRef": "_Riesgos.Resumen_Anio_Anterior",
+              "nativeQueryRef": "Hace un año",
+              "displayName": "Hace un año"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Resumen_Variables"
+                    }
+                  },
+                  "Property": "Unidad"
+                }
+              },
+              "queryRef": "Resumen_Variables.Unidad",
+              "nativeQueryRef": "Unidad",
+              "displayName": "Unidad"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Resumen_Variables"
+                  }
+                },
+                "Property": "Variable"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "177.93184032487093D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Resumen_Variables.Variable"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "100D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_Riesgos.Resumen_Actual"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "110D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_Riesgos.Resumen_Semana_Anterior"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "100D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_Riesgos.Resumen_Anio_Anterior"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "80D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Resumen_Variables.Unidad"
+          }
+        }
+      ],
+      "total": [
+        {
+          "properties": {
+            "totals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {}
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Resumen de la semana'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Si la semana va incompleta, las comparaciones usan los mismos días.'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "f0141cd2cd737e9eeba3",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Resumen_Variables"
+              }
+            },
+            "Property": "Variable"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "99774d34dbae3eeda3c9",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Riesgos"
+              }
+            },
+            "Property": "Resumen_Actual"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "e25128c57a9ca3a78aad",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Riesgos"
+              }
+            },
+            "Property": "Resumen_Semana_Anterior"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "de4cecbb03fa6a251ae2",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Riesgos"
+              }
+            },
+            "Property": "Resumen_Anio_Anterior"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "98b8a90df3ad347389e5",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Resumen_Variables"
+              }
+            },
+            "Property": "Unidad"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

@@ -1,0 +1,158 @@
+expression RangeEnd = #datetime(2026, 11, 23, 0, 0, 0) meta [IsParameterQuery=true, Type="DateTime", IsParameterQueryRequired=true]
+	lineageTag: 749353b3-1663-4601-8b3b-a09bd0ad06d9
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = DateTime
+
+expression fxLecturasEstacion_met =
+		(estacionId as number, RangeStart as datetime, RangeEnd as datetime) =>
+		let
+		    fechaini = DateTime.ToText(RangeStart, "yyyy-MM-dd HH:mm"),
+		    fechafin = DateTime.ToText(RangeEnd, "yyyy-MM-dd HH:mm"),
+		
+		    Origen =
+		        Json.Document(
+		            Web.Contents(
+		                "https://redmet.icc.org.gt/ws/redmet/estaciones/lecturas",
+		                [
+		                    Query = [
+		                        fechaini = fechaini,
+		                        fechafin = fechafin,
+		                        tipo = "fecha",
+		                        #"estacionids[]" = Number.ToText(estacionId)
+		                    ],
+		                    Timeout = #duration(0,0,5,0)
+		                ]
+		            )
+		        ),
+		
+		    // 🔑 convertir el ID a texto ANTES de usarlo
+		    EstacionKey = Number.ToText(estacionId),
+		
+		    // 🔑 extraer SOLO la lista
+		    Lecturas =
+		        try
+		            Record.Field(Origen, EstacionKey)
+		        otherwise
+		            {}
+		in
+		    Lecturas
+	lineageTag: af5d7866-b717-4234-b6f3-7f6c5c58a06d
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Function
+
+expression RangeStart = #datetime(2024, 10, 28, 0, 0, 0) meta [IsParameterQuery=true, Type="DateTime", IsParameterQueryRequired=true]
+	lineageTag: e087e64c-9d15-4153-afb0-462415ef5ea0
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = DateTime
+
+/// Fecha de inicio del año hidrológico
+expression InicioAnioHidrologico = #date(2025, 11, 2) meta [IsParameterQuery=true, Type="Date", IsParameterQueryRequired=true]
+	lineageTag: f21a3e71-7a20-4a5a-bc00-e23648ec0b52
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Date
+
+expression fxLecturasEstacion_met_diario =
+		(estacionId as number, RangeStart as datetime, RangeEnd as datetime) =>
+		let
+		    fechaini = DateTime.ToText(RangeStart, "yyyy-MM-dd HH:mm"),
+		    fechafin = DateTime.ToText(RangeEnd, "yyyy-MM-dd HH:mm"),
+		
+		    Origen = Json.Document(
+		        Web.Contents(
+		            "https://redmet.icc.org.gt/ws/getlecturasdia",
+		            [
+		                Query = [
+		                    fechaini   = fechaini,
+		                    fechafin   = fechafin,
+		                    estacionid = Number.ToText(estacionId)
+		                ],
+		                Timeout = #duration(0, 0, 5, 0)
+		            ]
+		        )
+		    ),
+		
+		    Lecturas = try Origen[data] otherwise {}
+		in
+		    Lecturas
+	lineageTag: c6ca2b25-c957-454e-b6dd-0febc5cb1692
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Function
+
+expression Fact_Meteorologia =
+		let
+		    Fuente = TablaEstaciones_met,
+		
+		    EjecutarAPI = Table.AddColumn(
+		        Fuente,
+		        "Lecturas",
+		        each fxLecturasEstacion_met([estacionid], RangeStart, RangeEnd)
+		    ),
+		
+		    ExpandirLista = Table.ExpandListColumn(EjecutarAPI, "Lecturas"),
+		
+		    ExpandirCampos = Table.ExpandRecordColumn(
+		        ExpandirLista,
+		        "Lecturas",
+		        {
+		            "fecha", "temperatura", "radiacion",
+		            "humedad_relativa", "precipitacion", "velocidad_viento",
+		            "presion_atmosferica", "mojadura", "direccion_viento",
+		            "eto", "indice_calor", "updated_at", "created_at"
+		        }
+		    ),
+		
+		    CambiarTipos = Table.TransformColumnTypes(
+		        ExpandirCampos,
+		        {
+		            {"estacionid",          Int64.Type},
+		            {"fecha",               type datetime},
+		            {"temperatura",         type number},
+		            {"radiacion",           type number},
+		            {"humedad_relativa",    type number},
+		            {"precipitacion",       type number},
+		            {"velocidad_viento",    type number},
+		            {"presion_atmosferica", type number},
+		            {"mojadura",            type number},
+		            {"direccion_viento",    type number},
+		            {"eto",                 type number},
+		            {"indice_calor",        type number},
+		            {"updated_at",          type datetime},
+		            {"created_at",          type datetime}
+		        }
+		    ),
+		
+		    // ── FILTRO INCREMENTAL PRIMERO ────────────────────────────────────
+		    // Control de calidad (rangos de aplicar_qc de los scripts R): fuera de rango = faltante
+		    QC = Table.TransformColumns(CambiarTipos, {{"eto", each if _ = null or (_ < 0 or _ > 90) then null else _, type number}, {"humedad_relativa", each if _ = null or (_ < 20 or _ > 100) then null else _, type number}, {"mojadura", each if _ = null or (_ < 0 or _ > 10) then null else _, type number}, {"precipitacion", each if _ = null or (_ < 0 or _ > 90) then null else _, type number}, {"radiacion", each if _ = null or (_ < 0 or _ > 1500) then null else _, type number}, {"temperatura", each if _ = null or (_ < -5 or _ > 50) then null else _, type number}, {"velocidad_viento", each if _ = null or (_ < 0 or _ > 270) then null else _, type number}, {"direccion_viento", each if _ = null then null else if _ = 360 then 0 else if _ < 0 or _ > 360 then null else _, type number}}),
+		
+		    FiltrarIncremental = Table.SelectRows(
+		        QC,
+		        each
+		            [fecha] >= List.Max({RangeStart, #datetime(2008, 1, 1, 0, 0, 0)}) and
+		            [fecha] < RangeEnd
+		    ),
+		
+		    // Columna Fecha tipo date para relacionar con Calendario
+		    AgregarFecha = Table.AddColumn(
+		        FiltrarIncremental, "Fecha",
+		        each Date.From([fecha]), type date
+		    )
+		
+		in
+		    AgregarFecha
+	lineageTag: fdbe24f6-e7e9-5d0d-9fb2-41620e764f1b
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

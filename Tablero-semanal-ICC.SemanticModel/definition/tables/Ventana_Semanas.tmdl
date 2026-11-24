@@ -1,0 +1,38 @@
+table Ventana_Semanas
+	lineageTag: 86ccaf0c-259d-530b-a511-ca8fe82e4885
+
+	column Ventana
+		dataType: string
+		lineageTag: 864b2a9b-1b2e-51d6-8231-7585c33d38c6
+		summarizeBy: none
+		sourceColumn: Ventana
+		sortByColumn: Semanas
+
+		annotation SummarizationSetBy = User
+
+	column Semanas
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 86a3f22e-974f-5384-ad13-77e081b51707
+		summarizeBy: none
+		sourceColumn: Semanas
+
+		annotation SummarizationSetBy = User
+
+	partition Ventana_Semanas = m
+		mode: import
+		source =
+				let
+				    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+				    Tabla = #table(type table [Ventana = text, Semanas = Int64.Type], {
+					{"4 semanas", 4},
+					{"8 semanas", 8},
+					{"12 semanas", 12},
+					{"Desde el inicio del año", 0}
+				    })
+				in
+				    Tabla
+
+	annotation PBI_ResultType = Table
+

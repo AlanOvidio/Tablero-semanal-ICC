@@ -1,16 +1,17 @@
 # Diccionario de datos
 
-> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-03. No editar a mano: los cambios se pierden al regenerar.
+> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-24. No editar a mano: los cambios se pierden al regenerar.
 
 ## Parámetros y funciones de Power Query
 
 | Nombre | Descripción | Definición |
 |---|---|---|
-| `RangeEnd` | Fin del rango de carga en Desktop, exclusivo. Usar las 00:00 del día siguiente al último día que se quiere ver. | `#datetime(2026, 11, 2, 0, 0, 0)` |
+| `RangeEnd` | Fin del rango de carga en Desktop, exclusivo. Usar las 00:00 del día siguiente al último día que se quiere ver. | `#datetime(2026, 11, 23, 0, 0, 0)` |
 | `fxLecturasEstacion_met` | Lecturas de 15 min de una estación (endpoint /ws/redmet/estaciones/lecturas). | Función (ver `expressions.tmdl`) |
 | `RangeStart` | Inicio del rango de carga en Desktop (en el servicio lo fija la actualización incremental). Usar 00:00. | `#datetime(2024, 10, 28, 0, 0, 0)` |
 | `InicioAnioHidrologico` | Fecha de referencia del inicio del año hidrológico (se usan su mes y día; la semana inicia el lunes). | `#date(2025, 11, 2)` |
 | `fxLecturasEstacion_met_diario` | Resumen diario de una estación (endpoint /ws/getlecturasdia). | Función (ver `expressions.tmdl`) |
+| `Fact_Meteorologia` |  | `let 		    Fuente = TablaEstaciones_met, 		 		    EjecutarAPI = Table.AddColumn( 		        Fuente, 		        "Lecturas", 		        each fxLecturasEstacion_met([estacionid], RangeStart, RangeEnd) 		    ), 		 		    ExpandirLista = Table.ExpandListColumn(EjecutarAPI, "Lecturas"), 		 		    ExpandirCampos = Table.ExpandRecordColumn( 		        ExpandirLista, 		        "Lecturas", 		        { 		            "fecha", "temperatura", "radiacion", 		            "humedad_relativa", "precipitacion", "velocidad_viento", 		            "presion_atmosferica", "mojadura", "direccion_viento", 		            "eto", "indice_calor", "updated_at", "created_at" 		        } 		    ), 		 		    CambiarTipos = Table.TransformColumnTypes( 		        ExpandirCampos, 		        { 		            {"estacionid",          Int64.Type}, 		            {"fecha",               type datetime}, 		            {"temperatura",         type number}, 		            {"radiacion",           type number}, 		            {"humedad_relativa",    type number}, 		            {"precipitacion",       type number}, 		            {"velocidad_viento",    type number}, 		            {"presion_atmosferica", type number}, 		            {"mojadura",            type number}, 		            {"direccion_viento",    type number}, 		            {"eto",                 type number}, 		            {"indice_calor",        type number}, 		            {"updated_at",          type datetime}, 		            {"created_at",          type datetime} 		        } 		    ), 		 		    // ── FILTRO INCREMENTAL PRIMERO ──────────────────────────────────── 		    // Control de calidad (rangos de aplicar_qc de los scripts R): fuera de rango = faltante 		    QC = Table.TransformColumns(CambiarTipos, {{"eto", each if _ = null or (_ < 0 or _ > 90) then null else _, type number}, {"humedad_relativa", each if _ = null or (_ < 20 or _ > 100) then null else _, type number}, {"mojadura", each if _ = null or (_ < 0 or _ > 10) then null else _, type number}, {"precipitacion", each if _ = null or (_ < 0 or _ > 90) then null else _, type number}, {"radiacion", each if _ = null or (_ < 0 or _ > 1500) then null else _, type number}, {"temperatura", each if _ = null or (_ < -5 or _ > 50) then null else _, type number}, {"velocidad_viento", each if _ = null or (_ < 0 or _ > 270) then null else _, type number}, {"direccion_viento", each if _ = null then null else if _ = 360 then 0 else if _ < 0 or _ > 360 then null else _, type number}}), 		 		    FiltrarIncremental = Table.SelectRows( 		        QC, 		        each 		            [fecha] >= List.Max({RangeStart, #datetime(2008, 1, 1, 0, 0, 0)}) and 		            [fecha] < RangeEnd 		    ), 		 		    // Columna Fecha tipo date para relacionar con Calendario 		    AgregarFecha = Table.AddColumn( 		        FiltrarIncremental, "Fecha", 		        each Date.From([fecha]), type date 		    ) 		 		in 		    AgregarFecha` |
 
 ## Actualización incremental
 
@@ -18,7 +19,6 @@
 |---|---|---|
 | `Fact_Diaria_met` | 18 años | últimos 7 días |
 | `Fact_Horaria_riesgo` | 5 años | últimos 7 días |
-| `Fact_Meteorologia` | 18 años | últimos 7 días |
 | `Fact_Subdiaria_met_aux` | 5 años | últimos 7 días |
 
 ## Relaciones
@@ -27,8 +27,6 @@
 |---|---|---|---|
 | `Fact_Diaria_met.Fecha` | `Calendario.Fecha` | Sí | una dirección |
 | `Fact_Diaria_met.estacionid` | `Estaciones_met.estacionid` | Sí | una dirección |
-| `Fact_Meteorologia.'Fecha 2'` | `Calendario.Fecha` | **No** (inactiva) | una dirección |
-| `Fact_Meteorologia.estacionid` | `Estaciones_met.estacionid` | **No** (inactiva) | una dirección |
 | `Fact_Subdiaria_met_aux.estacionid` | `Estaciones_met.estacionid` | Sí | una dirección |
 | `Fact_Subdiaria_met_aux.Fecha` | `Calendario.Fecha` | Sí | una dirección |
 | `Fact_Horaria_riesgo.Fecha` | `Calendario.Fecha` | Sí | una dirección |
@@ -57,6 +55,10 @@
 | `Semana_Anio_Etiqueta` | string |  | `Inicio_Semana` |  |
 | `Semana_Anio_Num` | int64 | 0 |  |  |
 | `Fecha_Corta` | string |  |  |  |
+| `Semana_Selector` | string |  | `Inicio_Semana` |  |
+| `Año_Selector` | string |  | `Año_Hidrologico` |  |
+| `Semana_Corta` | string |  | `Inicio_Semana` |  |
+| `Semana_Eje` | string |  | `Inicio_Semana` |  |
 
 **Jerarquía `Jerarquía hidrológica`:** Año hidrológico (`Año_Hidrologico`) → Semana (`Semana_Hidrologica`) → Fecha (`Fecha`)
 
@@ -65,7 +67,7 @@
 ```powerquery
 let
     FechaInicio = #date(2008, 1, 1),
-    FechaFin    = Date.From(DateTime.LocalNow()),
+    FechaFin    = Date.From(DateTimeZone.SwitchZone(DateTimeZone.UtcNow(), -6)),  // hora de Guatemala también en el servicio (UTC)
 
     MesInicioHidro = Date.Month(InicioAnioHidrologico),
     DiaInicioHidro = Date.Day(InicioAnioHidrologico),
@@ -163,7 +165,7 @@ let
         each
             Text.PadStart(Text.From([Semana_Hidrologica]), 2, "0") &
             " | " &
-            Text.From([Año_Hidrologico]) &
+            Text.From([Año_Hidrologico] - 1) & "-" & Text.From([Año_Hidrologico]) &
             " (" &
             Date.ToText([Inicio_Semana], "dd-MMM", "es-GT") &
             " - " &
@@ -201,9 +203,35 @@ let
     each Date.ToText([Fecha], "dd-MMM", "es-GT"), type text
 ),
 
+    // Selectores automáticos: la semana y el año hidrológico de hoy (hora de Guatemala)
+    // reciben una etiqueta fija para que los segmentadores avancen solos en cada actualización
+    InicioSemanaHoy = Date.AddDays(FechaFin, -Date.DayOfWeek(FechaFin, Day.Monday)),
+    InicioSemanaAnterior = Date.AddDays(InicioSemanaHoy, -7),
+    AnioHidroHoy = List.Max(Table.SelectRows(AgregaFechaCorta, each [Inicio_Semana] = InicioSemanaAnterior)[Año_Hidrologico]),
+    AgregaSemanaSelector = Table.AddColumn(
+        AgregaFechaCorta, "Semana_Selector",
+        each if [Inicio_Semana] = InicioSemanaHoy then "Semana en curso" else if [Inicio_Semana] = InicioSemanaAnterior then "Última semana completa" else [Semana_Etiqueta], type text
+    ),
+    AgregaAnioSelector = Table.AddColumn(
+        AgregaSemanaSelector, "Año_Selector",
+        each if [Año_Hidrologico] = AnioHidroHoy then "Año hidrológico actual" else Text.From([Año_Hidrologico] - 1) & "-" & Text.From([Año_Hidrologico]), type text
+    ),
+    // Etiqueta corta para ejes de gráficas semanales (única por semana)
+    AgregaSemanaCorta = Table.AddColumn(
+        AgregaAnioSelector, "Semana_Corta",
+        each "S" & Text.PadStart(Text.From([Semana_Hidrologica]), 2, "0") & " · " & Date.ToText([Inicio_Semana], "dd-MMM-yy", "es-GT"), type text
+    ),
+
+    // Número de semana para ejes: se ve solo el número; caracteres invisibles (U+200B, uno por año)
+    // lo hacen único por año para poder ordenarlo por Inicio_Semana
+    AgregaSemanaEje = Table.AddColumn(
+        AgregaSemanaCorta, "Semana_Eje",
+        each Text.From([Semana_Hidrologica]) & Text.Repeat("#(200B)", [Año_Hidrologico] - 2007), type text
+    ),
+
     // Ordenamiento
     #"Filas ordenadas" = Table.Sort(
-        AgregaFechaCorta, {{"Fecha", Order.Descending}}
+        AgregaSemanaEje, {{"Fecha", Order.Descending}}
     )
 
 in
@@ -280,6 +308,28 @@ in
 </details>
 
 
+### `Eje_Secundario`
+
+| Columna | Tipo | Formato | Ordenar por | Notas |
+|---|---|---|---|---|
+| `Opcion` | string |  | `Orden` |  |
+| `Orden` | int64 | 0 |  | oculta |
+
+<details><summary>Consulta de Power Query (M)</summary>
+
+```powerquery
+let
+    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+    Tabla = #table(type table [Opcion = text, Orden = Int64.Type], {
+	{"Humedad relativa", 1},
+	{"Temperatura nocturna", 2}
+    })
+in
+    Tabla
+```
+</details>
+
+
 ### `Estaciones_met`
 
 | Columna | Tipo | Formato | Ordenar por | Notas |
@@ -288,8 +338,8 @@ in
 | `estrato_id` | int64 | 0 |  |  |
 | `codigo` | string |  |  |  |
 | `finca` | string |  |  |  |
-| `latitud` | double |  |  |  |
-| `longitud` | double |  |  |  |
+| `latitud` | double | 0.00 |  |  |
+| `longitud` | double | 0.00 |  |  |
 | `altitud` | int64 | 0 |  |  |
 | `activa` | boolean | """TRUE"";""TRUE"";""FALSE""" |  |  |
 | `redmet` | boolean | """TRUE"";""TRUE"";""FALSE""" |  |  |
@@ -356,9 +406,11 @@ let
             {"activa",  type logical},
             {"redmet",  type logical}
         }
-    )
+    ),
+    // Solo las estaciones que se descargan (lista de TablaEstaciones_met)
+    SoloDescargadas = Table.SelectRows(#"Tipos correctos", each List.Contains(TablaEstaciones_met[estacionid], [estacionid]))
 in
-    #"Tipos correctos"
+    SoloDescargadas
 ```
 </details>
 
@@ -457,8 +509,11 @@ let
     ),
 
     // ── FILTRO INCREMENTAL PRIMERO ────────────────────────────────────
+    // Control de calidad de los resúmenes diarios (rangos de aplicar_qc de los scripts R)
+    QC = Table.TransformColumns(CambiarTipos, {{"Temp_Media", each if _ = null or (_ < -5 or _ > 50) then null else _, type number}, {"Temp_Min", each if _ = null or (_ < -5 or _ > 50) then null else _, type number}, {"Temp_Max", each if _ = null or (_ < -5 or _ > 50) then null else _, type number}, {"HR_Media", each if _ = null or (_ < 20 or _ > 100) then null else _, type number}, {"HR_Min", each if _ = null or (_ < 20 or _ > 100) then null else _, type number}, {"HR_Max", each if _ = null or (_ < 20 or _ > 100) then null else _, type number}, {"Precip_Total", each if _ = null or (_ < 0) then null else _, type number}, {"ETO_Total", each if _ = null or (_ < 0) then null else _, type number}, {"Rad_Total", each if _ = null or (_ < 0) then null else _, type number}, {"Viento_Media", each if _ = null or (_ < 0 or _ > 270) then null else _, type number}}),
+
     FiltrarIncremental = Table.SelectRows(
-        CambiarTipos,
+        QC,
         each
             [Fecha] >= Date.From(List.Max({RangeStart, #datetime(2008, 1, 1, 0, 0, 0)})) and
             [Fecha] < Date.From(RangeEnd)
@@ -493,7 +548,7 @@ let
         AgregarDiaSeco, "GDD_Base10",
         each
             let gdd = [Temp_Media] - 10
-            in if gdd > 0 then gdd else 0,
+            in if gdd = null then null else if gdd > 0 then gdd else 0,
         type number
     ),
 
@@ -502,7 +557,7 @@ let
         AgregarGDD_Base10, "GDD_Base15",
         each
             let gdd = [Temp_Media] - 15
-            in if gdd > 0 then gdd else 0,
+            in if gdd = null then null else if gdd > 0 then gdd else 0,
         type number
     ),
 
@@ -510,7 +565,8 @@ let
     AgregarGDD_Cana_ST = Table.AddColumn(
         AgregarGDD_Base15, "GDD_Cana_ST",
         each
-            if [Temp_Media] <= 10 then 0
+            if [Temp_Media] = null then null
+            else if [Temp_Media] <= 10 then 0
             else if [Temp_Media] >= 34 then 34 - 10
             else [Temp_Media] - 10,
         type number
@@ -520,7 +576,8 @@ let
     AgregarGDD_Banano_ST = Table.AddColumn(
         AgregarGDD_Cana_ST, "GDD_Banano_ST",
         each
-            if [Temp_Media] <= 15 then 0
+            if [Temp_Media] = null then null
+            else if [Temp_Media] <= 15 then 0
             else if [Temp_Media] >= 28 then 28 - 15
             else [Temp_Media] - 15,
         type number
@@ -530,7 +587,8 @@ let
     AgregarGDD_Aguacate_ST = Table.AddColumn(
         AgregarGDD_Banano_ST, "GDD_Aguacate_ST",
         each
-            if [Temp_Media] <= 10 then 0
+            if [Temp_Media] = null then null
+            else if [Temp_Media] <= 10 then 0
             else if [Temp_Media] >= 24 then 24 - 10
             else [Temp_Media] - 10,
         type number
@@ -540,7 +598,8 @@ let
     AgregarGDD_Palma_ST = Table.AddColumn(
         AgregarGDD_Aguacate_ST, "GDD_Palma_ST",
         each
-            if [Temp_Media] <= 15 then 0
+            if [Temp_Media] = null then null
+            else if [Temp_Media] <= 15 then 0
             else if [Temp_Media] >= 30 then 30 - 15
             else [Temp_Media] - 15,
         type number
@@ -550,7 +609,8 @@ let
     AgregarGDD_Maiz_ST = Table.AddColumn(
         AgregarGDD_Palma_ST, "GDD_Maiz_ST",
         each
-            if [Temp_Media] <= 10 then 0
+            if [Temp_Media] = null then null
+            else if [Temp_Media] <= 10 then 0
             else if [Temp_Media] >= 30 then 30 - 10
             else [Temp_Media] - 10,
         type number
@@ -626,8 +686,11 @@ let
     ),
 
     // ── FILTRO INCREMENTAL ────────────────────────────────────────────
+    // Control de calidad (rangos de aplicar_qc de los scripts R): fuera de rango = faltante
+    QC = Table.TransformColumns(CambiarTipos, {{"humedad_relativa", each if _ = null or (_ < 20 or _ > 100) then null else _, type number}, {"mojadura", each if _ = null or (_ < 0 or _ > 10) then null else _, type number}, {"precipitacion", each if _ = null or (_ < 0 or _ > 90) then null else _, type number}, {"radiacion", each if _ = null or (_ < 0 or _ > 1500) then null else _, type number}, {"temperatura", each if _ = null or (_ < -5 or _ > 50) then null else _, type number}, {"velocidad_viento", each if _ = null or (_ < 0 or _ > 270) then null else _, type number}, {"direccion_viento", each if _ = null then null else if _ = 360 then 0 else if _ < 0 or _ > 360 then null else _, type number}}),
+
     FiltrarIncremental = Table.SelectRows(
-        CambiarTipos,
+        QC,
         each
             [fecha] >= List.Max({RangeStart, #datetime(2008, 1, 1, 0, 0, 0)}) and
             [fecha] < RangeEnd
@@ -756,91 +819,6 @@ in
 </details>
 
 
-### `Fact_Meteorologia` — actualización incremental
-
-| Columna | Tipo | Formato | Ordenar por | Notas |
-|---|---|---|---|---|
-| `estacionid` | int64 | 0 |  |  |
-| `fecha` | dateTime | General Date |  |  |
-| `temperatura` | double |  |  |  |
-| `radiacion` | double |  |  |  |
-| `humedad_relativa` | double | 0 |  |  |
-| `precipitacion` | double |  |  |  |
-| `velocidad_viento` | double |  |  |  |
-| `presion_atmosferica` | double |  |  |  |
-| `mojadura` | double | 0 |  |  |
-| `direccion_viento` | double |  |  |  |
-| `eto` | double |  |  |  |
-| `indice_calor` | double |  |  |  |
-| `updated_at` | dateTime | General Date |  |  |
-| `created_at` | dateTime | General Date |  |  |
-| `Fecha 2` | dateTime | Long Date |  |  |
-
-<details><summary>Consulta de Power Query (M)</summary>
-
-```powerquery
-let
-    Fuente = TablaEstaciones_met,
-
-    EjecutarAPI = Table.AddColumn(
-        Fuente,
-        "Lecturas",
-        each fxLecturasEstacion_met([estacionid], RangeStart, RangeEnd)
-    ),
-
-    ExpandirLista = Table.ExpandListColumn(EjecutarAPI, "Lecturas"),
-
-    ExpandirCampos = Table.ExpandRecordColumn(
-        ExpandirLista,
-        "Lecturas",
-        {
-            "fecha", "temperatura", "radiacion",
-            "humedad_relativa", "precipitacion", "velocidad_viento",
-            "presion_atmosferica", "mojadura", "direccion_viento",
-            "eto", "indice_calor", "updated_at", "created_at"
-        }
-    ),
-
-    CambiarTipos = Table.TransformColumnTypes(
-        ExpandirCampos,
-        {
-            {"estacionid",          Int64.Type},
-            {"fecha",               type datetime},
-            {"temperatura",         type number},
-            {"radiacion",           type number},
-            {"humedad_relativa",    type number},
-            {"precipitacion",       type number},
-            {"velocidad_viento",    type number},
-            {"presion_atmosferica", type number},
-            {"mojadura",            type number},
-            {"direccion_viento",    type number},
-            {"eto",                 type number},
-            {"indice_calor",        type number},
-            {"updated_at",          type datetime},
-            {"created_at",          type datetime}
-        }
-    ),
-
-    // ── FILTRO INCREMENTAL PRIMERO ────────────────────────────────────
-    FiltrarIncremental = Table.SelectRows(
-        CambiarTipos,
-        each
-            [fecha] >= List.Max({RangeStart, #datetime(2008, 1, 1, 0, 0, 0)}) and
-            [fecha] < RangeEnd
-    ),
-
-    // Columna Fecha tipo date para relacionar con Calendario
-    AgregarFecha = Table.AddColumn(
-        FiltrarIncremental, "Fecha",
-        each Date.From([fecha]), type date
-    )
-
-in
-    AgregarFecha
-```
-</details>
-
-
 ### `Fact_Subdiaria_met_aux` — actualización incremental
 
 | Columna | Tipo | Formato | Ordenar por | Notas |
@@ -935,8 +913,11 @@ let
         }
     ),
 
+    // Control de calidad (rangos de aplicar_qc de los scripts R): fuera de rango = faltante
+    QC = Table.TransformColumns(CambiarTipos, {{"eto", each if _ = null or (_ < 0 or _ > 90) then null else _, type number}, {"humedad_relativa", each if _ = null or (_ < 20 or _ > 100) then null else _, type number}, {"mojadura", each if _ = null or (_ < 0 or _ > 10) then null else _, type number}, {"precipitacion", each if _ = null or (_ < 0 or _ > 90) then null else _, type number}, {"radiacion", each if _ = null or (_ < 0 or _ > 1500) then null else _, type number}, {"temperatura", each if _ = null or (_ < -5 or _ > 50) then null else _, type number}, {"velocidad_viento", each if _ = null or (_ < 0 or _ > 270) then null else _, type number}, {"direccion_viento", each if _ = null then null else if _ = 360 then 0 else if _ < 0 or _ > 360 then null else _, type number}}),
+
     FiltrarIncremental = Table.SelectRows(
-        CambiarTipos,
+        QC,
         each
             [fecha] >= List.Max({RangeStart, #datetime(2008, 1, 1, 0, 0, 0)}) and
             [fecha] < RangeEnd
@@ -1514,6 +1495,123 @@ in
 </details>
 
 
+### `Leyenda_Mapa_Calor`
+
+| Columna | Tipo | Formato | Ordenar por | Notas |
+|---|---|---|---|---|
+| `Vista` | string |  |  |  |
+| `Grupo` | string |  |  |  |
+| `Orden` | int64 | 0 |  | oculta |
+| `Rango` | string |  | `Orden` |  |
+| `Color` | string |  |  |  |
+
+<details><summary>Consulta de Power Query (M)</summary>
+
+```powerquery
+let
+    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+    Tabla = #table(type table [Vista = text, Grupo = text, Orden = Int64.Type, Rango = text, Color = text], {
+	{"Riesgos", "", 1, "0 %", "#FFFFFF"},
+	{"Riesgos", "", 2, "< 25 %", "#F9E79F"},
+	{"Riesgos", "", 3, "25 – 50 %", "#F39C12"},
+	{"Riesgos", "", 4, "≥ 50 %", "#C0392B"},
+	{"Temperatura del aire", "", 1, "< 18 °C", "#4575B4"},
+	{"Temperatura del aire", "", 2, "18 – 24 °C", "#91BFDB"},
+	{"Temperatura del aire", "", 3, "24 – 30 °C", "#FFFFBF"},
+	{"Temperatura del aire", "", 4, "30 – 34 °C", "#FC8D59"},
+	{"Temperatura del aire", "", 5, "≥ 34 °C", "#D73027"},
+	{"Humedad relativa", "", 1, "< 60 %", "#F7FBFF"},
+	{"Humedad relativa", "", 2, "60 – 80 %", "#C6DBEF"},
+	{"Humedad relativa", "", 3, "80 – 90 %", "#6BAED6"},
+	{"Humedad relativa", "", 4, "≥ 90 %", "#2171B5"},
+	{"Déficit de presión de vapor", "", 1, "< 0.4 · aire muy húmedo (riesgo de enfermedades) kPa", "#6BAED6"},
+	{"Déficit de presión de vapor", "", 2, "0.4 – 1.2 · favorable kPa", "#A1D99B"},
+	{"Déficit de presión de vapor", "", 3, "1.2 – 1.6 · inicio de estrés kPa", "#FED976"},
+	{"Déficit de presión de vapor", "", 4, "≥ 1.6 · estrés hídrico kPa", "#F03B20"},
+	{"Sensación térmica (índice de calor)", "", 1, "< 27 °C", "#FFFFFF"},
+	{"Sensación térmica (índice de calor)", "", 2, "27 – 32 precaución °C", "#FFFFB2"},
+	{"Sensación térmica (índice de calor)", "", 3, "32 – 41 prec. extrema °C", "#FECC5C"},
+	{"Sensación térmica (índice de calor)", "", 4, "41 – 54 peligro °C", "#FD8D3C"},
+	{"Sensación térmica (índice de calor)", "", 5, "≥ 54 °C", "#E31A1C"},
+	{"Mojadura de la hoja", "", 1, "ninguna estación con la hoja mojada", "#FFFFFF"},
+	{"Mojadura de la hoja", "", 2, "menos de la mitad de las estaciones", "#9ECAE1"},
+	{"Mojadura de la hoja", "", 3, "la mitad o más de las estaciones", "#3182BD"},
+	{"Lluvia", "", 1, "0 mm/h", "#FFFFFF"},
+	{"Lluvia", "", 2, "< 1 mm/h", "#DEEBF7"},
+	{"Lluvia", "", 3, "1 – 5 mm/h", "#9ECAE1"},
+	{"Lluvia", "", 4, "5 – 10 mm/h", "#4292C6"},
+	{"Lluvia", "", 5, "≥ 10 mm/h", "#08519C"},
+	{"Velocidad del viento", "", 1, "< 1.8 calma km/h", "#FFFFFF"},
+	{"Velocidad del viento", "", 2, "1.8 – 10 km/h", "#E5F5E0"},
+	{"Velocidad del viento", "", 3, "10 – 20 km/h", "#A1D99B"},
+	{"Velocidad del viento", "", 4, "20 – 30 km/h", "#41AB5D"},
+	{"Velocidad del viento", "", 5, "≥ 30 km/h", "#006D2C"},
+	{"Irradiancia", "", 1, "≤ 40 sin luz W/m²", "#F0F0F0"},
+	{"Irradiancia", "", 2, "40 – 300 W/m²", "#FFF7BC"},
+	{"Irradiancia", "", 3, "300 – 600 W/m²", "#FEC44F"},
+	{"Irradiancia", "", 4, "600 – 800 W/m²", "#FE9929"},
+	{"Irradiancia", "", 5, "≥ 800 W/m²", "#D95F0E"}
+    })
+in
+    Tabla
+```
+</details>
+
+
+### `Leyenda_Mapa_Riesgo`
+
+| Columna | Tipo | Formato | Ordenar por | Notas |
+|---|---|---|---|---|
+| `Modo` | string |  |  |  |
+| `Orden` | int64 | 0 |  | oculta |
+| `Rango` | string |  | `Orden` |  |
+| `Color` | string |  |  |  |
+
+<details><summary>Consulta de Power Query (M)</summary>
+
+```powerquery
+let
+    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+    Tabla = #table(type table [Modo = text, Orden = Int64.Type, Rango = text, Color = text], {
+	{"Conteo", 1, "Sin riesgos en alerta", "#C6DBEF"},
+	{"Conteo", 2, "1 riesgo en alerta", "#6BAED6"},
+	{"Conteo", 3, "2 a 3 riesgos en alerta", "#2171B5"},
+	{"Conteo", 4, "4 o más riesgos en alerta", "#08306B"},
+	{"Conteo", 5, "Sin datos", "#FFFFFF"},
+	{"Riesgo", 6, "Alerta", "#D64550"},
+	{"Riesgo", 7, "Precaución", "#F2B134"},
+	{"Riesgo", 8, "Normal", "#3BA272"},
+	{"Riesgo", 9, "Sin datos ", "#B0B0B0"}
+    })
+in
+    Tabla
+```
+</details>
+
+
+### `Periodo_Vista`
+
+| Columna | Tipo | Formato | Ordenar por | Notas |
+|---|---|---|---|---|
+| `Vista` | string |  | `Orden` |  |
+| `Orden` | int64 | 0 |  | oculta |
+
+<details><summary>Consulta de Power Query (M)</summary>
+
+```powerquery
+let
+    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+    Tabla = #table(type table [Vista = text, Orden = Int64.Type], {
+	{"Día", 1},
+	{"Noche", 2},
+	{"Ambos", 3}
+    })
+in
+    Tabla
+```
+</details>
+
+
 ### `Periodos_Dia`
 
 | Columna | Tipo | Formato | Ordenar por | Notas |
@@ -1548,6 +1646,37 @@ let
     )
 in
     Tipos
+```
+</details>
+
+
+### `Resumen_Variables`
+
+| Columna | Tipo | Formato | Ordenar por | Notas |
+|---|---|---|---|---|
+| `Variable` | string |  | `Orden` |  |
+| `Orden` | int64 | 0 |  | oculta |
+| `Unidad` | string |  |  |  |
+| `Formato` | string |  |  | oculta |
+
+<details><summary>Consulta de Power Query (M)</summary>
+
+```powerquery
+let
+    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+    Tabla = #table(type table [Variable = text, Orden = Int64.Type, Unidad = text, Formato = text], {
+	{"Lluvia", 1, "mm", "0.0"},
+	{"Evapotranspiración (ETo)", 2, "mm", "0.0"},
+	{"Balance hídrico", 3, "mm", "+0.0;-0.0;0.0"},
+	{"Temperatura media", 4, "°C", "0.0"},
+	{"Temperatura máxima", 5, "°C", "0.0"},
+	{"Temperatura mínima", 6, "°C", "0.0"},
+	{"Radiación (media diaria)", 7, "MJ/m²/día", "0.0"},
+	{"Horas con luz (media diaria)", 8, "h", "0.0"},
+	{"Grados día (media diaria)", 9, "°C día", "0.0"}
+    })
+in
+    Tabla
 ```
 </details>
 
@@ -1665,6 +1794,8 @@ in
 | `Semana_Hidrologica` | int64 | 0 |  |  |
 | `Año_Hidrologico` | int64 | 0 |  |  |
 | `Inicio_Semana` | dateTime | Long Date |  |  |
+| `Semana_Corta` | string |  | `Inicio_Semana` |  |
+| `Semana_Eje` | string |  | `Inicio_Semana` |  |
 
 <details><summary>Consulta de Power Query (M)</summary>
 
@@ -1677,7 +1808,9 @@ let
             "Semana_Etiqueta",
             "Semana_Hidrologica",
             "Año_Hidrologico",
-            "Inicio_Semana"
+            "Inicio_Semana",
+            "Semana_Corta",
+            "Semana_Eje"
         }
     ),
     SinDuplicados = Table.Distinct(Seleccion),
@@ -1687,6 +1820,46 @@ let
     )
 in
     Ordenado
+```
+</details>
+
+
+### `Series_DiaNoche`
+
+| Columna | Tipo | Formato | Ordenar por | Notas |
+|---|---|---|---|---|
+| `ID` | string |  |  | oculta |
+| `Grafica` | string |  |  |  |
+| `Periodo` | string |  |  |  |
+| `Serie` | string |  | `Orden` |  |
+| `Orden` | int64 | 0 |  | oculta |
+
+<details><summary>Consulta de Power Query (M)</summary>
+
+```powerquery
+let
+    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+    Tabla = #table(type table [ID = text, Grafica = text, Periodo = text, Serie = text, Orden = Int64.Type], {
+	{"DPV_MED_D", "Estrés atmosférico", "Día", "DPV medio diurno", 1},
+	{"DPV_MAX_D", "Estrés atmosférico", "Día", "DPV máx. diurno", 2},
+	{"DPV_MED_N", "Estrés atmosférico", "Noche", "DPV medio nocturno", 3},
+	{"HR_MIN", "Estrés atmosférico", "24 h", "HR mínima", 4},
+	{"HR_MED", "Estrés atmosférico", "24 h", "HR media", 5},
+	{"T_NOC", "Estrés atmosférico", "Noche", "T media nocturna", 6},
+	{"T_MIN_NOC", "Estrés atmosférico", "Noche", "T mínima nocturna", 7},
+	{"MOJ_D", "Estrés vegetal", "Día", "Mojadura diurna", 8},
+	{"MOJ_N", "Estrés vegetal", "Noche", "Mojadura nocturna", 9},
+	{"LUZ_D", "Estrés vegetal", "Día", "Horas con luz", 10},
+	{"ESTRES_D", "Estrés vegetal", "Día", "Horas de estrés térmico", 11},
+	{"IRR_MAX", "Estrés vegetal", "Día", "Irradiancia máx. diurna", 12},
+	{"IRR_LUZ", "Estrés vegetal", "Día", "Irradiancia media de luz", 13},
+	{"V_MAX_D", "Viento", "Día", "Viento máx. diurno", 14},
+	{"V_MAX_N", "Viento", "Noche", "Viento máx. nocturno", 15},
+	{"V_MED_D", "Viento", "Día", "Viento medio diurno", 16},
+	{"V_MED_N", "Viento", "Noche", "Viento medio nocturno", 17}
+    })
+in
+    Tabla
 ```
 </details>
 
@@ -1702,8 +1875,11 @@ in
 ```powerquery
 let
       Estaciones = {
+       // Guatemala
        1,3,4,5,6,8,9,10,11,13,14,15,17,19,20,21,22,23,24,25,26,
-        27,28,29,30,31,33,34,36,37,67,73,74,75,94
+        27,28,29,30,31,33,34,36,37,67,73,74,75,94,
+       // El Salvador (CASSA): Central Izalco, COPAL, Chaparrastique, Agua Santa, El Carmen, San Clemente, Miravalle, El Cipitillo, San Ildefonso
+        38,39,40,45,46,47,78,79,80
      },
 
     //    Estaciones = {
@@ -1712,6 +1888,30 @@ let
 
     
     Tabla = Table.FromList(Estaciones, Splitter.SplitByNothing(), {"estacionid"})
+in
+    Tabla
+```
+</details>
+
+
+### `Ventana_Semanas`
+
+| Columna | Tipo | Formato | Ordenar por | Notas |
+|---|---|---|---|---|
+| `Ventana` | string |  | `Semanas` |  |
+| `Semanas` | int64 | 0 |  | oculta |
+
+<details><summary>Consulta de Power Query (M)</summary>
+
+```powerquery
+let
+    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+    Tabla = #table(type table [Ventana = text, Semanas = Int64.Type], {
+	{"4 semanas", 4},
+	{"8 semanas", 8},
+	{"12 semanas", 12},
+	{"Desde el inicio del año", 0}
+    })
 in
     Tabla
 ```
@@ -1734,14 +1934,14 @@ let
     // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
     Tabla = #table(type table [Vista = text, Orden = Int64.Type, Unidad = text, Leyenda = text], {
 	{"Riesgos", 1, "% de horas-estación", "blanco 0 · amarillo < 25 % · naranja 25–50 % · rojo ≥ 50 %"},
-	{"Temperatura", 2, "°C", "azul < 18 · celeste 18–24 · amarillo 24–30 · naranja 30–34 · rojo ≥ 34"},
+	{"Temperatura del aire", 2, "°C", "azul < 18 · celeste 18–24 · amarillo 24–30 · naranja 30–34 · rojo ≥ 34"},
 	{"Humedad relativa", 3, "%", "blanco < 60 · celeste 60–80 · azul 80–90 · azul oscuro ≥ 90"},
 	{"Déficit de presión de vapor", 4, "kPa", "azul < 0.4 (muy húmedo) · verde 0.4–1.2 · amarillo 1.2–1.6 · rojo ≥ 1.6 (estrés)"},
-	{"Sensación térmica", 5, "°C", "blanco < 27 · amarillo 27–32 (precaución) · naranja claro 32–41 (precaución extrema) · naranja 41–54 (peligro) · rojo ≥ 54"},
-	{"Mojadura", 6, "% de horas-estación mojadas", "blanco 0 · celeste < 50 % · azul ≥ 50 %"},
+	{"Sensación térmica (índice de calor)", 5, "°C", "blanco < 27 · amarillo 27–32 (precaución) · naranja claro 32–41 (precaución extrema) · naranja 41–54 (peligro) · rojo ≥ 54"},
+	{"Mojadura de la hoja", 6, "% de estaciones con la hoja mojada en esa hora", "blanco 0 · celeste < 50 % · azul ≥ 50 %"},
 	{"Lluvia", 7, "mm/h", "blanco 0 · celeste < 1 · azul claro 1–5 · azul 5–10 · azul oscuro ≥ 10"},
-	{"Viento", 8, "km/h", "blanco calma < 1.8 · verde claro 1.8–10 · verde 10–20 · verde medio 20–30 · verde oscuro ≥ 30"},
-	{"Radiación", 9, "W/m²", "gris ≤ 40 (sin luz) · amarillo claro 40–300 · amarillo 300–600 · naranja 600–800 · naranja oscuro ≥ 800"}
+	{"Velocidad del viento", 8, "km/h", "blanco calma < 1.8 · verde claro 1.8–10 · verde 10–20 · verde medio 20–30 · verde oscuro ≥ 30"},
+	{"Irradiancia", 9, "W/m²", "gris ≤ 40 (sin luz) · amarillo claro 40–300 · amarillo 300–600 · naranja 600–800 · naranja oscuro ≥ 800"}
     })
 in
     Tabla

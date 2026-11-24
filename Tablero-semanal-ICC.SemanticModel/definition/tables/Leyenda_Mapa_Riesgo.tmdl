@@ -1,0 +1,59 @@
+table Leyenda_Mapa_Riesgo
+	lineageTag: 8d0b4a25-6e3c-538e-b53b-cb411eeb52c3
+
+	column Modo
+		dataType: string
+		lineageTag: 2ba974ee-e5df-5f08-b87a-699533ed6586
+		summarizeBy: none
+		sourceColumn: Modo
+
+		annotation SummarizationSetBy = User
+
+	column Orden
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 2bdbb65a-68db-5445-8e5f-401d07bcee4e
+		summarizeBy: none
+		sourceColumn: Orden
+
+		annotation SummarizationSetBy = User
+
+	column Rango
+		dataType: string
+		lineageTag: b9d6a1f6-b2e3-5f67-b00b-8f02f348fa6b
+		summarizeBy: none
+		sourceColumn: Rango
+		sortByColumn: Orden
+
+		annotation SummarizationSetBy = User
+
+	column Color
+		dataType: string
+		lineageTag: 2f692c00-6c42-5a62-8bfd-7ea1bb41ded3
+		summarizeBy: none
+		sourceColumn: Color
+
+		annotation SummarizationSetBy = User
+
+	partition Leyenda_Mapa_Riesgo = m
+		mode: import
+		source =
+				let
+				    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+				    Tabla = #table(type table [Modo = text, Orden = Int64.Type, Rango = text, Color = text], {
+					{"Conteo", 1, "Sin riesgos en alerta", "#C6DBEF"},
+					{"Conteo", 2, "1 riesgo en alerta", "#6BAED6"},
+					{"Conteo", 3, "2 a 3 riesgos en alerta", "#2171B5"},
+					{"Conteo", 4, "4 o más riesgos en alerta", "#08306B"},
+					{"Conteo", 5, "Sin datos", "#FFFFFF"},
+					{"Riesgo", 6, "Alerta", "#D64550"},
+					{"Riesgo", 7, "Precaución", "#F2B134"},
+					{"Riesgo", 8, "Normal", "#3BA272"},
+					{"Riesgo", 9, "Sin datos ", "#B0B0B0"}
+				    })
+				in
+				    Tabla
+
+	annotation PBI_ResultType = Table
+

@@ -1,6 +1,6 @@
 # Catálogo de riesgos por cultivo
 
-> Generado por `tools/generar_catalogo_riesgos.py` el 2026-11-03 desde [`config/riesgos_cultivo.csv`](../config/riesgos_cultivo.csv). **54 riesgos**: 42 a incluir, 12 pendientes; 2 validados. No editar a mano: editar el CSV y regenerar.
+> Generado por `tools/generar_catalogo_riesgos.py` el 2026-11-24 desde [`config/riesgos_cultivo.csv`](../config/riesgos_cultivo.csv). **54 riesgos**: 42 a incluir, 12 pendientes; 2 validados. No editar a mano: editar el CSV y regenerar.
 
 ## Cómo leer este catálogo
 

@@ -14,7 +14,7 @@ o un comentario // en la primera línea de su expresión, o una entrada en FIJAS
 import glob, json, os, re, datetime
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PROY = "2026_dashboard_exp1"
+PROY = "Tablero-semanal-ICC"
 DEF = os.path.join(RAIZ, f"{PROY}.SemanticModel", "definition")
 PAGS = os.path.join(RAIZ, f"{PROY}.Report", "definition", "pages")
 DOCS = os.path.join(RAIZ, "docs")

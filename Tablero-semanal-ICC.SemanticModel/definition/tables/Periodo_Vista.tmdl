@@ -1,0 +1,37 @@
+table Periodo_Vista
+	lineageTag: ac4da325-9c07-51ae-b107-4c8ab5e44206
+
+	column Vista
+		dataType: string
+		lineageTag: f47faad7-2940-5dfa-b717-5c763de961dd
+		summarizeBy: none
+		sourceColumn: Vista
+		sortByColumn: Orden
+
+		annotation SummarizationSetBy = User
+
+	column Orden
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 95fef017-ebbe-5738-bc3e-081e088f262d
+		summarizeBy: none
+		sourceColumn: Orden
+
+		annotation SummarizationSetBy = User
+
+	partition Periodo_Vista = m
+		mode: import
+		source =
+				let
+				    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+				    Tabla = #table(type table [Vista = text, Orden = Int64.Type], {
+					{"Día", 1},
+					{"Noche", 2},
+					{"Ambos", 3}
+				    })
+				in
+				    Tabla
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,101 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "cc6fa8405c8f5248b825",
+  "position": {
+    "x": 9.9903938520653224,
+    "y": 502.01729106628238,
+    "z": 2000,
+    "height": 29.971181556195965,
+    "width": 690.5859750240154,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Balance (mm):  ",
+                    "textStyle": {
+                      "fontSize": "10pt"
+                    }
+                  },
+                  {
+                    "value": "■ ",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "color": "#8c510a"
+                    }
+                  },
+                  {
+                    "value": "≤ −30    ",
+                    "textStyle": {
+                      "fontSize": "10pt"
+                    }
+                  },
+                  {
+                    "value": "■ ",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "color": "#d8b365"
+                    }
+                  },
+                  {
+                    "value": "−30 a −10    ",
+                    "textStyle": {
+                      "fontSize": "10pt"
+                    }
+                  },
+                  {
+                    "value": "■ ",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "color": "#f5f5f5"
+                    }
+                  },
+                  {
+                    "value": "−10 a 10    ",
+                    "textStyle": {
+                      "fontSize": "10pt"
+                    }
+                  },
+                  {
+                    "value": "■ ",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "color": "#5ab4ac"
+                    }
+                  },
+                  {
+                    "value": "10 a 30    ",
+                    "textStyle": {
+                      "fontSize": "10pt"
+                    }
+                  },
+                  {
+                    "value": "■ ",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "color": "#01665e"
+                    }
+                  },
+                  {
+                    "value": "≥ 30 ",
+                    "textStyle": {
+                      "fontSize": "10pt"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

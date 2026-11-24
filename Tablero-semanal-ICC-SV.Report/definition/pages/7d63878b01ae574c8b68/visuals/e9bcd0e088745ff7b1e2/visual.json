@@ -1,0 +1,346 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "e9bcd0e088745ff7b1e2",
+  "position": {
+    "x": 7.2452229299363058,
+    "y": 358.12101910828028,
+    "z": 11000,
+    "height": 487.5,
+    "width": 1280.3343949044586,
+    "tabOrder": 11000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Riesgos_Cultivo"
+                    }
+                  },
+                  "Property": "Riesgo"
+                }
+              },
+              "queryRef": "Riesgos_Cultivo.Riesgo",
+              "nativeQueryRef": "Riesgo",
+              "displayName": "Riesgo"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Riesgos"
+                    }
+                  },
+                  "Property": "Riesgo_Etiqueta"
+                }
+              },
+              "queryRef": "_Riesgos.Riesgo_Etiqueta",
+              "nativeQueryRef": "Situación semanal",
+              "displayName": "Situación semanal"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Riesgos_Cultivo"
+                    }
+                  },
+                  "Property": "Umbral_Amarillo"
+                }
+              },
+              "queryRef": "Riesgos_Cultivo.Umbral_Amarillo",
+              "nativeQueryRef": "Precaución desde",
+              "displayName": "Precaución desde"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Riesgos_Cultivo"
+                    }
+                  },
+                  "Property": "Umbral_Rojo"
+                }
+              },
+              "queryRef": "Riesgos_Cultivo.Umbral_Rojo",
+              "nativeQueryRef": "Alerta desde",
+              "displayName": "Alerta desde"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Riesgos_Cultivo"
+                    }
+                  },
+                  "Property": "Condicion"
+                }
+              },
+              "queryRef": "Riesgos_Cultivo.Condicion",
+              "nativeQueryRef": "Condición evaluada",
+              "displayName": "Condición evaluada"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Riesgos_Cultivo"
+                    }
+                  },
+                  "Property": "Aplicacion"
+                }
+              },
+              "queryRef": "Riesgos_Cultivo.Aplicacion",
+              "nativeQueryRef": "Aplica",
+              "displayName": "Aplica"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Riesgos_Cultivo"
+                    }
+                  },
+                  "Property": "Confianza"
+                }
+              },
+              "queryRef": "Riesgos_Cultivo.Confianza",
+              "nativeQueryRef": "Confianza",
+              "displayName": "Confianza"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Riesgos_Cultivo"
+                  }
+                },
+                "Property": "Riesgo"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "170D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Riesgos_Cultivo.Riesgo"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "130D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_Riesgos.Riesgo_Etiqueta"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "87.74418756426806D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Riesgos_Cultivo.Umbral_Amarillo"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "70.48837015437572D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Riesgos_Cultivo.Umbral_Rojo"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "440D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Riesgos_Cultivo.Condicion"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "190D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Riesgos_Cultivo.Aplicacion"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "90D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Riesgos_Cultivo.Confianza"
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "backColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Riesgos"
+                        }
+                      },
+                      "Property": "Riesgo_Color"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 1
+                }
+              }
+            ],
+            "metadata": "_Riesgos.Riesgo_Etiqueta"
+          }
+        }
+      ],
+      "total": [
+        {
+          "properties": {
+            "totals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Semáforo de riesgos (verde normal · amarillo precaución · rojo alerta · gris sin datos)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -1,0 +1,98 @@
+table Leyenda_Mapa_Calor
+	lineageTag: 59d349dd-719b-5013-888b-9d7729ea57cb
+
+	column Vista
+		dataType: string
+		lineageTag: f35b14d4-61f9-50f8-97d5-23450a84c724
+		summarizeBy: none
+		sourceColumn: Vista
+
+		annotation SummarizationSetBy = User
+
+	column Grupo
+		dataType: string
+		lineageTag: 77a33a7f-3757-5c99-8ce9-d97d6726b7ac
+		summarizeBy: none
+		sourceColumn: Grupo
+
+		annotation SummarizationSetBy = User
+
+	column Orden
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: f9d11cb1-8664-5ba4-aa69-b1eb0aca7d55
+		summarizeBy: none
+		sourceColumn: Orden
+
+		annotation SummarizationSetBy = User
+
+	column Rango
+		dataType: string
+		lineageTag: bb144327-a53d-5fa5-a917-d5544de66698
+		summarizeBy: none
+		sourceColumn: Rango
+		sortByColumn: Orden
+
+		annotation SummarizationSetBy = User
+
+	column Color
+		dataType: string
+		lineageTag: 089ba189-685a-516e-acc4-f184d2071391
+		summarizeBy: none
+		sourceColumn: Color
+
+		annotation SummarizationSetBy = User
+
+	partition Leyenda_Mapa_Calor = m
+		mode: import
+		source =
+				let
+				    // Generado por tools/generar_riesgos_modelo.py desde config/riesgos_cultivo.csv. No editar a mano.
+				    Tabla = #table(type table [Vista = text, Grupo = text, Orden = Int64.Type, Rango = text, Color = text], {
+					{"Riesgos", "", 1, "0 %", "#FFFFFF"},
+					{"Riesgos", "", 2, "< 25 %", "#F9E79F"},
+					{"Riesgos", "", 3, "25 – 50 %", "#F39C12"},
+					{"Riesgos", "", 4, "≥ 50 %", "#C0392B"},
+					{"Temperatura del aire", "", 1, "< 18 °C", "#4575B4"},
+					{"Temperatura del aire", "", 2, "18 – 24 °C", "#91BFDB"},
+					{"Temperatura del aire", "", 3, "24 – 30 °C", "#FFFFBF"},
+					{"Temperatura del aire", "", 4, "30 – 34 °C", "#FC8D59"},
+					{"Temperatura del aire", "", 5, "≥ 34 °C", "#D73027"},
+					{"Humedad relativa", "", 1, "< 60 %", "#F7FBFF"},
+					{"Humedad relativa", "", 2, "60 – 80 %", "#C6DBEF"},
+					{"Humedad relativa", "", 3, "80 – 90 %", "#6BAED6"},
+					{"Humedad relativa", "", 4, "≥ 90 %", "#2171B5"},
+					{"Déficit de presión de vapor", "", 1, "< 0.4 · aire muy húmedo (riesgo de enfermedades) kPa", "#6BAED6"},
+					{"Déficit de presión de vapor", "", 2, "0.4 – 1.2 · favorable kPa", "#A1D99B"},
+					{"Déficit de presión de vapor", "", 3, "1.2 – 1.6 · inicio de estrés kPa", "#FED976"},
+					{"Déficit de presión de vapor", "", 4, "≥ 1.6 · estrés hídrico kPa", "#F03B20"},
+					{"Sensación térmica (índice de calor)", "", 1, "< 27 °C", "#FFFFFF"},
+					{"Sensación térmica (índice de calor)", "", 2, "27 – 32 precaución °C", "#FFFFB2"},
+					{"Sensación térmica (índice de calor)", "", 3, "32 – 41 prec. extrema °C", "#FECC5C"},
+					{"Sensación térmica (índice de calor)", "", 4, "41 – 54 peligro °C", "#FD8D3C"},
+					{"Sensación térmica (índice de calor)", "", 5, "≥ 54 °C", "#E31A1C"},
+					{"Mojadura de la hoja", "", 1, "ninguna estación con la hoja mojada", "#FFFFFF"},
+					{"Mojadura de la hoja", "", 2, "menos de la mitad de las estaciones", "#9ECAE1"},
+					{"Mojadura de la hoja", "", 3, "la mitad o más de las estaciones", "#3182BD"},
+					{"Lluvia", "", 1, "0 mm/h", "#FFFFFF"},
+					{"Lluvia", "", 2, "< 1 mm/h", "#DEEBF7"},
+					{"Lluvia", "", 3, "1 – 5 mm/h", "#9ECAE1"},
+					{"Lluvia", "", 4, "5 – 10 mm/h", "#4292C6"},
+					{"Lluvia", "", 5, "≥ 10 mm/h", "#08519C"},
+					{"Velocidad del viento", "", 1, "< 1.8 calma km/h", "#FFFFFF"},
+					{"Velocidad del viento", "", 2, "1.8 – 10 km/h", "#E5F5E0"},
+					{"Velocidad del viento", "", 3, "10 – 20 km/h", "#A1D99B"},
+					{"Velocidad del viento", "", 4, "20 – 30 km/h", "#41AB5D"},
+					{"Velocidad del viento", "", 5, "≥ 30 km/h", "#006D2C"},
+					{"Irradiancia", "", 1, "≤ 40 sin luz W/m²", "#F0F0F0"},
+					{"Irradiancia", "", 2, "40 – 300 W/m²", "#FFF7BC"},
+					{"Irradiancia", "", 3, "300 – 600 W/m²", "#FEC44F"},
+					{"Irradiancia", "", 4, "600 – 800 W/m²", "#FE9929"},
+					{"Irradiancia", "", 5, "≥ 800 W/m²", "#D95F0E"}
+				    })
+				in
+				    Tabla
+
+	annotation PBI_ResultType = Table
+

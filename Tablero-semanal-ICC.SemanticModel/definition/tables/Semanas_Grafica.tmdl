@@ -1,0 +1,89 @@
+table Semanas_Grafica
+	lineageTag: bd780575-a0e3-432a-839f-2246b5ff47ef
+
+	column Semana_Etiqueta
+		dataType: string
+		lineageTag: 70b89e11-c4fd-4e99-93bd-42baf77f30dc
+		summarizeBy: none
+		sourceColumn: Semana_Etiqueta
+		sortByColumn: Inicio_Semana
+
+		annotation SummarizationSetBy = Automatic
+
+	column Semana_Hidrologica
+		dataType: int64
+		formatString: 0
+		lineageTag: 461348de-f0cf-472a-b6fe-f7399ab01e8c
+		summarizeBy: sum
+		sourceColumn: Semana_Hidrologica
+
+		annotation SummarizationSetBy = Automatic
+
+	column Año_Hidrologico
+		dataType: int64
+		formatString: 0
+		lineageTag: 5e00173e-194c-4667-b78a-d5bf9d141bb5
+		summarizeBy: sum
+		sourceColumn: Año_Hidrologico
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Inicio_Semana
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 28bedf8a-5dcc-438d-a4d3-fe3d08512c7d
+		summarizeBy: none
+		sourceColumn: Inicio_Semana
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Semana_Corta
+		dataType: string
+		lineageTag: 88211622-8926-5521-ae9c-4044206e1c34
+		summarizeBy: none
+		sourceColumn: Semana_Corta
+		sortByColumn: Inicio_Semana
+
+		annotation SummarizationSetBy = User
+
+	column Semana_Eje
+		dataType: string
+		lineageTag: 743b5534-54c1-5e34-ab63-99422a88a9b8
+		summarizeBy: none
+		sourceColumn: Semana_Eje
+		sortByColumn: Inicio_Semana
+
+		annotation SummarizationSetBy = User
+
+	partition Semanas_Grafica = m
+		mode: import
+		source =
+				let
+				    Fuente = Calendario,
+				    Seleccion = Table.SelectColumns(
+				        Fuente,
+				        {
+				            "Semana_Etiqueta",
+				            "Semana_Hidrologica",
+				            "Año_Hidrologico",
+				            "Inicio_Semana",
+				            "Semana_Corta",
+				            "Semana_Eje"
+				        }
+				    ),
+				    SinDuplicados = Table.Distinct(Seleccion),
+				    Ordenado = Table.Sort(
+				        SinDuplicados,
+				        {{"Inicio_Semana", Order.Ascending}}
+				    )
+				in
+				    Ordenado
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+
