@@ -113,23 +113,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "a8c2a35f8caf40f43349",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Riesgos"
-              }
-            },
-            "Property": "Datos_Al_Diaria"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

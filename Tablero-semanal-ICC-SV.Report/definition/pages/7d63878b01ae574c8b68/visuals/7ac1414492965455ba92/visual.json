@@ -17,6 +17,26 @@
           "projections": [
             {
               "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Estaciones_met"
+                        }
+                      },
+                      "Property": "finca"
+                    }
+                  },
+                  "Function": 3
+                }
+              },
+              "queryRef": "Min(Estaciones_met.finca)",
+              "nativeQueryRef": "Estación",
+              "displayName": "Estación"
+            },
+            {
+              "field": {
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
@@ -137,6 +157,27 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            },
+            "zoom": {
+              "expr": {
+                "Literal": {
+                  "Value": "7.74D"
+                }
+              }
+            },
+            "centerLatitude": {
+              "expr": {
+                "Literal": {
+                  "Value": "13.542765182652502D"
+                }
+              }
+            },
+            "centerLongitude": {
+              "expr": {
+                "Literal": {
+                  "Value": "-89.07953050000003D"
                 }
               }
             }

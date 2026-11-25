@@ -161,21 +161,21 @@
             "zoom": {
               "expr": {
                 "Literal": {
-                  "Value": "7.74D"
+                  "Value": "6.65D"
                 }
               }
             },
             "centerLatitude": {
               "expr": {
                 "Literal": {
-                  "Value": "14.317886324017948D"
+                  "Value": "14.033612849893856D"
                 }
               }
             },
             "centerLongitude": {
               "expr": {
                 "Literal": {
-                  "Value": "-91.1979791D"
+                  "Value": "-90.14283210000002D"
                 }
               }
             },
@@ -405,98 +405,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "32007d121d6d46d6145d",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Medidas"
-              }
-            },
-            "Property": "Horas_Estres_Termico_Semanal"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "044fbba47f27d6536f0f",
-        "field": {
-          "Aggregation": {
-            "Expression": {
-              "Column": {
-                "Expression": {
-                  "SourceRef": {
-                    "Entity": "Estaciones_met"
-                  }
-                },
-                "Property": "finca"
-              }
-            },
-            "Function": 3
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "c6d8b7ca587e2fea3bf4",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Medidas"
-              }
-            },
-            "Property": "VPD_Max_Diurna"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "f9fcefcf3bf65cbc3032",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Medidas"
-              }
-            },
-            "Property": "Temp_Nocturna_Media"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "b1594c8add27c4e37fb0",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Estaciones_met"
-              }
-            },
-            "Property": "longitud"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "8eff9d1558b0ebde7aac",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Estaciones_met"
-              }
-            },
-            "Property": "latitud"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

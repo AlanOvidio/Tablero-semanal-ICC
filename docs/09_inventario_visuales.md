@@ -1,6 +1,6 @@
 # Inventario de páginas y visuales
 
-> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-24. No editar a mano.
+> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-25. No editar a mano.
 
 ## Agua y energía
 
@@ -14,10 +14,10 @@ Tamaño 1300×1624 · 24 visuales · carpeta `d18dbb7729765a1097a1`
 | slicer | Estación | finca | `9d1ab0` |
 | slicer | Año hidrológico | Año_Selector | `37e7d0` |
 | slicer | Semana | Semana_Selector | `eb6fea` |
-| azureMap | Balance hídrico de la semana por estación (tamaño = lluvia) | Precip_Semanal, finca), Balance_Semanal, ETO_Semanal, longitud, latitud | `320625` |
-| cardVisual | Precipitación semanal | Precip_Semanal | `a602cf` |
 | cardVisual | Evapotranspiración semanal | ETO_Semanal | `7c4f09` |
-| cardVisual | Balance hídrico | Balance_Semanal | `c70aec` |
+| cardVisual | Balance hídrico semanal | Balance_Semanal | `c70aec` |
+| cardVisual | Precipitación semanal | Precip_Semanal | `a602cf` |
+| azureMap | Balance hídrico de la semana por estación (tamaño = lluvia) | Precip_Semanal, finca), Balance_Semanal, ETO_Semanal, longitud, latitud | `320625` |
 | tableEx | Resumen de la semana | Variable, Resumen_Actual, Resumen_Semana_Anterior, Resumen_Anio_Anterior, Unidad | `38eac1` |
 | clusteredColumnChart | Balances anteriores | Semana_Eje, Balance_Por_Semana | `53badd` |
 | cardVisual | Estaciones en déficit | Estaciones_Deficit_Critico | `951738` |
@@ -39,9 +39,9 @@ Tamaño 1300×1755 · 21 visuales · carpeta `6d6c6ba3b87858a5a48f`
 | cardVisual |  | Datos_Al_Diaria | `ddf457` |
 | cardVisual |  | Titulo_Semana | `d3b855` |
 | slicer | Estrato altitudinal | estrato.nombre | `8bf32c` |
-| slicer | Año hidrológico | Año_Selector | `221923` |
-| slicer | Semana | Semana_Selector | `0296bd` |
 | slicer | Estación | finca | `7121f5` |
+| slicer | Semana | Semana_Selector | `0296bd` |
+| slicer | Año hidrológico | Año_Selector | `221923` |
 | scatterChart | Estrés de día frente a recuperación de noche por estación | finca, estrato.nombre, Mojadura_Horas_Nocturna_Semanal, VPD_Max_Diurna, Temp_Nocturna_Media | `45261e` |
 | azureMap | DPV máximo diurno por estación (tamaño = horas de estrés térmico) | Horas_Estres_Termico_Semanal, finca), VPD_Max_Diurna, Temp_Nocturna_Media, longitud, latitud | `57ba35` |
 | lineChart | Condiciones de estrés atmosférico (DPV y eje secundario a elegir) | Jerarquía hidrológica.Fecha, DN_DPV_MED_D, DN_DPV_MAX_D, DN_DPV_MED_N, DN_HR_MIN, DN_HR_MED, DN_T_NOC, DN_T_MIN_NOC | `72c2e0` |
@@ -87,13 +87,13 @@ Tamaño 1300×2369.808917197452 · 18 visuales · carpeta `7d63878b01ae574c8b68`
 | slicer | Estrato altitudinal | estrato.nombre | `bc4ed0` |
 | slicer | Estación | finca | `97646e` |
 | slicer | Cultivo | Cultivo | `51dd08` |
-| cardVisual | Contexto Productivo | Balance_Semanal, Temp_Nocturna_Media, GDD_Cultivo_Acumulado, Horas_Luz, Mojadura_Horas_Total_Semanal, Mojadura_Horas_Nocturna_Semanal, GDD_Cultivo_Acumulado_Anterior | `c35fd4` |
 | cardVisual | Riesgos del cultivo en la semana | Riesgos_En_Alerta, Riesgos_En_Precaucion | `f409f8` |
+| cardVisual | Contexto Productivo | Balance_Semanal, Temp_Nocturna_Media, GDD_Cultivo_Acumulado, Horas_Luz, Mojadura_Horas_Total_Semanal, Mojadura_Horas_Nocturna_Semanal, GDD_Cultivo_Acumulado_Anterior | `c35fd4` |
 | tableEx | Semáforo de riesgos (verde normal · amarillo precaución · rojo alerta · gris sin datos) | Riesgo, Riesgo_Etiqueta, Umbral_Amarillo, Umbral_Rojo, Condicion, Aplicacion, Confianza | `e9bcd0` |
 | slicer | Riesgos del mapa horario (sin selección = todos) | Categoria, Riesgo | `15a15e` |
 | tableEx | Leyenda | Rango | `6b6864` |
 | pivotTable |  | Fecha_Corta, Hora_Etiqueta, Mapa_Calor_N, Mapa_Calor_Valor | `7379ed` |
-| azureMap |  | Riesgos_En_Alerta, Riesgos_En_Precaucion, longitud, latitud | `7ac141` |
+| azureMap |  | finca), Riesgos_En_Alerta, Riesgos_En_Precaucion, longitud, latitud | `7ac141` |
 | tableEx |  | Rango | `fb7e92` |
 | pivotTable | Riesgos por estrato y estación (expandir el estrato para ver las estaciones) | Riesgo, estrato.nombre, finca, Riesgo_Valor | `eb968e` |
 

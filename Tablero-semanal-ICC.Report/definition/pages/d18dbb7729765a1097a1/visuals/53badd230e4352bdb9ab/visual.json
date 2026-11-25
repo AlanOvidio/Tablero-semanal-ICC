@@ -385,6 +385,20 @@
           }
         },
         "type": "Advanced"
+      },
+      {
+        "name": "0d83207dc2c7a21600f5",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Semanas_Grafica"
+              }
+            },
+            "Property": "Semana_Eje"
+          }
+        },
+        "type": "Categorical"
       }
     ]
   }

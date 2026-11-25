@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "2d39c96246f2534f8bb1",
   "position": {
-    "x": 936,
+    "x": 935.66878980891715,
     "y": 0,
     "z": 2000,
     "height": 64,
@@ -113,23 +113,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "28587dc52023c65975f8",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Riesgos"
-              }
-            },
-            "Property": "Datos_Al_Horaria"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

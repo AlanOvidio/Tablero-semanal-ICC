@@ -40,6 +40,7 @@ En el **servicio** estos parámetros no se usan: cada tabla con actualización i
   ```json
   { "workspace": "<nombre del área de trabajo>", "semanticmodelid": "<id del modelo>" }
   ```
+  El modelo está en **Mi área de trabajo**, donde la conexión tiene otro formato: el archivo guarda la `connectionString` completa, copiada del `definition.pbir` de un informe en blanco conectado al modelo desde Desktop (*Obtener datos → Modelos semánticos de Power BI*, guardado como .pbip). Si el modelo se vuelve a crear con otro ID, repetir ese paso.
 - Nunca publicar GT o SV mientras apunten al modelo local: Desktop publicaría también un modelo `Tablero-semanal-ICC-GT`/`-SV` y su informe quedaría conectado a él.
 - El enlace de *Publicar en la web* pertenece a cada informe: los informes GT y SV tienen enlaces propios.
 

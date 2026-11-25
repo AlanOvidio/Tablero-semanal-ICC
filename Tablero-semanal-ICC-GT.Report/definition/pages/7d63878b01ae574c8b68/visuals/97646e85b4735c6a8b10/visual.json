@@ -117,23 +117,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "47db08b7b9dd83225ae3",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Estaciones_met"
-              }
-            },
-            "Property": "finca"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

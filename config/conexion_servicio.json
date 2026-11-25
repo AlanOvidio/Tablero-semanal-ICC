@@ -1,0 +1,5 @@
+{
+  "area_de_trabajo": "Mi área de trabajo",
+  "semanticmodelid": "0041bc69-1f23-4466-a036-0f6db2617378",
+  "connectionString": "Data Source=pbiazure://api.powerbi.com;initial catalog=0041bc69-1f23-4466-a036-0f6db2617378;identity provider=\"https://login.microsoftonline.com/common, https://analysis.windows.net/powerbi/api, 7f67af8a-fedc-4b08-8b4e-37c4d127b6cf\";integrated security=ClaimsToken;semanticmodelid=0041bc69-1f23-4466-a036-0f6db2617378;modelid=13304749"
+}

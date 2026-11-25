@@ -152,23 +152,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "f895255dbe0ec18a8e24",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Periodo_Vista"
-              }
-            },
-            "Property": "Vista"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

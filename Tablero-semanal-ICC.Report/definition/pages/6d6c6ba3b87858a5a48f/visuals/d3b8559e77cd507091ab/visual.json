@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "d3b8559e77cd507091ab",
   "position": {
-    "x": 638,
-    "y": 1,
+    "x": 641.71974522293,
+    "y": 1.0350318471337581,
     "z": 1200,
-    "height": 77,
-    "width": 361,
+    "height": 76.592356687898089,
+    "width": 357.0859872611465,
     "tabOrder": 1200
   },
   "visual": {
@@ -113,23 +113,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "5f032f25dc8264487e6b",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Riesgos"
-              }
-            },
-            "Property": "Titulo_Semana"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

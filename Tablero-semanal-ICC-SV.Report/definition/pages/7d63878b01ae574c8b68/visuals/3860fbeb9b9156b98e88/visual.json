@@ -113,23 +113,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "7e204bec327b24b58f25",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Riesgos"
-              }
-            },
-            "Property": "Titulo_Contexto"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

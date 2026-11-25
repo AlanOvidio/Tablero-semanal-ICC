@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "1126beb630d4568b8952",
   "position": {
-    "x": 833.20930232558146,
-    "y": 493.39534883720933,
+    "x": 924.28343949044586,
+    "y": 493.71019108280257,
     "z": 11000,
-    "height": 148.74418604651163,
-    "width": 454.69767441860466,
+    "height": 148.00955414012739,
+    "width": 363.29617834394907,
     "tabOrder": 11000
   },
   "visual": {
@@ -152,23 +152,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "ce1eb698285f40973195",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Periodos_Dia"
-              }
-            },
-            "Property": "Periodo"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

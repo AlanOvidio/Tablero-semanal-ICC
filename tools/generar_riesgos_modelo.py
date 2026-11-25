@@ -275,7 +275,7 @@ VISTAS = [
      [(0.4, "#6BAED6"), (1.2, "#A1D99B"), (1.6, "#FED976")], "#F03B20"),
     ("Sensación térmica (índice de calor)", "°C", "0.0", "blanco < 27 · amarillo 27–32 (precaución) · naranja claro 32–41 (precaución extrema) · naranja 41–54 (peligro) · rojo ≥ 54",
      [(27, "#FFFFFF"), (32, "#FFFFB2"), (41, "#FECC5C"), (54, "#FD8D3C")], "#E31A1C"),
-    ("Mojadura de la hoja", "% de estaciones con la hoja mojada en esa hora", "0%", "blanco 0 · celeste < 50 % · azul ≥ 50 %",
+    ("Mojadura de la hoja", "% de registros horarios con la hoja mojada", "0%", "blanco seca · celeste mojadura parcial (< 50 %) · azul mojadura predominante (≥ 50 %)",
      [(0.0000001, "#FFFFFF"), (0.5, "#9ECAE1")], "#3182BD"),
     ("Lluvia", "mm/h", "0.0", "blanco 0 · celeste < 1 · azul claro 1–5 · azul 5–10 · azul oscuro ≥ 10",
      [(0.0000001, "#FFFFFF"), (1, "#DEEBF7"), (5, "#9ECAE1"), (10, "#4292C6")], "#08519C"),
@@ -289,7 +289,7 @@ RANGOS_RIESGO = ["0 %", "< 25 %", "25 – 50 %", "≥ 50 %"]
 ETIQ = {"Temperatura del aire": ["< 18", "18 – 24", "24 – 30", "30 – 34", "≥ 34"], "Humedad relativa": ["< 60", "60 – 80", "80 – 90", "≥ 90"],
         "Déficit de presión de vapor": ["< 0.4 · aire muy húmedo (riesgo de enfermedades)", "0.4 – 1.2 · favorable", "1.2 – 1.6 · inicio de estrés", "≥ 1.6 · estrés hídrico"],
         "Sensación térmica (índice de calor)": ["< 27", "27 – 32 precaución", "32 – 41 prec. extrema", "41 – 54 peligro", "≥ 54"],
-        "Mojadura de la hoja": ["ninguna estación con la hoja mojada", "menos de la mitad de las estaciones", "la mitad o más de las estaciones"], "Lluvia": ["0", "< 1", "1 – 5", "5 – 10", "≥ 10"],
+        "Mojadura de la hoja": ["Seca", "Mojadura parcial (< 50 %)", "Mojadura predominante (≥ 50 %)"], "Lluvia": ["0", "< 1", "1 – 5", "5 – 10", "≥ 10"],
         "Velocidad del viento": ["< 1.8 calma", "1.8 – 10", "10 – 20", "20 – 30", "≥ 30"], "Irradiancia": ["≤ 40 sin luz", "40 – 300", "300 – 600", "600 – 800", "≥ 800"]}
 OSCUROS = ["#54278F", "#A63603", "#A50F15", "#252525", "#969696", "#9E9AC8", "#FB6A4A", "#4575B4", "#D73027", "#2171B5", "#F03B20", "#E31A1C", "#3182BD", "#4292C6", "#08519C", "#41AB5D", "#006D2C", "#D95F0E", "#C0392B"]
 vis_cols = [("Vista", "text", "string", None), ("Orden", "Int64.Type", "int64", "0"), ("Unidad", "text", "string", None), ("Leyenda", "text", "string", None)]
@@ -342,7 +342,7 @@ open(os.path.join(DEF, "tables", "Leyenda_Mapa_Riesgo.tmdl"), "w", encoding="utf
     tabla_m("Leyenda_Mapa_Riesgo", [("Modo", "text", "string", None), ("Orden", "Int64.Type", "int64", "0"), ("Rango", "text", "string", None), ("Color", "text", "string", None)],
             [["Conteo", 1, "Sin riesgos en alerta", "#C6DBEF"], ["Conteo", 2, "1 riesgo en alerta", "#6BAED6"], ["Conteo", 3, "2 a 3 riesgos en alerta", "#2171B5"],
              ["Conteo", 4, "4 o más riesgos en alerta", "#08306B"], ["Conteo", 5, "Sin datos", "#FFFFFF"],
-             ["Riesgo", 6, "Alerta", "#D64550"], ["Riesgo", 7, "Precaución", "#F2B134"], ["Riesgo", 8, "Normal", "#3BA272"], ["Riesgo", 9, "Sin datos ", "#B0B0B0"]],
+             ["Riesgo", 6, "Alerta", "#D64550"], ["Riesgo", 7, "Precaución", "#F2B134"], ["Riesgo", 8, "Normal", "#3BA272"], ["Riesgo", 9, "Sin datos\u200b", "#B0B0B0"]],
             sort={"Rango": "Orden"}, ocultas=("Orden",)))
 open(os.path.join(DEF, "tables", "Ventana_Semanas.tmdl"), "w", encoding="utf-8", newline="").write(
     tabla_m("Ventana_Semanas", [("Ventana", "text", "string", None), ("Semanas", "Int64.Type", "int64", "0")],

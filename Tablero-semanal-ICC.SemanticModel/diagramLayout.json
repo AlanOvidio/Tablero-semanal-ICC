@@ -4,8 +4,8 @@
     {
       "ordinal": 0,
       "scrollPosition": {
-        "x": 0,
-        "y": 715611.10443946882
+        "x": 96.793039256453326,
+        "y": 714635.107960302
       },
       "nodes": [
         {
@@ -19,7 +19,7 @@
             "height": 300,
             "width": 234
           },
-          "zIndex": 21
+          "zIndex": 20
         },
         {
           "location": {
@@ -32,7 +32,7 @@
             "height": 104,
             "width": 234
           },
-          "zIndex": 20
+          "zIndex": 12
         },
         {
           "location": {
@@ -45,7 +45,7 @@
             "height": 299.16020229710421,
             "width": 234
           },
-          "zIndex": 15
+          "zIndex": 8
         },
         {
           "location": {
@@ -58,7 +58,7 @@
             "height": 286.9184217570189,
             "width": 234
           },
-          "zIndex": 22
+          "zIndex": 23
         },
         {
           "location": {
@@ -71,7 +71,7 @@
             "height": 451.2360826197845,
             "width": 234
           },
-          "zIndex": 19
+          "zIndex": 11
         },
         {
           "location": {
@@ -84,7 +84,7 @@
             "height": 180.77084763682069,
             "width": 234
           },
-          "zIndex": 14
+          "zIndex": 7
         },
         {
           "location": {
@@ -97,7 +97,7 @@
             "height": 394.43415757854018,
             "width": 234
           },
-          "zIndex": 18
+          "zIndex": 21
         },
         {
           "location": {
@@ -110,12 +110,12 @@
             "height": 104,
             "width": 234
           },
-          "zIndex": 13
+          "zIndex": 6
         },
         {
           "location": {
-            "x": 1427.2578179115749,
-            "y": 716325.57377269142
+            "x": 1628.9099830291852,
+            "y": 716333.63985929615
           },
           "nodeIndex": "Horas_Dia",
           "nodeLineageTag": "b3f64462-11fe-465b-aaea-861ae4feedb2",
@@ -123,7 +123,7 @@
             "height": 145,
             "width": 234
           },
-          "zIndex": 12
+          "zIndex": 5
         },
         {
           "location": {
@@ -136,7 +136,7 @@
             "height": 300,
             "width": 234
           },
-          "zIndex": 23
+          "zIndex": 22
         },
         {
           "location": {
@@ -149,7 +149,7 @@
             "height": 176,
             "width": 234
           },
-          "zIndex": 17
+          "zIndex": 10
         },
         {
           "location": {
@@ -162,7 +162,7 @@
             "height": 176,
             "width": 234
           },
-          "zIndex": 16
+          "zIndex": 9
         },
         {
           "location": {
@@ -175,7 +175,7 @@
             "height": 336.17379675879783,
             "width": 234
           },
-          "zIndex": 3
+          "zIndex": 1
         },
         {
           "location": {
@@ -188,7 +188,7 @@
             "height": 212.17379675879783,
             "width": 234
           },
-          "zIndex": 4
+          "zIndex": 2
         },
         {
           "location": {
@@ -201,64 +201,64 @@
             "height": 336.17379675879783,
             "width": 234
           },
-          "zIndex": 5
+          "zIndex": 13
         },
         {
           "location": {
-            "x": 2147.5781325996527,
-            "y": 437734.8094207127
+            "x": 2765.3586205623319,
+            "y": 715388.46805801138
           },
           "nodeIndex": "Leyenda_Mapa_Calor",
           "nodeLineageTag": "59d349dd-719b-5013-888b-9d7729ea57cb",
           "size": {
-            "height": 200,
+            "height": 145,
             "width": 234
           },
-          "zIndex": 6
+          "zIndex": 18
         },
         {
           "location": {
-            "x": 2431.5781325996527,
-            "y": 437746.8094207127
+            "x": 3029.4649649264393,
+            "y": 715362.5197628421
           },
           "nodeIndex": "Resumen_Variables",
           "nodeLineageTag": "b9b23d4d-b0b4-5596-a782-bf154167c360",
           "size": {
-            "height": 176,
+            "height": 145,
             "width": 234
           },
-          "zIndex": 7
+          "zIndex": 3
         },
         {
           "location": {
-            "x": 2715.5781325996527,
-            "y": 437746.8094207127
+            "x": 3313.4649649264393,
+            "y": 715362.5197628421
           },
           "nodeIndex": "Vistas_Mapa_Calor",
           "nodeLineageTag": "7d1572f2-7250-5029-a2cd-774d4f946525",
           "size": {
-            "height": 176,
+            "height": 145,
             "width": 234
           },
-          "zIndex": 8
+          "zIndex": 4
         },
         {
           "location": {
-            "x": 2965.6651981382797,
-            "y": 437152.68167414138
+            "x": 2844.6452005684059,
+            "y": 716157.41499208717
           },
           "nodeIndex": "Periodo_Vista",
           "nodeLineageTag": "ac4da325-9c07-51ae-b107-4c8ab5e44206",
           "size": {
-            "height": 128,
+            "height": 145,
             "width": 234
           },
-          "zIndex": 9
+          "zIndex": 19
         },
         {
           "location": {
-            "x": 3249.6651981382797,
-            "y": 437080.68167414138
+            "x": 3156.5281055569521,
+            "y": 716131.04156388657
           },
           "nodeIndex": "Series_DiaNoche",
           "nodeLineageTag": "a836b55a-e790-522a-aab0-4439f4010758",
@@ -266,12 +266,12 @@
             "height": 272,
             "width": 234
           },
-          "zIndex": 10
+          "zIndex": 17
         },
         {
           "location": {
-            "x": 3499.7522636769068,
-            "y": 367343.27560066158
+            "x": 2344.1521367283476,
+            "y": 715829.045900607
           },
           "nodeIndex": "Eje_Secundario",
           "nodeLineageTag": "e85968d2-cdb7-5ad3-bb5f-f12d918f8b0f",
@@ -279,12 +279,12 @@
             "height": 128,
             "width": 234
           },
-          "zIndex": 11
+          "zIndex": 14
         },
         {
           "location": {
-            "x": 3749.8393292155338,
-            "y": 297261.59853641596
+            "x": 1839.3090336375894,
+            "y": 716880.7560635116
           },
           "nodeIndex": "Leyenda_Mapa_Riesgo",
           "nodeLineageTag": "8d0b4a25-6e3c-538e-b53b-cb411eeb52c3",
@@ -292,24 +292,24 @@
             "height": 176,
             "width": 234
           },
-          "zIndex": 1
+          "zIndex": 15
         },
         {
           "location": {
-            "x": 4033.8393292155338,
-            "y": 297285.59853641596
+            "x": 2346.0166822150904,
+            "y": 715655.53988215525
           },
           "nodeIndex": "Ventana_Semanas",
           "nodeLineageTag": "86ccaf0c-259d-530b-a511-ca8fe82e4885",
           "size": {
-            "height": 128,
+            "height": 145,
             "width": 234
           },
-          "zIndex": 2
+          "zIndex": 16
         }
       ],
       "name": "Todas las tablas",
-      "zoomValue": 49.590342827053995,
+      "zoomValue": 49.590342827053831,
       "pinKeyFieldsToTop": false,
       "showExtraHeaderInfo": false,
       "hideKeyFieldsWhenCollapsed": false,

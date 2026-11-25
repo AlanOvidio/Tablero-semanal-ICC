@@ -2,8 +2,8 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "38eac11f51685febbf67",
   "position": {
-    "x": 701.12359550561791,
-    "y": 270.22471910112358,
+    "x": 701.75159235668787,
+    "y": 269.10828025477707,
     "z": 2400,
     "height": 262.00842696629212,
     "width": 588.83426966292132,
@@ -97,16 +97,16 @@
         "sort": [
           {
             "field": {
-              "Column": {
+              "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Resumen_Variables"
+                    "Entity": "_Riesgos"
                   }
                 },
-                "Property": "Variable"
+                "Property": "Resumen_Semana_Anterior"
               }
             },
-            "direction": "Ascending"
+            "direction": "Descending"
           }
         ]
       }
@@ -250,7 +250,7 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "f0141cd2cd737e9eeba3",
+        "name": "62781d956e8ca23c2508",
         "field": {
           "Column": {
             "Expression": {
@@ -264,7 +264,7 @@
         "type": "Categorical"
       },
       {
-        "name": "99774d34dbae3eeda3c9",
+        "name": "6ac11a27d7bc0410f41e",
         "field": {
           "Measure": {
             "Expression": {
@@ -278,7 +278,7 @@
         "type": "Advanced"
       },
       {
-        "name": "e25128c57a9ca3a78aad",
+        "name": "f5fb0386e2a1c8fb90dd",
         "field": {
           "Measure": {
             "Expression": {
@@ -292,7 +292,7 @@
         "type": "Advanced"
       },
       {
-        "name": "de4cecbb03fa6a251ae2",
+        "name": "5d6c04bcf7d08401072d",
         "field": {
           "Measure": {
             "Expression": {
@@ -306,7 +306,7 @@
         "type": "Advanced"
       },
       {
-        "name": "98b8a90df3ad347389e5",
+        "name": "95e9922f56c753a25855",
         "field": {
           "Column": {
             "Expression": {

@@ -152,23 +152,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "15b41bdaa5fc60e9c8f3",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Cultivos"
-              }
-            },
-            "Property": "Cultivo"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

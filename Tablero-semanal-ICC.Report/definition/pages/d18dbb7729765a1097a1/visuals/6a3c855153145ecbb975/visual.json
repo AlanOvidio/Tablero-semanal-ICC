@@ -5,8 +5,8 @@
     "x": 1008.1210191082803,
     "y": 0,
     "z": 1300,
-    "height": 55,
-    "width": 181.66666666666669,
+    "height": 62.101910828025481,
+    "width": 182.16560509554139,
     "tabOrder": 1300
   },
   "visual": {
@@ -113,23 +113,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "5df86109d20d50db1fc4",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Riesgos"
-              }
-            },
-            "Property": "Datos_Al_Diaria"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

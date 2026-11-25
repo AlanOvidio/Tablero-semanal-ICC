@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "c70aeccbf1c654518a94",
   "position": {
-    "x": 1093.9481268011527,
-    "y": 139.86551392891451,
+    "x": 1094.4186046511629,
+    "y": 129.3953488372093,
     "z": 2300,
-    "height": 129.87512007684919,
-    "width": 206.05187319884726,
+    "height": 140.27906976744188,
+    "width": 195.90697674418607,
     "tabOrder": 2300
   },
   "visual": {
@@ -202,7 +202,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Balance hídrico'"
+                  "Value": "'Balance hídrico semanal'"
                 }
               }
             }
@@ -242,5 +242,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "d07819580dda0f6e7de0",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Medidas"
+              }
+            },
+            "Property": "Balance_Semanal"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

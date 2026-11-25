@@ -152,5 +152,23 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "f44b8666f1391bebe2d5",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Ventana_Semanas"
+              }
+            },
+            "Property": "Ventana"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
   }
 }

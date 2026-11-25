@@ -6,7 +6,7 @@
     "y": 486.46496815286628,
     "z": 10000,
     "height": 163.53503184713375,
-    "width": 185.27070063694268,
+    "width": 250.47770700636943,
     "tabOrder": 10000
   },
   "visual": {
@@ -201,20 +201,6 @@
           ]
         },
         "howCreated": "User"
-      },
-      {
-        "name": "1bff5df6f4808b446a6b",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Leyenda_Mapa_Calor"
-              }
-            },
-            "Property": "Rango"
-          }
-        },
-        "type": "Categorical"
       }
     ]
   }

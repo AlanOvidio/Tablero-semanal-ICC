@@ -199,23 +199,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "e3ffe27e7be6b430f8d7",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Medidas"
-              }
-            },
-            "Property": "Rosa_Vientos_SVG"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

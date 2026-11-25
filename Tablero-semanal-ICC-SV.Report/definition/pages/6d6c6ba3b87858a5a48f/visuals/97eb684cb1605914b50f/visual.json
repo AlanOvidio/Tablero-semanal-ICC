@@ -152,23 +152,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "e32a88329f3c8d8b2f16",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Eje_Secundario"
-              }
-            },
-            "Property": "Opcion"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

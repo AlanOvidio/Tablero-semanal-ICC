@@ -144,6 +144,27 @@
                   "Value": "true"
                 }
               }
+            },
+            "zoom": {
+              "expr": {
+                "Literal": {
+                  "Value": "7.61D"
+                }
+              }
+            },
+            "centerLatitude": {
+              "expr": {
+                "Literal": {
+                  "Value": "14.317886324017948D"
+                }
+              }
+            },
+            "centerLongitude": {
+              "expr": {
+                "Literal": {
+                  "Value": "-91.1979791D"
+                }
+              }
             }
           }
         }
@@ -386,7 +407,7 @@
         "howCreated": "User"
       },
       {
-        "name": "b38618ed6380453aeba8",
+        "name": "4af6f99645e787143fd9",
         "field": {
           "Aggregation": {
             "Expression": {
@@ -405,7 +426,7 @@
         "type": "Advanced"
       },
       {
-        "name": "b10d9de3762ce6a3aa4d",
+        "name": "8a6e293a875fb1c85232",
         "field": {
           "Measure": {
             "Expression": {
@@ -419,7 +440,7 @@
         "type": "Advanced"
       },
       {
-        "name": "63882add11e4e6793eda",
+        "name": "ac542787ff09e1ae2c9f",
         "field": {
           "Column": {
             "Expression": {
@@ -433,7 +454,7 @@
         "type": "Advanced"
       },
       {
-        "name": "40f11471c5bcbc8acb64",
+        "name": "3cd1cbb61de3f65804a7",
         "field": {
           "Column": {
             "Expression": {

@@ -24,6 +24,10 @@ Registrar aquí cada cambio relevante al modelo o al reporte: **qué** cambió, 
 
 ## Bitácora de cambios
 
+### 2026-11-25 · Ajustes tras la primera publicación
+- `Leyenda_Mapa_Riesgo`: la segunda etiqueta "Sin datos" se distinguía con un espacio final, que el servicio ignora al comparar textos; la actualización fallaba al ordenar `Rango` por `Orden`. Ahora usa un espacio de ancho cero.
+- Mojadura de la hoja (mapa de calor y mapa geográfico): leyenda válida para una o varias estaciones: *Seca*, *Mojadura parcial (< 50 %)*, *Mojadura predominante (≥ 50 %)*; unidad "% de registros horarios con la hoja mojada".
+
 ### 2026-11-24 · Estaciones de El Salvador e informes por país
 - `TablaEstaciones_met`: se agregan las 9 estaciones de El Salvador (38 Central Izalco, 39 COPAL, 40 Chaparrastique, 45 Agua Santa, 46 El Carmen, 47 San Clemente, 78 Miravalle, 79 El Cipitillo, 80 San Ildefonso).
 - Un modelo semántico y tres informes: `Tablero-semanal-ICC` (trabajo, sin filtro de país), `Tablero-semanal-ICC-GT` y `Tablero-semanal-ICC-SV` (generados con `tools/generar_informes_pais.py`, filtro de país a nivel de informe, solo las cuatro páginas públicas, mapas con ajuste automático). Ver [05 · Operación](05_operacion.md).

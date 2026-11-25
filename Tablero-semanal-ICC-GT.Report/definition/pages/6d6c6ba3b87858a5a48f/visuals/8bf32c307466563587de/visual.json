@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "8bf32c307466563587de",
   "position": {
-    "x": 495,
-    "y": 77.5,
+    "x": 480.25477707006371,
+    "y": 77.627388535031855,
     "z": 1700,
-    "height": 76.25,
-    "width": 427.5,
+    "height": 66.242038216560516,
+    "width": 427.46815286624206,
     "tabOrder": 1700
   },
   "visual": {
@@ -110,11 +110,11 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true,
     "syncGroup": {
       "groupName": "Estrato",
       "fieldChanges": true,
       "filterChanges": true
-    }
+    },
+    "drillFilterOtherVisuals": true
   }
 }

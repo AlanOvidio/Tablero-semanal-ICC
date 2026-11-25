@@ -181,20 +181,6 @@
           ]
         },
         "howCreated": "User"
-      },
-      {
-        "name": "b66888fd48f32f6c5f23",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Series_DiaNoche"
-              }
-            },
-            "Property": "Serie"
-          }
-        },
-        "type": "Categorical"
       }
     ]
   }

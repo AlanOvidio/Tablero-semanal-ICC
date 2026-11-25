@@ -1,6 +1,6 @@
 # Catálogo de medidas DAX
 
-> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-24 (281 medidas). No editar a mano.
+> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-25 (281 medidas). No editar a mano.
 
 Convenciones: las medidas con prefijo `_` son auxiliares; `Semaforo_*` devuelve 1 = rojo, 2 = amarillo, 3 = verde. Las medidas de suma (lluvia, ETo, balance, horas, GDD, radiación acumulada) **suman por estación y promedian entre estaciones**; los máximos y mínimos devuelven **el extremo** de las estaciones seleccionadas. Ver `04_guia_usuario.md` y `06_decisiones_y_cambios.md`.
 

@@ -1,6 +1,6 @@
 # Diccionario de datos
 
-> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-24. No editar a mano: los cambios se pierden al regenerar.
+> Generado automáticamente por `tools/generar_docs_modelo.py` el 2026-11-25. No editar a mano: los cambios se pierden al regenerar.
 
 ## Parámetros y funciones de Power Query
 
@@ -1533,9 +1533,9 @@ let
 	{"Sensación térmica (índice de calor)", "", 3, "32 – 41 prec. extrema °C", "#FECC5C"},
 	{"Sensación térmica (índice de calor)", "", 4, "41 – 54 peligro °C", "#FD8D3C"},
 	{"Sensación térmica (índice de calor)", "", 5, "≥ 54 °C", "#E31A1C"},
-	{"Mojadura de la hoja", "", 1, "ninguna estación con la hoja mojada", "#FFFFFF"},
-	{"Mojadura de la hoja", "", 2, "menos de la mitad de las estaciones", "#9ECAE1"},
-	{"Mojadura de la hoja", "", 3, "la mitad o más de las estaciones", "#3182BD"},
+	{"Mojadura de la hoja", "", 1, "Seca", "#FFFFFF"},
+	{"Mojadura de la hoja", "", 2, "Mojadura parcial (< 50 %)", "#9ECAE1"},
+	{"Mojadura de la hoja", "", 3, "Mojadura predominante (≥ 50 %)", "#3182BD"},
 	{"Lluvia", "", 1, "0 mm/h", "#FFFFFF"},
 	{"Lluvia", "", 2, "< 1 mm/h", "#DEEBF7"},
 	{"Lluvia", "", 3, "1 – 5 mm/h", "#9ECAE1"},
@@ -1581,7 +1581,7 @@ let
 	{"Riesgo", 6, "Alerta", "#D64550"},
 	{"Riesgo", 7, "Precaución", "#F2B134"},
 	{"Riesgo", 8, "Normal", "#3BA272"},
-	{"Riesgo", 9, "Sin datos ", "#B0B0B0"}
+	{"Riesgo", 9, "Sin datos​", "#B0B0B0"}
     })
 in
     Tabla
@@ -1938,7 +1938,7 @@ let
 	{"Humedad relativa", 3, "%", "blanco < 60 · celeste 60–80 · azul 80–90 · azul oscuro ≥ 90"},
 	{"Déficit de presión de vapor", 4, "kPa", "azul < 0.4 (muy húmedo) · verde 0.4–1.2 · amarillo 1.2–1.6 · rojo ≥ 1.6 (estrés)"},
 	{"Sensación térmica (índice de calor)", 5, "°C", "blanco < 27 · amarillo 27–32 (precaución) · naranja claro 32–41 (precaución extrema) · naranja 41–54 (peligro) · rojo ≥ 54"},
-	{"Mojadura de la hoja", 6, "% de estaciones con la hoja mojada en esa hora", "blanco 0 · celeste < 50 % · azul ≥ 50 %"},
+	{"Mojadura de la hoja", 6, "% de registros horarios con la hoja mojada", "blanco seca · celeste mojadura parcial (< 50 %) · azul mojadura predominante (≥ 50 %)"},
 	{"Lluvia", 7, "mm/h", "blanco 0 · celeste < 1 · azul claro 1–5 · azul 5–10 · azul oscuro ≥ 10"},
 	{"Velocidad del viento", 8, "km/h", "blanco calma < 1.8 · verde claro 1.8–10 · verde 10–20 · verde medio 20–30 · verde oscuro ≥ 30"},
 	{"Irradiancia", 9, "W/m²", "gris ≤ 40 (sin luz) · amarillo claro 40–300 · amarillo 300–600 · naranja 600–800 · naranja oscuro ≥ 800"}

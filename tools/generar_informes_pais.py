@@ -10,7 +10,8 @@ filtro de país a nivel de informe (oculto y bloqueado) y mapas con ajuste autom
 
 Uso (con Power BI Desktop cerrado), después de cualquier cambio en el informe de trabajo:
       python tools/generar_informes_pais.py
-Conexión: si existe config/conexion_servicio.json con {"workspace": "<nombre>", "semanticmodelid": "<id>"},
+Conexión: si existe config/conexion_servicio.json con {"connectionString": "..."} (copiada del definition.pbir de un
+informe en blanco conectado al modelo publicado desde Desktop) o con {"workspace": "<nombre>", "semanticmodelid": "<id>"},
 los informes por país se conectan al modelo publicado (informes ligeros: publicarlos NO reemplaza el modelo).
 Sin ese archivo apuntan al modelo local, para revisarlos en Desktop.
 """
@@ -39,6 +40,8 @@ def conexion():
     cfg = "config/conexion_servicio.json"
     if os.path.exists(cfg):
         c = rj(cfg)
+        if c.get("connectionString"):  # copiada de un informe conectado creado por Desktop (necesario en Mi área de trabajo)
+            return {"byConnection": {"connectionString": c["connectionString"]}}, "modelo publicado"
         cs = (f'Data Source="powerbi://api.powerbi.com/v1.0/myorg/{c["workspace"]}";initial catalog={BASE};'
               f'access mode=readonly;integrated security=ClaimsToken;semanticmodelid={c["semanticmodelid"]}')
         return {"byConnection": {"connectionString": cs}}, "modelo publicado"

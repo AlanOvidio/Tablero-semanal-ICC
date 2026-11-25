@@ -392,5 +392,70 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "5e3f82a121c072c1dd78",
+        "field": {
+          "HierarchyLevel": {
+            "Expression": {
+              "Hierarchy": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Calendario"
+                  }
+                },
+                "Hierarchy": "Jerarquía hidrológica"
+              }
+            },
+            "Level": "Fecha"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "f353b37f27b9bd315de1",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Medidas"
+              }
+            },
+            "Property": "Precip_Diaria"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "fa5d810f8d508bfc81b0",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Medidas"
+              }
+            },
+            "Property": "ETO_Diaria"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "ea9320d1ae00b14306d4",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Medidas"
+              }
+            },
+            "Property": "Precip_Max_Evento"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
   }
 }

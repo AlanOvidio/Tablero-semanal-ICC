@@ -51,7 +51,7 @@ Las líneas punteadas horizontales marcan esos umbrales.
 
 | Visual | Qué muestra | Cómo interpretarlo |
 |---|---|---|
-| Mapa de calor | Variable elegida (temperatura del aire, humedad relativa, DPV, sensación térmica, mojadura de la hoja, lluvia, velocidad del viento, irradiancia) por hora y día, promedio de las estaciones | Colores por rangos fijos (ver leyenda). En mojadura, cada casilla es el % de estaciones con la hoja mojada en esa hora. |
+| Mapa de calor | Variable elegida (temperatura del aire, humedad relativa, DPV, sensación térmica, mojadura de la hoja, lluvia, velocidad del viento, irradiancia) por hora y día, promedio de las estaciones | Colores por rangos fijos (ver leyenda). En mojadura, el color indica el % de registros horarios con la hoja mojada: *Seca*, *Mojadura parcial* (< 50 %) o *Mojadura predominante* (≥ 50 %). En el mapa de calor cada casilla reúne las estaciones seleccionadas en esa hora (con una sola estación es seca o predominante); en el mapa geográfico, las horas de cada estación. |
 | Mapa de estaciones | Promedio de la semana de la misma variable en cada estación | Diferencias entre fincas. |
 | Rosa de vientos | Frecuencia del viento por dirección en el periodo del día elegido | El pétalo más largo es de dónde **viene** el viento con más frecuencia; el color indica su velocidad media. Las calmas (< 1.8 km/h) se informan aparte. |
 

@@ -16069,7 +16069,7 @@ cultureInfo es-GT
 			        }
 			      ]
 			    },
-			    "table_riesgos.rad_texto_actual": {
+			    "entity__riesgo.rad_texto_actual": {
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "_Riesgos",
@@ -16078,6 +16078,54 @@ cultureInfo es-GT
 			      },
 			      "State": "Generated",
 			      "Terms": [
+			        {
+			          "rad texto actual": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "Rad_Texto_Actual": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "Año actual: acumulado": {
+			            "State": "Generated",
+			            "Weight": 0.675
+			          }
+			        },
+			        {
+			          "rad texto real": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.739
+			          }
+			        },
+			        {
+			          "rad texto existent": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.739
+			          }
+			        },
+			        {
+			          "rad texto tangible": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.739
+			          }
+			        },
 			        {
 			          "Año actual: acumulado (desv.)": {
 			            "State": "Suggested",
@@ -16090,7 +16138,7 @@ cultureInfo es-GT
 			        }
 			      ]
 			    },
-			    "table_riesgos.rad_texto_anterior": {
+			    "entity__riesgo.rad_texto_anterior": {
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "_Riesgos",
@@ -16099,6 +16147,24 @@ cultureInfo es-GT
 			      },
 			      "State": "Generated",
 			      "Terms": [
+			        {
+			          "rad texto anterior": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "Rad_Texto_Anterior": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "Año anterior: acumulado": {
+			            "State": "Generated",
+			            "Weight": 0.675
+			          }
+			        },
 			        {
 			          "Año anterior: acumulado (desv.)": {
 			            "State": "Suggested",
@@ -16111,7 +16177,7 @@ cultureInfo es-GT
 			        }
 			      ]
 			    },
-			    "table_riesgos.gdd_texto_actual": {
+			    "entity__riesgo.GDD_texto_actual": {
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "_Riesgos",
@@ -16120,6 +16186,54 @@ cultureInfo es-GT
 			      },
 			      "State": "Generated",
 			      "Terms": [
+			        {
+			          "GDD texto actual": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "GDD_Texto_Actual": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "Año actual: acumulado": {
+			            "State": "Generated",
+			            "Weight": 0.675
+			          }
+			        },
+			        {
+			          "gdd texto real": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.739
+			          }
+			        },
+			        {
+			          "gdd texto existent": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.739
+			          }
+			        },
+			        {
+			          "gdd texto tangible": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.739
+			          }
+			        },
 			        {
 			          "Año actual: acumulado (desv.)": {
 			            "State": "Suggested",
@@ -16132,7 +16246,7 @@ cultureInfo es-GT
 			        }
 			      ]
 			    },
-			    "table_riesgos.gdd_texto_anterior": {
+			    "entity__riesgo.GDD_texto_anterior": {
 			      "Definition": {
 			        "Binding": {
 			          "ConceptualEntity": "_Riesgos",
@@ -16141,6 +16255,24 @@ cultureInfo es-GT
 			      },
 			      "State": "Generated",
 			      "Terms": [
+			        {
+			          "GDD texto anterior": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "GDD_Texto_Anterior": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "Año anterior: acumulado": {
+			            "State": "Generated",
+			            "Weight": 0.675
+			          }
+			        },
 			        {
 			          "Año anterior: acumulado (desv.)": {
 			            "State": "Suggested",
@@ -16163,6 +16295,11 @@ cultureInfo es-GT
 			      "State": "Generated",
 			      "Terms": [
 			        {
+			          "rango": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
 			          "Leyenda": {
 			            "State": "Suggested",
 			            "Source": {
@@ -16173,332 +16310,385 @@ cultureInfo es-GT
 			          }
 			        }
 			      ]
+			    },
+			    "entity__riesgo.riesgo_valor_max_estacion": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Riesgos",
+			          "ConceptualProperty": "Riesgo_Valor_Max_Estacion"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "riesgo valor max estacion": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "Riesgo_Valor_Max_Estacion": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "riesgo valor maximum estacion": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.599
+			          }
+			        }
+			      ]
+			    },
+			    "entity__riesgo.leyenda_riesgo_mostrar": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Riesgos",
+			          "ConceptualProperty": "Leyenda_Riesgo_Mostrar"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "leyenda riesgo mostrar": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "Leyenda_Riesgo_Mostrar": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        }
+			      ]
+			    },
+			    "entity__riesgo.leyenda_riesgo_color": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Riesgos",
+			          "ConceptualProperty": "Leyenda_Riesgo_Color"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "leyenda riesgo color": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "Leyenda_Riesgo_Color": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "leyenda riesgo hue": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.508
+			          }
+			        },
+			        {
+			          "leyenda riesgo tint": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.492
+			          }
+			        },
+			        {
+			          "leyenda riesgo shade": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.492
+			          }
+			        },
+			        {
+			          "leyenda riesgo dye": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.492
+			          }
+			        },
+			        {
+			          "leyenda riesgo paint": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.492
+			          }
+			        },
+			        {
+			          "leyenda riesgo pigment": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.492
+			          }
+			        }
+			      ]
+			    },
+			    "entity__riesgo.leyenda_riesgo_fuente": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Riesgos",
+			          "ConceptualProperty": "Leyenda_Riesgo_Fuente"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "leyenda riesgo fuente": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "Leyenda_Riesgo_Fuente": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        }
+			      ]
+			    },
+			    "entity__riesgo.leyenda_riesgo_titulo": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Riesgos",
+			          "ConceptualProperty": "Leyenda_Riesgo_Titulo"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "leyenda riesgo titulo": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "Leyenda_Riesgo_Titulo": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        }
+			      ]
+			    },
+			    "ventana_semana": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Ventana_Semanas"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "ventana semana": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "Ventana_Semanas": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        }
+			      ]
+			    },
+			    "ventana_semana.ventana": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Ventana_Semanas",
+			          "ConceptualProperty": "Ventana"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "ventana": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "ventana_semana.semana": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Ventana_Semanas",
+			          "ConceptualProperty": "Semanas"
+			        }
+			      },
+			      "State": "Generated",
+			      "Visibility": {
+			        "Value": "Hidden"
+			      },
+			      "Terms": [
+			        {
+			          "semana": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "leyenda_mapa_riesgo": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Leyenda_Mapa_Riesgo"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "leyenda mapa riesgo": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "Leyenda_Mapa_Riesgo": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        }
+			      ]
+			    },
+			    "leyenda_mapa_riesgo.modo": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Leyenda_Mapa_Riesgo",
+			          "ConceptualProperty": "Modo"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "modo": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "leyenda_mapa_riesgo.orden": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Leyenda_Mapa_Riesgo",
+			          "ConceptualProperty": "Orden"
+			        }
+			      },
+			      "State": "Generated",
+			      "Visibility": {
+			        "Value": "Hidden"
+			      },
+			      "Terms": [
+			        {
+			          "orden": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "leyenda_mapa_riesgo.color": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Leyenda_Mapa_Riesgo",
+			          "ConceptualProperty": "Color"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "color": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "hue": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.491
+			          }
+			        },
+			        {
+			          "tint": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.476
+			          }
+			        },
+			        {
+			          "shade": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.476
+			          }
+			        },
+			        {
+			          "dye": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.476
+			          }
+			        },
+			        {
+			          "paint": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.476
+			          }
+			        },
+			        {
+			          "pigment": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.476
+			          }
+			        }
+			      ]
 			    }
 			  },
 			  "Relationships": {
-			    "riesgos_cultivo_has_cultivo": {
-			      "Binding": {
-			        "ConceptualEntity": "Riesgos_Cultivo"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "riesgos_cultivo": {
-			          "Target": {
-			            "Entity": "riesgos_cultivo"
-			          }
-			        },
-			        "cultivo": {
-			          "Target": {
-			            "Entity": "cultivo"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "riesgos_cultivo"
-			            },
-			            "Object": {
-			              "Role": "cultivo"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "riesgos_cultivos_have_cultivos"
-			        },
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "cultivo"
-			            },
-			            "Object": {
-			              "Role": "riesgos_cultivo"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "cultivos_have_riesgos_cultivos"
-			        }
-			      ]
-			    },
-			    "fact_horaria_riesgo_has_direcciones_viento": {
-			      "Binding": {
-			        "ConceptualEntity": "Fact_Horaria_riesgo"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "fact_horaria_riesgo": {
-			          "Target": {
-			            "Entity": "fact_horaria_riesgo"
-			          }
-			        },
-			        "direcciones_viento": {
-			          "Target": {
-			            "Entity": "direcciones_viento"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "fact_horaria_riesgo"
-			            },
-			            "Object": {
-			              "Role": "direcciones_viento"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "fact_horaria_riesgos_have_direcciones_vientos"
-			        },
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "direcciones_viento"
-			            },
-			            "Object": {
-			              "Role": "fact_horaria_riesgo"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "direcciones_vientos_have_fact_horaria_riesgos"
-			        }
-			      ]
-			    },
-			    "fact_horaria_riesgo_has_horas_dia": {
-			      "Binding": {
-			        "ConceptualEntity": "Fact_Horaria_riesgo"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "fact_horaria_riesgo": {
-			          "Target": {
-			            "Entity": "fact_horaria_riesgo"
-			          }
-			        },
-			        "horas_dia": {
-			          "Target": {
-			            "Entity": "horas_dia"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "fact_horaria_riesgo"
-			            },
-			            "Object": {
-			              "Role": "horas_dia"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "fact_horaria_riesgos_have_horas_dias"
-			        },
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "horas_dia"
-			            },
-			            "Object": {
-			              "Role": "fact_horaria_riesgo"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "horas_dias_have_fact_horaria_riesgos"
-			        }
-			      ]
-			    },
-			    "fact_horaria_riesgo_has_estacione_met": {
-			      "Binding": {
-			        "ConceptualEntity": "Fact_Horaria_riesgo"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "fact_horaria_riesgo": {
-			          "Target": {
-			            "Entity": "fact_horaria_riesgo"
-			          }
-			        },
-			        "estacione_met": {
-			          "Target": {
-			            "Entity": "estacione_met"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "fact_horaria_riesgo"
-			            },
-			            "Object": {
-			              "Role": "estacione_met"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "fact_horaria_riesgos_have_estacione_met"
-			        },
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "estacione_met"
-			            },
-			            "Object": {
-			              "Role": "fact_horaria_riesgo"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "estacione_met_have_fact_horaria_riesgos"
-			        }
-			      ]
-			    },
-			    "fact_horaria_riesgo_has_calendario": {
-			      "Binding": {
-			        "ConceptualEntity": "Fact_Horaria_riesgo"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "fact_horaria_riesgo": {
-			          "Target": {
-			            "Entity": "fact_horaria_riesgo"
-			          }
-			        },
-			        "calendario": {
-			          "Target": {
-			            "Entity": "calendario"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "fact_horaria_riesgo"
-			            },
-			            "Object": {
-			              "Role": "calendario"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "fact_horaria_riesgos_have_calendarios"
-			        },
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "calendario"
-			            },
-			            "Object": {
-			              "Role": "fact_horaria_riesgo"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "calendarios_have_fact_horaria_riesgos"
-			        }
-			      ]
-			    },
-			    "fact_subdiaria_met_aux_has_calendario": {
-			      "Binding": {
-			        "ConceptualEntity": "Fact_Subdiaria_met_aux"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "fact_subdiaria_met_aux": {
-			          "Target": {
-			            "Entity": "fact_subdiaria_met_aux"
-			          }
-			        },
-			        "calendario": {
-			          "Target": {
-			            "Entity": "calendario"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "fact_subdiaria_met_aux"
-			            },
-			            "Object": {
-			              "Role": "calendario"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "fact_subdiaria_met_aux_have_calendarios"
-			        },
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "calendario"
-			            },
-			            "Object": {
-			              "Role": "fact_subdiaria_met_aux"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "calendarios_have_fact_subdiaria_met_aux"
-			        }
-			      ]
-			    },
-			    "fact_subdiaria_met_aux_has_estacione_met": {
-			      "Binding": {
-			        "ConceptualEntity": "Fact_Subdiaria_met_aux"
-			      },
-			      "State": "Generated",
-			      "Roles": {
-			        "fact_subdiaria_met_aux": {
-			          "Target": {
-			            "Entity": "fact_subdiaria_met_aux"
-			          }
-			        },
-			        "estacione_met": {
-			          "Target": {
-			            "Entity": "estacione_met"
-			          }
-			        }
-			      },
-			      "Phrasings": [
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "fact_subdiaria_met_aux"
-			            },
-			            "Object": {
-			              "Role": "estacione_met"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "fact_subdiaria_met_aux_have_estacione_met"
-			        },
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "estacione_met"
-			            },
-			            "Object": {
-			              "Role": "fact_subdiaria_met_aux"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "estacione_met_have_fact_subdiaria_met_aux"
-			        }
-			      ]
-			    },
-			    "fact_diaria_met_has_estacione_met": {
+			    "fact_diaria_met_has_entity__riesgo_riesgo_valor_max_estacion": {
 			      "Binding": {
 			        "ConceptualEntity": "Fact_Diaria_met"
 			      },
@@ -16509,84 +16699,256 @@ cultureInfo es-GT
 			            "Entity": "fact_diaria_met"
 			          }
 			        },
+			        "entity__riesgo.riesgo_valor_max_estacion": {
+			          "Target": {
+			            "Entity": "entity__riesgo.riesgo_valor_max_estacion"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "fact_diaria_met"
+			            },
+			            "Object": {
+			              "Role": "entity__riesgo.riesgo_valor_max_estacion"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "fact_diaria_met_have_riesgo_valor_max_estacion"
+			        }
+			      ]
+			    },
+			    "estacione_met_has_entity__riesgo_riesgo_valor_max_estacion": {
+			      "Binding": {
+			        "ConceptualEntity": "Estaciones_met"
+			      },
+			      "State": "Generated",
+			      "Roles": {
 			        "estacione_met": {
 			          "Target": {
 			            "Entity": "estacione_met"
 			          }
+			        },
+			        "entity__riesgo.riesgo_valor_max_estacion": {
+			          "Target": {
+			            "Entity": "entity__riesgo.riesgo_valor_max_estacion"
+			          }
 			        }
 			      },
 			      "Phrasings": [
 			        {
 			          "Attribute": {
 			            "Subject": {
-			              "Role": "fact_diaria_met"
+			              "Role": "estacione_met"
 			            },
 			            "Object": {
-			              "Role": "estacione_met"
+			              "Role": "entity__riesgo.riesgo_valor_max_estacion"
 			            }
 			          },
 			          "State": "Generated",
 			          "Weight": 0.99,
-			          "ID": "fact_diaria_met_have_estacione_met"
-			        },
-			        {
-			          "Attribute": {
-			            "Subject": {
-			              "Role": "estacione_met"
-			            },
-			            "Object": {
-			              "Role": "fact_diaria_met"
-			            }
-			          },
-			          "State": "Generated",
-			          "Weight": 0.99,
-			          "ID": "estacione_met_have_fact_diaria_met"
+			          "ID": "estacione_met_have_riesgo_valor_max_estacion"
 			        }
 			      ]
 			    },
-			    "fact_diaria_met_has_calendario": {
+			    "calendario_has_entity__riesgo_riesgo_valor_max_estacion": {
 			      "Binding": {
-			        "ConceptualEntity": "Fact_Diaria_met"
+			        "ConceptualEntity": "Calendario"
 			      },
 			      "State": "Generated",
 			      "Roles": {
-			        "fact_diaria_met": {
-			          "Target": {
-			            "Entity": "fact_diaria_met"
-			          }
-			        },
 			        "calendario": {
 			          "Target": {
 			            "Entity": "calendario"
 			          }
+			        },
+			        "entity__riesgo.riesgo_valor_max_estacion": {
+			          "Target": {
+			            "Entity": "entity__riesgo.riesgo_valor_max_estacion"
+			          }
 			        }
 			      },
 			      "Phrasings": [
 			        {
 			          "Attribute": {
 			            "Subject": {
-			              "Role": "fact_diaria_met"
+			              "Role": "calendario"
 			            },
 			            "Object": {
-			              "Role": "calendario"
+			              "Role": "entity__riesgo.riesgo_valor_max_estacion"
 			            }
 			          },
 			          "State": "Generated",
 			          "Weight": 0.99,
-			          "ID": "fact_diaria_met_have_calendarios"
+			          "ID": "calendarios_have_riesgo_valor_max_estacion"
+			        }
+			      ]
+			    },
+			    "leyenda_mapa_riesgo_has_rango": {
+			      "Binding": {
+			        "ConceptualEntity": "Leyenda_Mapa_Riesgo"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "leyenda_mapa_riesgo": {
+			          "Target": {
+			            "Entity": "leyenda_mapa_riesgo"
+			          }
 			        },
+			        "leyenda_mapa_riesgo.rango": {
+			          "Target": {
+			            "Entity": "leyenda_mapa_riesgo.rango"
+			          }
+			        }
+			      },
+			      "Phrasings": [
 			        {
 			          "Attribute": {
 			            "Subject": {
-			              "Role": "calendario"
+			              "Role": "leyenda_mapa_riesgo"
 			            },
 			            "Object": {
-			              "Role": "fact_diaria_met"
+			              "Role": "leyenda_mapa_riesgo.rango"
 			            }
 			          },
 			          "State": "Generated",
 			          "Weight": 0.99,
-			          "ID": "calendarios_have_fact_diaria_met"
+			          "ID": "leyenda_mapa_riesgos_have_rangos"
+			        }
+			      ]
+			    },
+			    "entity__riesgo_has_GDD_texto_anterior": {
+			      "Binding": {
+			        "ConceptualEntity": "_Riesgos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity__riesgo": {
+			          "Target": {
+			            "Entity": "entity__riesgo"
+			          }
+			        },
+			        "entity__riesgo.GDD_texto_anterior": {
+			          "Target": {
+			            "Entity": "entity__riesgo.GDD_texto_anterior"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity__riesgo"
+			            },
+			            "Object": {
+			              "Role": "entity__riesgo.GDD_texto_anterior"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing_riesgos_have_GDD_texto_anterior"
+			        }
+			      ]
+			    },
+			    "entity__riesgo_has_GDD_texto_actual": {
+			      "Binding": {
+			        "ConceptualEntity": "_Riesgos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity__riesgo": {
+			          "Target": {
+			            "Entity": "entity__riesgo"
+			          }
+			        },
+			        "entity__riesgo.GDD_texto_actual": {
+			          "Target": {
+			            "Entity": "entity__riesgo.GDD_texto_actual"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity__riesgo"
+			            },
+			            "Object": {
+			              "Role": "entity__riesgo.GDD_texto_actual"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing_riesgos_have_GDD_texto_actual"
+			        }
+			      ]
+			    },
+			    "entity__riesgo_has_rad_texto_anterior": {
+			      "Binding": {
+			        "ConceptualEntity": "_Riesgos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity__riesgo": {
+			          "Target": {
+			            "Entity": "entity__riesgo"
+			          }
+			        },
+			        "entity__riesgo.rad_texto_anterior": {
+			          "Target": {
+			            "Entity": "entity__riesgo.rad_texto_anterior"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity__riesgo"
+			            },
+			            "Object": {
+			              "Role": "entity__riesgo.rad_texto_anterior"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing_riesgos_have_rad_texto_anterior"
+			        }
+			      ]
+			    },
+			    "entity__riesgo_has_rad_texto_actual": {
+			      "Binding": {
+			        "ConceptualEntity": "_Riesgos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity__riesgo": {
+			          "Target": {
+			            "Entity": "entity__riesgo"
+			          }
+			        },
+			        "entity__riesgo.rad_texto_actual": {
+			          "Target": {
+			            "Entity": "entity__riesgo.rad_texto_actual"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity__riesgo"
+			            },
+			            "Object": {
+			              "Role": "entity__riesgo.rad_texto_actual"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing_riesgos_have_rad_texto_actual"
 			        }
 			      ]
 			    },
@@ -25899,6 +26261,39 @@ cultureInfo es-GT
 			          "State": "Generated",
 			          "Weight": 0.99,
 			          "ID": "Phrasing_riesgos_have_GDD_desv_acum"
+			        }
+			      ]
+			    },
+			    "ventana_semana_has_entity__riesgo_desv_media_linea": {
+			      "Binding": {
+			        "ConceptualEntity": "Ventana_Semanas"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "ventana_semana": {
+			          "Target": {
+			            "Entity": "ventana_semana"
+			          }
+			        },
+			        "entity__riesgo.desv_media_linea": {
+			          "Target": {
+			            "Entity": "entity__riesgo.desv_media_linea"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "ventana_semana"
+			            },
+			            "Object": {
+			              "Role": "entity__riesgo.desv_media_linea"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "ventana_semanas_have_desv_media_linea"
 			        }
 			      ]
 			    },
@@ -40023,6 +40418,783 @@ cultureInfo es-GT
 			          "State": "Generated",
 			          "Weight": 0.99,
 			          "ID": "estacione_met_have_estacionids"
+			        }
+			      ]
+			    },
+			    "fact_horaria_riesgo_has_entity__riesgo_riesgo_valor_max_estacion": {
+			      "Binding": {
+			        "ConceptualEntity": "Fact_Horaria_riesgo"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "fact_horaria_riesgo": {
+			          "Target": {
+			            "Entity": "fact_horaria_riesgo"
+			          }
+			        },
+			        "entity__riesgo.riesgo_valor_max_estacion": {
+			          "Target": {
+			            "Entity": "entity__riesgo.riesgo_valor_max_estacion"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "fact_horaria_riesgo"
+			            },
+			            "Object": {
+			              "Role": "entity__riesgo.riesgo_valor_max_estacion"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "fact_horaria_riesgos_have_riesgo_valor_max_estacion"
+			        }
+			      ]
+			    },
+			    "fact_subdiaria_met_aux_has_entity__riesgo_riesgo_valor_max_estacion": {
+			      "Binding": {
+			        "ConceptualEntity": "Fact_Subdiaria_met_aux"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "fact_subdiaria_met_aux": {
+			          "Target": {
+			            "Entity": "fact_subdiaria_met_aux"
+			          }
+			        },
+			        "entity__riesgo.riesgo_valor_max_estacion": {
+			          "Target": {
+			            "Entity": "entity__riesgo.riesgo_valor_max_estacion"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "fact_subdiaria_met_aux"
+			            },
+			            "Object": {
+			              "Role": "entity__riesgo.riesgo_valor_max_estacion"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "fact_subdiaria_met_aux_have_riesgo_valor_max_estacion"
+			        }
+			      ]
+			    },
+			    "riesgos_cultivo_has_entity__riesgo_riesgo_valor_max_estacion": {
+			      "Binding": {
+			        "ConceptualEntity": "Riesgos_Cultivo"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "riesgos_cultivo": {
+			          "Target": {
+			            "Entity": "riesgos_cultivo"
+			          }
+			        },
+			        "entity__riesgo.riesgo_valor_max_estacion": {
+			          "Target": {
+			            "Entity": "entity__riesgo.riesgo_valor_max_estacion"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "riesgos_cultivo"
+			            },
+			            "Object": {
+			              "Role": "entity__riesgo.riesgo_valor_max_estacion"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "riesgos_cultivos_have_riesgo_valor_max_estacion"
+			        }
+			      ]
+			    },
+			    "leyenda_mapa_riesgo_has_entity__riesgo_leyenda_riesgo_mostrar": {
+			      "Binding": {
+			        "ConceptualEntity": "Leyenda_Mapa_Riesgo"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "leyenda_mapa_riesgo": {
+			          "Target": {
+			            "Entity": "leyenda_mapa_riesgo"
+			          }
+			        },
+			        "entity__riesgo.leyenda_riesgo_mostrar": {
+			          "Target": {
+			            "Entity": "entity__riesgo.leyenda_riesgo_mostrar"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "leyenda_mapa_riesgo"
+			            },
+			            "Object": {
+			              "Role": "entity__riesgo.leyenda_riesgo_mostrar"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "leyenda_mapa_riesgos_have_leyenda_riesgo_mostrar"
+			        }
+			      ]
+			    },
+			    "riesgos_cultivo_has_entity__riesgo_leyenda_riesgo_mostrar": {
+			      "Binding": {
+			        "ConceptualEntity": "Riesgos_Cultivo"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "riesgos_cultivo": {
+			          "Target": {
+			            "Entity": "riesgos_cultivo"
+			          }
+			        },
+			        "entity__riesgo.leyenda_riesgo_mostrar": {
+			          "Target": {
+			            "Entity": "entity__riesgo.leyenda_riesgo_mostrar"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "riesgos_cultivo"
+			            },
+			            "Object": {
+			              "Role": "entity__riesgo.leyenda_riesgo_mostrar"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "riesgos_cultivos_have_leyenda_riesgo_mostrar"
+			        }
+			      ]
+			    },
+			    "leyenda_mapa_riesgo_has_entity__riesgo_leyenda_riesgo_color": {
+			      "Binding": {
+			        "ConceptualEntity": "Leyenda_Mapa_Riesgo"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "leyenda_mapa_riesgo": {
+			          "Target": {
+			            "Entity": "leyenda_mapa_riesgo"
+			          }
+			        },
+			        "entity__riesgo.leyenda_riesgo_color": {
+			          "Target": {
+			            "Entity": "entity__riesgo.leyenda_riesgo_color"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "leyenda_mapa_riesgo"
+			            },
+			            "Object": {
+			              "Role": "entity__riesgo.leyenda_riesgo_color"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "leyenda_mapa_riesgos_have_leyenda_riesgo_color"
+			        }
+			      ]
+			    },
+			    "entity__riesgo_has_leyenda_riesgo_fuente": {
+			      "Binding": {
+			        "ConceptualEntity": "_Riesgos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity__riesgo": {
+			          "Target": {
+			            "Entity": "entity__riesgo"
+			          }
+			        },
+			        "entity__riesgo.leyenda_riesgo_fuente": {
+			          "Target": {
+			            "Entity": "entity__riesgo.leyenda_riesgo_fuente"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity__riesgo"
+			            },
+			            "Object": {
+			              "Role": "entity__riesgo.leyenda_riesgo_fuente"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing_riesgos_have_leyenda_riesgo_fuente"
+			        }
+			      ]
+			    },
+			    "riesgos_cultivo_has_entity__riesgo_leyenda_riesgo_titulo": {
+			      "Binding": {
+			        "ConceptualEntity": "Riesgos_Cultivo"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "riesgos_cultivo": {
+			          "Target": {
+			            "Entity": "riesgos_cultivo"
+			          }
+			        },
+			        "entity__riesgo.leyenda_riesgo_titulo": {
+			          "Target": {
+			            "Entity": "entity__riesgo.leyenda_riesgo_titulo"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "riesgos_cultivo"
+			            },
+			            "Object": {
+			              "Role": "entity__riesgo.leyenda_riesgo_titulo"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "riesgos_cultivos_have_leyenda_riesgo_titulo"
+			        }
+			      ]
+			    },
+			    "ventana_semana_has_ventana": {
+			      "Binding": {
+			        "ConceptualEntity": "Ventana_Semanas"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "ventana_semana": {
+			          "Target": {
+			            "Entity": "ventana_semana"
+			          }
+			        },
+			        "ventana_semana.ventana": {
+			          "Target": {
+			            "Entity": "ventana_semana.ventana"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "ventana_semana"
+			            },
+			            "Object": {
+			              "Role": "ventana_semana.ventana"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "ventana_semanas_have_ventanas"
+			        }
+			      ]
+			    },
+			    "leyenda_mapa_riesgo_has_modo": {
+			      "Binding": {
+			        "ConceptualEntity": "Leyenda_Mapa_Riesgo"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "leyenda_mapa_riesgo": {
+			          "Target": {
+			            "Entity": "leyenda_mapa_riesgo"
+			          }
+			        },
+			        "leyenda_mapa_riesgo.modo": {
+			          "Target": {
+			            "Entity": "leyenda_mapa_riesgo.modo"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "leyenda_mapa_riesgo"
+			            },
+			            "Object": {
+			              "Role": "leyenda_mapa_riesgo.modo"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "leyenda_mapa_riesgos_have_modos"
+			        }
+			      ]
+			    },
+			    "leyenda_mapa_riesgo_has_color": {
+			      "Binding": {
+			        "ConceptualEntity": "Leyenda_Mapa_Riesgo"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "leyenda_mapa_riesgo": {
+			          "Target": {
+			            "Entity": "leyenda_mapa_riesgo"
+			          }
+			        },
+			        "leyenda_mapa_riesgo.color": {
+			          "Target": {
+			            "Entity": "leyenda_mapa_riesgo.color"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "leyenda_mapa_riesgo"
+			            },
+			            "Object": {
+			              "Role": "leyenda_mapa_riesgo.color"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "leyenda_mapa_riesgos_have_colors"
+			        }
+			      ]
+			    },
+			    "fact_diaria_met_has_calendario": {
+			      "Binding": {
+			        "ConceptualEntity": "Fact_Diaria_met"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "fact_diaria_met": {
+			          "Target": {
+			            "Entity": "fact_diaria_met"
+			          }
+			        },
+			        "calendario": {
+			          "Target": {
+			            "Entity": "calendario"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "fact_diaria_met"
+			            },
+			            "Object": {
+			              "Role": "calendario"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "fact_diaria_met_have_calendarios"
+			        },
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "calendario"
+			            },
+			            "Object": {
+			              "Role": "fact_diaria_met"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "calendarios_have_fact_diaria_met"
+			        }
+			      ]
+			    },
+			    "fact_diaria_met_has_estacione_met": {
+			      "Binding": {
+			        "ConceptualEntity": "Fact_Diaria_met"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "fact_diaria_met": {
+			          "Target": {
+			            "Entity": "fact_diaria_met"
+			          }
+			        },
+			        "estacione_met": {
+			          "Target": {
+			            "Entity": "estacione_met"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "fact_diaria_met"
+			            },
+			            "Object": {
+			              "Role": "estacione_met"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "fact_diaria_met_have_estacione_met"
+			        },
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "estacione_met"
+			            },
+			            "Object": {
+			              "Role": "fact_diaria_met"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "estacione_met_have_fact_diaria_met"
+			        }
+			      ]
+			    },
+			    "fact_subdiaria_met_aux_has_estacione_met": {
+			      "Binding": {
+			        "ConceptualEntity": "Fact_Subdiaria_met_aux"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "fact_subdiaria_met_aux": {
+			          "Target": {
+			            "Entity": "fact_subdiaria_met_aux"
+			          }
+			        },
+			        "estacione_met": {
+			          "Target": {
+			            "Entity": "estacione_met"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "fact_subdiaria_met_aux"
+			            },
+			            "Object": {
+			              "Role": "estacione_met"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "fact_subdiaria_met_aux_have_estacione_met"
+			        },
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "estacione_met"
+			            },
+			            "Object": {
+			              "Role": "fact_subdiaria_met_aux"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "estacione_met_have_fact_subdiaria_met_aux"
+			        }
+			      ]
+			    },
+			    "fact_subdiaria_met_aux_has_calendario": {
+			      "Binding": {
+			        "ConceptualEntity": "Fact_Subdiaria_met_aux"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "fact_subdiaria_met_aux": {
+			          "Target": {
+			            "Entity": "fact_subdiaria_met_aux"
+			          }
+			        },
+			        "calendario": {
+			          "Target": {
+			            "Entity": "calendario"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "fact_subdiaria_met_aux"
+			            },
+			            "Object": {
+			              "Role": "calendario"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "fact_subdiaria_met_aux_have_calendarios"
+			        },
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "calendario"
+			            },
+			            "Object": {
+			              "Role": "fact_subdiaria_met_aux"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "calendarios_have_fact_subdiaria_met_aux"
+			        }
+			      ]
+			    },
+			    "fact_horaria_riesgo_has_calendario": {
+			      "Binding": {
+			        "ConceptualEntity": "Fact_Horaria_riesgo"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "fact_horaria_riesgo": {
+			          "Target": {
+			            "Entity": "fact_horaria_riesgo"
+			          }
+			        },
+			        "calendario": {
+			          "Target": {
+			            "Entity": "calendario"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "fact_horaria_riesgo"
+			            },
+			            "Object": {
+			              "Role": "calendario"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "fact_horaria_riesgos_have_calendarios"
+			        },
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "calendario"
+			            },
+			            "Object": {
+			              "Role": "fact_horaria_riesgo"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "calendarios_have_fact_horaria_riesgos"
+			        }
+			      ]
+			    },
+			    "fact_horaria_riesgo_has_estacione_met": {
+			      "Binding": {
+			        "ConceptualEntity": "Fact_Horaria_riesgo"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "fact_horaria_riesgo": {
+			          "Target": {
+			            "Entity": "fact_horaria_riesgo"
+			          }
+			        },
+			        "estacione_met": {
+			          "Target": {
+			            "Entity": "estacione_met"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "fact_horaria_riesgo"
+			            },
+			            "Object": {
+			              "Role": "estacione_met"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "fact_horaria_riesgos_have_estacione_met"
+			        },
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "estacione_met"
+			            },
+			            "Object": {
+			              "Role": "fact_horaria_riesgo"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "estacione_met_have_fact_horaria_riesgos"
+			        }
+			      ]
+			    },
+			    "fact_horaria_riesgo_has_horas_dia": {
+			      "Binding": {
+			        "ConceptualEntity": "Fact_Horaria_riesgo"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "fact_horaria_riesgo": {
+			          "Target": {
+			            "Entity": "fact_horaria_riesgo"
+			          }
+			        },
+			        "horas_dia": {
+			          "Target": {
+			            "Entity": "horas_dia"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "fact_horaria_riesgo"
+			            },
+			            "Object": {
+			              "Role": "horas_dia"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "fact_horaria_riesgos_have_horas_dias"
+			        },
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "horas_dia"
+			            },
+			            "Object": {
+			              "Role": "fact_horaria_riesgo"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "horas_dias_have_fact_horaria_riesgos"
+			        }
+			      ]
+			    },
+			    "fact_horaria_riesgo_has_direcciones_viento": {
+			      "Binding": {
+			        "ConceptualEntity": "Fact_Horaria_riesgo"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "fact_horaria_riesgo": {
+			          "Target": {
+			            "Entity": "fact_horaria_riesgo"
+			          }
+			        },
+			        "direcciones_viento": {
+			          "Target": {
+			            "Entity": "direcciones_viento"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "fact_horaria_riesgo"
+			            },
+			            "Object": {
+			              "Role": "direcciones_viento"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "fact_horaria_riesgos_have_direcciones_vientos"
+			        },
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "direcciones_viento"
+			            },
+			            "Object": {
+			              "Role": "fact_horaria_riesgo"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "direcciones_vientos_have_fact_horaria_riesgos"
+			        }
+			      ]
+			    },
+			    "riesgos_cultivo_has_cultivo": {
+			      "Binding": {
+			        "ConceptualEntity": "Riesgos_Cultivo"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "riesgos_cultivo": {
+			          "Target": {
+			            "Entity": "riesgos_cultivo"
+			          }
+			        },
+			        "cultivo": {
+			          "Target": {
+			            "Entity": "cultivo"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "riesgos_cultivo"
+			            },
+			            "Object": {
+			              "Role": "cultivo"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "riesgos_cultivos_have_cultivos"
+			        },
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "cultivo"
+			            },
+			            "Object": {
+			              "Role": "riesgos_cultivo"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "cultivos_have_riesgos_cultivos"
 			        }
 			      ]
 			    },

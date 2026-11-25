@@ -2,8 +2,8 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "c35fd45640885aa5a8ac",
   "position": {
-    "x": 280,
-    "y": 173,
+    "x": 282.56369426751593,
+    "y": 199.76114649681529,
     "z": 10000,
     "height": 125.23885350318471,
     "width": 998.80573248407643,
@@ -475,107 +475,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "7d817fd76d7bdf8dd98d",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Medidas"
-              }
-            },
-            "Property": "Balance_Semanal"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "334c62327bf43a4bf599",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Medidas"
-              }
-            },
-            "Property": "Temp_Nocturna_Media"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "0a739ae29cbbf82fafb4",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Riesgos"
-              }
-            },
-            "Property": "GDD_Cultivo_Acumulado"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "f2e0b16cf88c15fe4b80",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Medidas"
-              }
-            },
-            "Property": "Horas_Luz"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "bce6331a8a3f25abf822",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Medidas"
-              }
-            },
-            "Property": "Mojadura_Horas_Total_Semanal"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "e8c31472f55574972575",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Medidas"
-              }
-            },
-            "Property": "Mojadura_Horas_Nocturna_Semanal"
-          }
-        },
-        "type": "Advanced"
-      },
-      {
-        "name": "124389ccd8d89621836e",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Riesgos"
-              }
-            },
-            "Property": "GDD_Cultivo_Acumulado_Anterior"
-          }
-        },
-        "type": "Advanced"
-      }
-    ]
   }
 }

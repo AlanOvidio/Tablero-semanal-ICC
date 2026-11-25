@@ -50,7 +50,7 @@ table Leyenda_Mapa_Riesgo
 					{"Riesgo", 6, "Alerta", "#D64550"},
 					{"Riesgo", 7, "Precaución", "#F2B134"},
 					{"Riesgo", 8, "Normal", "#3BA272"},
-					{"Riesgo", 9, "Sin datos ", "#B0B0B0"}
+					{"Riesgo", 9, "Sin datos​", "#B0B0B0"}
 				    })
 				in
 				    Tabla

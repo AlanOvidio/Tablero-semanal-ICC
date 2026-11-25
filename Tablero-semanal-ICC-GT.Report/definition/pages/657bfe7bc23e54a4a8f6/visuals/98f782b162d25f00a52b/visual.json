@@ -489,48 +489,6 @@
           ]
         },
         "howCreated": "User"
-      },
-      {
-        "name": "9f5c893ebd2012201771",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Calendario"
-              }
-            },
-            "Property": "Fecha_Corta"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "246beec8d9890ef6ec0b",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Horas_Dia"
-              }
-            },
-            "Property": "Hora_Etiqueta"
-          }
-        },
-        "type": "Categorical"
-      },
-      {
-        "name": "e308079dfe401a093da6",
-        "field": {
-          "Measure": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "_Riesgos"
-              }
-            },
-            "Property": "Mapa_Calor_Valor"
-          }
-        },
-        "type": "Advanced"
       }
     ]
   }
